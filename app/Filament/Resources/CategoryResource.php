@@ -19,17 +19,33 @@ class CategoryResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
+    public static function getModelLabel(): string
+    {
+        return __('Danh mục');
+    }
+    public static function getPluralModelLabel(): string
+    {
+        return __('Danh mục');
+    }
+    public static function getNavigationLabel(): string
+    {
+        return __('Quản lý danh mục');
+    }
+
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
                 Forms\Components\TextInput::make('name')
+                    ->label(__('Tên danh mục'))
                     ->required()
                     ->maxLength(100),
                 Forms\Components\TextInput::make('slug')
                     ->required()
+                    ->label(__('Slug danh mục'))
                     ->maxLength(100),
                 Forms\Components\Textarea::make('description')
+                    ->label(__('Mô tả danh mục'))
                     ->columnSpanFull(),
             ]);
     }
@@ -39,15 +55,19 @@ class CategoryResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('name')
-                    ->searchable(),
+                    ->searchable()
+                    ->label(__('Tên danh mục')),
                 Tables\Columns\TextColumn::make('slug')
+                    ->label(__('Slug danh mục'))
                     ->searchable(),
                 Tables\Columns\TextColumn::make('created_at')
+                    ->label(__('Ngày tạo'))
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('updated_at')
                     ->dateTime()
+                    ->label(__('Ngày cập nhật'))
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
