@@ -8,6 +8,7 @@ use App\Models\Course;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
+use Filament\Support\RawJs;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
@@ -46,16 +47,24 @@ class CourseResource extends Resource
                     ->schema([
                         Forms\Components\TextInput::make('title')
                             ->required()
-                            ->label('Tiêu đề khóa học')
-                            ->maxLength(255),
+                            ->label('Tên khóa học')
+                            ->maxLength(255)
+                            ->live(onBlur: true)
+                            ->afterStateUpdated(fn (string $operation, $state, Forms\Set $set) => $operation === 'create' ? $set('slug', \Illuminate\Support\Str::slug($state)) : null)
+                            ->columnSpan(2),
                         Forms\Components\TextInput::make('slug')
-                            ->label('Slug khóa học')
+                            ->label('Slug')
+                            ->placeholder('URL thân thiện, ví dụ: khoa-hoc-tieng-trung')
                             ->required()
-                            ->maxLength(255),
+                            ->maxLength(255)
+                            ->columnSpan(2),
                         Forms\Components\Select::make('category_id')
                             ->label('Danh mục khóa học')
                             ->relationship('category', 'name')
-                            ->required(),
+                            ->searchable()
+                            ->preload()
+                            ->required()
+                            ->columnSpan(2),
                         Forms\Components\Select::make('status')
                             ->required()
                             ->label('Trạng thái')
@@ -63,44 +72,51 @@ class CourseResource extends Resource
                                 'draft' => 'Nháp',
                                 'published' => 'Đã xuất bản',
                                 'archived' => 'Đã lưu trữ',
-                            ]),
+                            ])
+                            ->default('draft')
+                            ->columnSpan(2),
+                        Forms\Components\TextInput::make('price')
+                            ->label('Giá khóa học')
+                            ->required()
+                            ->numeric(12,0)
+                            ->default(null)
+                            ->prefix('₫')
+                            ->mask(RawJs::make('$money($input)'))
+                            ->stripCharacters([',', '.'])
+                            ->dehydrateStateUsing(fn ($state) => (int) str_replace([','], '', $state))
+                            ->columnSpan(2),
+                        Forms\Components\DatePicker::make('start_date')
+                            ->label('Ngày bắt đầu')
+                            ->displayFormat('d/m/Y')
+                            ->native(false)
+                            ->required()
+                            ->minDate(now())
+                            ->columnSpan(1),
+                        Forms\Components\DatePicker::make('end_registration_date')
+                            ->label('Ngày kết thúc đăng ký')
+                            ->native(false)
+                            ->displayFormat('d/m/Y')
+                            ->minDate(now())
+                            ->columnSpan(1),
                     ])
-                    ->columns(2)
+                    ->columns(4)
                     ->collapsible(),
 
                 Forms\Components\Section::make('Nội dung khóa học')
                     ->description('Mô tả và nội dung chi tiết của khóa học')
                     ->schema([
                         Forms\Components\Textarea::make('description')
-                            ->label('Mô tả khóa học')
+                            ->label('Mô tả ngắn về khóa học')
+                            ->maxLength(1000)
                             ->columnSpanFull(),
                         Forms\Components\Textarea::make('content')
                             ->label('Nội dung khóa học')
                             ->columnSpanFull(),
                         Forms\Components\FileUpload::make('featured_image')
-                            ->label('Hình ảnh nổi bật')
+                            ->label('Hình ảnh')
                             ->disk('public')
                             ->image(),
                     ])
-                    ->collapsible(),
-
-                Forms\Components\Section::make('Thông tin giá và thời gian')
-                    ->description('Thông tin về giá và thời gian của khóa học')
-                    ->schema([
-                        Forms\Components\TextInput::make('price')
-                            ->label('Giá khóa học')
-                            ->required()
-                            ->numeric()
-                            ->default(null)
-                            ->prefix('₫'),
-                        Forms\Components\DatePicker::make('end_registration_date')
-                            ->label('Ngày kết thúc đăng ký')
-                            ->required(),
-                        Forms\Components\DatePicker::make('start_date')
-                            ->label('Ngày bắt đầu')
-                            ->required(),
-                    ])
-                    ->columns(3)
                     ->collapsible(),
             ]);
     }
@@ -110,36 +126,41 @@ class CourseResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('title')
-                    ->label('Tiêu đề khóa học')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('slug')
-                    ->label('Slug khóa học')
+                    ->label('Tên khóa học')
                     ->searchable(),
                 Tables\Columns\ImageColumn::make('featured_image')
-                    ->label('Hình ảnh nổi bật'),
+                    ->label('Hình ảnh'),
                 Tables\Columns\TextColumn::make('price')
-                    ->label('Giá khóa học')
-                    ->money('VND')
+                    ->label('Giá')
+                    ->formatStateUsing(fn ($state) => $state ? number_format($state) . ' ₫' : '-')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('category.name')
-                    ->label('Danh mục khóa học')
+                    ->label('Danh mục')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('end_registration_date')
-                    ->date()
-                    ->label('Ngày kết thúc đăng ký')
+                    ->date('d/m/Y')
+                    ->label('Ngày k.thúc đăng ký')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('start_date')
-                    ->date()
+                    ->date('d/m/Y')
                     ->label('Ngày bắt đầu')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('status')
                     ->label('Trạng thái')
                     ->formatStateUsing(fn (string $state): string => match ($state) {
                         'draft' => 'Nháp',
-                        'published' => 'Đã xuất bản',
-                        'archived' => 'Đã lưu trữ',
+                        'published' => 'Hiển thị',
+                        'archived' => 'Lưu trữ',
                         default => $state,
-                    }),
+                    })
+                    ->badge()
+                    ->color(fn (string $state): string => match ($state) {
+                        'draft' => 'gray',
+                        'published' => 'success',
+                        'archived' => 'warning',
+                        default => 'gray',
+                    })
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime('d/m/Y H:i')
                     ->label('Ngày tạo')
@@ -152,7 +173,21 @@ class CourseResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                //
+                Tables\Filters\SelectFilter::make('category_id')
+                    ->label('Danh mục')
+                    ->multiple()
+                    ->relationship('category', 'name')
+                    ->searchable()
+                    ->preload(),
+            
+                Tables\Filters\SelectFilter::make('status')
+                    ->label('Trạng thái')
+                    ->options([
+                        'draft' => 'Nháp',
+                        'published' => 'Hiển thị',
+                        'archived' => 'Lưu trữ',
+                    ])
+                    ->default(null),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
