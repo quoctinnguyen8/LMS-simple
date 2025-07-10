@@ -18,9 +18,14 @@ class CourseRegistrationResource extends Resource
     protected static ?string $model = CourseRegistration::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-academic-cap';
+    
+    protected static ?int $navigationSort = 1;
+    protected static ?string $navigationGroup = 'Khóa học';
+
+
     public static function getModelLabel(): string
     {
-        return 'Đăng ký khóa học';
+        return 'đăng ký';
     }
     public static function getPluralModelLabel(): string
     {
@@ -28,7 +33,7 @@ class CourseRegistrationResource extends Resource
     }
     public static function getNavigationLabel(): string
     {
-        return 'Quản lý đăng ký khóa học';
+        return 'Thông tin đăng ký';
     }
 
     public static function form(Form $form): Form

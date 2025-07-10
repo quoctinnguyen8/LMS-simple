@@ -18,14 +18,17 @@ class UserResource extends Resource
     protected static ?string $model = User::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-users';
+    
+    protected static ?int $navigationSort = 1;
+    protected static ?string $navigationGroup = 'Người dùng';
 
     public static function getModelLabel(): string
     {
-        return 'Người dùng';
+        return 'người dùng';
     }
     public static function getPluralModelLabel(): string
     {
-        return 'Người dùng';
+        return 'người dùng';
     }
     public static function getNavigationLabel(): string
     {

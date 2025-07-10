@@ -17,19 +17,23 @@ class EquipmentResource extends Resource
 {
     protected static ?string $model = Equipment::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-device-phone-mobile';
+    protected static ?string $navigationIcon = 'heroicon-o-archive-box';
+    
+    protected static ?int $navigationSort = 4;
+
+    protected static ?string $navigationGroup = 'Thuê phòng học';
 
     public static function getModelLabel(): string
     {
-        return 'Thiết bị';
+        return 'thiết bị';
     }
     public static function getPluralModelLabel(): string
     {
-        return 'Thiết bị';
+        return 'thiết bị';
     }
     public static function getNavigationLabel(): string
     {
-        return 'Quản lý thiết bị';
+        return 'Trang thiết bị';
     }
 
     public static function form(Form $form): Form

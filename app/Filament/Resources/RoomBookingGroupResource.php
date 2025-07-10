@@ -19,17 +19,20 @@ class RoomBookingGroupResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-building-office';
     
+    protected static ?int $navigationSort = 2;
+    protected static ?string $navigationGroup = 'Thuê phòng học';
+    
     public static function getModelLabel(): string
     {
-        return 'Nhóm đặt phòng';
+        return 'nhóm đặt phòng';
     }
     public static function getPluralModelLabel(): string
     {
-        return 'Nhóm đặt phòng';
+        return 'nhóm đặt phòng';
     }
     public static function getNavigationLabel(): string
     {
-        return 'Quản lý nhóm đặt phòng';
+        return 'Nhóm đặt phòng';
     }
 
     public static function form(Form $form): Form

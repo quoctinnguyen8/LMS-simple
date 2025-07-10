@@ -18,6 +18,10 @@ class CourseResource extends Resource
     protected static ?string $model = Course::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-book-open';
+    
+    protected static ?int $navigationSort = 2;
+
+    protected static ?string $navigationGroup = 'Khóa học';
 
     public static function getModelLabel(): string
     {
@@ -29,7 +33,7 @@ class CourseResource extends Resource
     }
     public static function getNavigationLabel(): string
     {
-        return 'Quản lý khóa học';
+        return 'Thông tin khóa học';
     }
     
 

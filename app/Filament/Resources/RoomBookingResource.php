@@ -17,19 +17,22 @@ class RoomBookingResource extends Resource
 {
     protected static ?string $model = RoomBooking::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-building-office';
+    protected static ?string $navigationIcon = 'heroicon-o-bell';
+    
+    protected static ?int $navigationSort = 1;
+    protected static ?string $navigationGroup = 'Thuê phòng học';
 
     public static function getModelLabel(): string
     {
-        return 'Đặt phòng';
+        return 'đặt phòng';
     }
     public static function getPluralModelLabel(): string
     {
-        return 'Đặt phòng';
+        return 'đặt phòng';
     }
     public static function getNavigationLabel(): string
     {
-        return 'Quản lý đặt phòng';
+        return 'Yêu cầu đặt phòng';
     }
 
     public static function form(Form $form): Form

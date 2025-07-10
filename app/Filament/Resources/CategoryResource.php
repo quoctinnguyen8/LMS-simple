@@ -18,10 +18,14 @@ class CategoryResource extends Resource
     protected static ?string $model = Category::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    
+    protected static ?int $navigationSort = 3;
+
+    protected static ?string $navigationGroup = 'Khóa học';
 
     public static function getModelLabel(): string
     {
-        return 'Danh mục';
+        return 'danh mục';
     }
     public static function getPluralModelLabel(): string
     {
@@ -29,7 +33,7 @@ class CategoryResource extends Resource
     }
     public static function getNavigationLabel(): string
     {
-        return 'Quản lý danh mục';
+        return 'Danh mục khóa học';
     }
 
     public static function form(Form $form): Form
