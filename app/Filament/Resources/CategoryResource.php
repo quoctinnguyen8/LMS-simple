@@ -40,17 +40,23 @@ class CategoryResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('name')
-                    ->label('Tên danh mục')
-                    ->required()
-                    ->maxLength(100),
-                Forms\Components\TextInput::make('slug')
-                    ->required()
-                    ->label('Slug danh mục')
-                    ->maxLength(100),
-                Forms\Components\Textarea::make('description')
-                    ->label('Mô tả danh mục')
-                    ->columnSpanFull(),
+                Forms\Components\Section::make('Thông tin danh mục')
+                    ->description('Nhập thông tin cơ bản của danh mục khóa học')
+                    ->schema([
+                        Forms\Components\TextInput::make('name')
+                            ->label('Tên danh mục')
+                            ->required()
+                            ->maxLength(100),
+                        Forms\Components\TextInput::make('slug')
+                            ->required()
+                            ->label('Slug danh mục')
+                            ->maxLength(100),
+                        Forms\Components\Textarea::make('description')
+                            ->label('Mô tả danh mục')
+                            ->columnSpanFull(),
+                    ])
+                    ->columns(2)
+                    ->collapsible(),
             ]);
     }
 

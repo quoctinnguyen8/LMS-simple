@@ -39,34 +39,46 @@ class RoomResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('name')
-                    ->label('Tên phòng học')
-                    ->required()
-                    ->maxLength(100),
-                Forms\Components\TextInput::make('capacity')
-                    ->label('Sức chứa')
-                    ->required()
-                    ->numeric(),
-                Forms\Components\TextInput::make('location')
-                    ->label('Vị trí')
-                    ->maxLength(255)
-                    ->default(null),
-                Forms\Components\Select::make('status')
-                    ->required()
-                    ->label('Trạng thái')
-                    ->options([
-                        'available' => 'Có sẵn',
-                        'unavailable' => 'Không có sẵn',
-                        'maintenance' => 'Bảo trì',
-                    ]),
-                Forms\Components\Select::make('equipments')
-                    ->relationship('equipment', 'name')
-                    ->multiple()
-                    ->preload()
-                    ->label('Thiết bị'),
-                Forms\Components\Textarea::make('description')
-                    ->label('Mô tả')
-                    ->columnSpanFull(),
+                Forms\Components\Section::make('Thông tin cơ bản')
+                    ->description('Nhập thông tin cơ bản của phòng học')
+                    ->schema([
+                        Forms\Components\TextInput::make('name')
+                            ->label('Tên phòng học')
+                            ->required()
+                            ->maxLength(100),
+                        Forms\Components\TextInput::make('capacity')
+                            ->label('Sức chứa')
+                            ->required()
+                            ->numeric(),
+                        Forms\Components\TextInput::make('location')
+                            ->label('Vị trí')
+                            ->maxLength(255)
+                            ->default(null),
+                        Forms\Components\Select::make('status')
+                            ->required()
+                            ->label('Trạng thái')
+                            ->options([
+                                'available' => 'Có sẵn',
+                                'unavailable' => 'Không có sẵn',
+                                'maintenance' => 'Bảo trì',
+                            ]),
+                    ])
+                    ->columns(2)
+                    ->collapsible(),
+
+                Forms\Components\Section::make('Thiết bị và mô tả')
+                    ->description('Thiết bị có sẵn và mô tả chi tiết')
+                    ->schema([
+                        Forms\Components\Select::make('equipments')
+                            ->relationship('equipment', 'name')
+                            ->multiple()
+                            ->preload()
+                            ->label('Thiết bị'),
+                        Forms\Components\Textarea::make('description')
+                            ->label('Mô tả')
+                            ->columnSpanFull(),
+                    ])
+                    ->collapsible(),
             ]);
     }
 

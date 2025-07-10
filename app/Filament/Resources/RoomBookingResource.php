@@ -39,45 +39,65 @@ class RoomBookingResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\select::make('booking_group_id')
-                    ->label('Nhóm đặt phòng')
-                    ->relationship('room_booking_group', 'title'),
-                Forms\Components\select::make('user_id')
-                    ->label('Người dùng')
-                    ->relationship('user', 'name')
-                    ->required(),
-                Forms\Components\select::make('room_id')
-                    ->label('Phòng')
-                    ->relationship('room', 'name')
-                    ->required(),
-                Forms\Components\select::make('course_id')
-                    ->label('Khóa học')
-                    ->relationship('course', 'title')
-                    ->required(),
-                Forms\Components\DatePicker::make('booking_date')
-                    ->label('Ngày đặt')
-                    ->required(),
-                Forms\Components\TextInput::make('start_time')
-                    ->label('Thời gian bắt đầu')
-                    ->required(),
-                Forms\Components\TextInput::make('end_time')
-                    ->label('Thời gian kết thúc')
-                    ->required(),
-                Forms\Components\TextInput::make('purpose')
-                    ->label('Mục đích')
-                    ->maxLength(255)
-                    ->default(null),
-                Forms\Components\Toggle::make('is_recurring')
-                    ->label('Lặp lại'),
-                Forms\Components\select::make('status')
-                    ->label('Trạng thái')
-                    ->options([
-                        'pending' => 'Đang chờ',
-                        'approved' => 'Đã phê duyệt',
-                        'rejected' => 'Đã từ chối',
-                        'cancelled' => 'Đã hủy',
+                Forms\Components\Section::make('Thông tin cơ bản')
+                    ->description('Nhập thông tin cơ bản của yêu cầu đặt phòng')
+                    ->schema([
+                        Forms\Components\select::make('booking_group_id')
+                            ->label('Nhóm đặt phòng')
+                            ->relationship('room_booking_group', 'title'),
+                        Forms\Components\select::make('user_id')
+                            ->label('Người dùng')
+                            ->relationship('user', 'name')
+                            ->required(),
+                        Forms\Components\select::make('room_id')
+                            ->label('Phòng')
+                            ->relationship('room', 'name')
+                            ->required(),
+                        Forms\Components\select::make('course_id')
+                            ->label('Khóa học')
+                            ->relationship('course', 'title')
+                            ->required(),
                     ])
-                    ->required(),
+                    ->columns(2)
+                    ->collapsible(),
+
+                Forms\Components\Section::make('Thời gian và mục đích')
+                    ->description('Thông tin về thời gian và mục đích sử dụng')
+                    ->schema([
+                        Forms\Components\DatePicker::make('booking_date')
+                            ->label('Ngày đặt')
+                            ->required(),
+                        Forms\Components\TextInput::make('start_time')
+                            ->label('Thời gian bắt đầu')
+                            ->required(),
+                        Forms\Components\TextInput::make('end_time')
+                            ->label('Thời gian kết thúc')
+                            ->required(),
+                        Forms\Components\TextInput::make('purpose')
+                            ->label('Mục đích')
+                            ->maxLength(255)
+                            ->default(null),
+                    ])
+                    ->columns(2)
+                    ->collapsible(),
+
+                Forms\Components\Section::make('Cài đặt khác')
+                    ->description('Các cài đặt bổ sung')
+                    ->schema([
+                        Forms\Components\Toggle::make('is_recurring')
+                            ->label('Lặp lại'),
+                        Forms\Components\select::make('status')
+                            ->label('Trạng thái')
+                            ->options([
+                                'pending' => 'Đang chờ',
+                                'approved' => 'Đã phê duyệt',
+                                'rejected' => 'Đã từ chối',
+                                'cancelled' => 'Đã hủy',
+                            ])
+                            ->required(),
+                    ])
+                    ->columns(2)
+                    ->collapsible(),
             ]);
     }
 

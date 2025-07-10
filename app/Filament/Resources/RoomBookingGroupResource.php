@@ -39,58 +39,78 @@ class RoomBookingGroupResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\select::make('user_id')
-                    ->label('Người dùng')
-                    ->relationship('user', 'name')
-                    ->required(),
-                Forms\Components\select::make('room_id')
-                    ->label('Phòng')
-                    ->relationship('room', 'name')
-                    ->required(),
-                Forms\Components\select::make('course_id')
-                    ->label('Khóa học')
-                    ->relationship('course', 'title')
-                    ->required(),
-                Forms\Components\TextInput::make('title')
-                    ->label('Tiêu đề')
-                    ->required()
-                    ->maxLength(255),
-                Forms\Components\TextInput::make('purpose')
-                    ->label('Mục đích')
-                    ->maxLength(255)
-                    ->default(null),
-                Forms\Components\TimePicker::make('start_time')
-                    ->label('Thời gian bắt đầu')
-                    ->required(),
-                Forms\Components\TimePicker::make('end_time')
-                    ->label('Thời gian kết thúc')
-                    ->required(),
-                Forms\Components\select::make('recurrence_type')
-                    ->label('Loại lặp lại')
-                    ->options([
-                        'none' => '1 ngày',
-                        'weekly' => 'Hàng tuần',
+                Forms\Components\Section::make('Thông tin cơ bản')
+                    ->description('Nhập thông tin cơ bản của nhóm đặt phòng')
+                    ->schema([
+                        Forms\Components\select::make('user_id')
+                            ->label('Người dùng')
+                            ->relationship('user', 'name')
+                            ->required(),
+                        Forms\Components\select::make('room_id')
+                            ->label('Phòng')
+                            ->relationship('room', 'name')
+                            ->required(),
+                        Forms\Components\select::make('course_id')
+                            ->label('Khóa học')
+                            ->relationship('course', 'title')
+                            ->required(),
+                        Forms\Components\TextInput::make('title')
+                            ->label('Tiêu đề')
+                            ->required()
+                            ->maxLength(255),
+                        Forms\Components\TextInput::make('purpose')
+                            ->label('Mục đích')
+                            ->maxLength(255)
+                            ->default(null),
                     ])
-                    ->required(),
-                Forms\Components\TextInput::make('recurrence_days')
-                    ->label('Ngày lặp lại')
-                    ->maxLength(20)
-                    ->default(null),
-                Forms\Components\DatePicker::make('start_date')
-                    ->label('Ngày bắt đầu')
-                    ->required(),
-                Forms\Components\DatePicker::make('end_date')
-                    ->label('Ngày kết thúc')
-                    ->required(),
-                Forms\Components\Select::make('status')
-                    ->label('Trạng thái')
-                    ->options([
-                        'pending' => 'Đang chờ',
-                        'approved' => 'Đã phê duyệt',
-                        'rejected' => 'Đã từ chối',
-                        'cancelled' => 'Đã hủy',
+                    ->columns(2)
+                    ->collapsible(),
+
+                Forms\Components\Section::make('Thời gian và lặp lại')
+                    ->description('Cài đặt thời gian và chu kỳ lặp lại')
+                    ->schema([
+                        Forms\Components\TimePicker::make('start_time')
+                            ->label('Thời gian bắt đầu')
+                            ->required(),
+                        Forms\Components\TimePicker::make('end_time')
+                            ->label('Thời gian kết thúc')
+                            ->required(),
+                        Forms\Components\select::make('recurrence_type')
+                            ->label('Loại lặp lại')
+                            ->options([
+                                'none' => '1 ngày',
+                                'weekly' => 'Hàng tuần',
+                            ])
+                            ->required(),
+                        Forms\Components\TextInput::make('recurrence_days')
+                            ->label('Ngày lặp lại')
+                            ->maxLength(20)
+                            ->default(null),
                     ])
-                    ->required(),
+                    ->columns(2)
+                    ->collapsible(),
+
+                Forms\Components\Section::make('Thời gian hiệu lực')
+                    ->description('Khoảng thời gian hiệu lực của nhóm đặt phòng')
+                    ->schema([
+                        Forms\Components\DatePicker::make('start_date')
+                            ->label('Ngày bắt đầu')
+                            ->required(),
+                        Forms\Components\DatePicker::make('end_date')
+                            ->label('Ngày kết thúc')
+                            ->required(),
+                        Forms\Components\Select::make('status')
+                            ->label('Trạng thái')
+                            ->options([
+                                'pending' => 'Đang chờ',
+                                'approved' => 'Đã phê duyệt',
+                                'rejected' => 'Đã từ chối',
+                                'cancelled' => 'Đã hủy',
+                            ])
+                            ->required(),
+                    ])
+                    ->columns(3)
+                    ->collapsible(),
             ]);
     }
 

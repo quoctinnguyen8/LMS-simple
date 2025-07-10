@@ -40,33 +40,46 @@ class CourseRegistrationResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\select::make('user_id')
-                    ->label('Người dùng')
-                    ->relationship('user', 'name')
-                    ->required(),
-                Forms\Components\select::make('course_id')
-                    ->label('Khóa học')
-                    ->relationship('course', 'title')
-                    ->required(),
-                Forms\Components\DateTimePicker::make('registration_date')
-                    ->label('Ngày đăng ký')
-                    ->required(),
-                Forms\Components\Select::make('status')
-                    ->label('Trạng thái')
-                    ->options([
-                        'pending' => 'Đang chờ',
-                        'approved' => 'Đã phê duyệt',
-                        'rejected' => 'Đã từ chối',
+                Forms\Components\Section::make('Thông tin đăng ký')
+                    ->description('Nhập thông tin đăng ký khóa học')
+                    ->schema([
+                        Forms\Components\select::make('user_id')
+                            ->label('Người dùng')
+                            ->relationship('user', 'name')
+                            ->required(),
+                        Forms\Components\select::make('course_id')
+                            ->label('Khóa học')
+                            ->relationship('course', 'title')
+                            ->required(),
+                        Forms\Components\DateTimePicker::make('registration_date')
+                            ->label('Ngày đăng ký')
+                            ->required(),
                     ])
-                    ->required(),
-                Forms\Components\Select::make('payment_status')
-                    ->label('Trạng thái thanh toán')
-                    ->options([
-                        'paid' => 'Đã thanh toán',
-                        'unpaid' => 'Chưa thanh toán',
-                        'refunded' => 'Đã hoàn tiền',
+                    ->columns(3)
+                    ->collapsible(),
+
+                Forms\Components\Section::make('Trạng thái')
+                    ->description('Trạng thái đăng ký và thanh toán')
+                    ->schema([
+                        Forms\Components\Select::make('status')
+                            ->label('Trạng thái')
+                            ->options([
+                                'pending' => 'Đang chờ',
+                                'approved' => 'Đã phê duyệt',
+                                'rejected' => 'Đã từ chối',
+                            ])
+                            ->required(),
+                        Forms\Components\Select::make('payment_status')
+                            ->label('Trạng thái thanh toán')
+                            ->options([
+                                'paid' => 'Đã thanh toán',
+                                'unpaid' => 'Chưa thanh toán',
+                                'refunded' => 'Đã hoàn tiền',
+                            ])
+                            ->required(),
                     ])
-                    ->required(),
+                    ->columns(2)
+                    ->collapsible(),
             ]);
     }
 

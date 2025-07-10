@@ -40,15 +40,21 @@ class EquipmentResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('name')
-                    ->label('Tên thiết bị')
-                    ->required()
-                    ->maxLength(100),
-                Forms\Components\TextInput::make('price')
-                    ->label('Giá')
-                    ->numeric()
-                    ->default(null)
-                    ->prefix('₫'),
+                Forms\Components\Section::make('Thông tin thiết bị')
+                    ->description('Nhập thông tin cơ bản của thiết bị')
+                    ->schema([
+                        Forms\Components\TextInput::make('name')
+                            ->label('Tên thiết bị')
+                            ->required()
+                            ->maxLength(100),
+                        Forms\Components\TextInput::make('price')
+                            ->label('Giá')
+                            ->numeric()
+                            ->default(null)
+                            ->prefix('₫'),
+                    ])
+                    ->columns(2)
+                    ->collapsible(),
             ]);
     }
 

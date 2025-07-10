@@ -39,20 +39,26 @@ class UserResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('name')
-                    ->label('Tên người dùng')
-                    ->required()
-                    ->maxLength(255),
-                Forms\Components\TextInput::make('email')
-                    ->label('Email người dùng')
-                    ->email()
-                    ->required()
-                    ->maxLength(255),
-                Forms\Components\TextInput::make('password')
-                    ->label('Mật khẩu')
-                    ->password()
-                    ->required()
-                    ->maxLength(255),
+                Forms\Components\Section::make('Thông tin người dùng')
+                    ->description('Nhập thông tin cơ bản của người dùng')
+                    ->schema([
+                        Forms\Components\TextInput::make('name')
+                            ->label('Tên người dùng')
+                            ->required()
+                            ->maxLength(255),
+                        Forms\Components\TextInput::make('email')
+                            ->label('Email người dùng')
+                            ->email()
+                            ->required()
+                            ->maxLength(255),
+                        Forms\Components\TextInput::make('password')
+                            ->label('Mật khẩu')
+                            ->password()
+                            ->required()
+                            ->maxLength(255),
+                    ])
+                    ->columns(2)
+                    ->collapsible(),
             ]);
     }
 
