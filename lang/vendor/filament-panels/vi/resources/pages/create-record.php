@@ -15,11 +15,11 @@ return [
             ],
 
             'create' => [
-                'label' => 'Tạo',
+                'label' => 'Lưu',
             ],
 
             'create_another' => [
-                'label' => 'Tạo & tạo thêm',
+                'label' => 'Lưu & tạo thêm',
             ],
 
         ],

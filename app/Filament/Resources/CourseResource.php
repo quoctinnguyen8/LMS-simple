@@ -21,15 +21,15 @@ class CourseResource extends Resource
 
     public static function getModelLabel(): string
     {
-        return __('khóa học');
+        return 'khóa học';
     }
     public static function getPluralModelLabel(): string
     {
-        return __('khóa học');
+        return 'khóa học';
     }
     public static function getNavigationLabel(): string
     {
-        return __('Quản lý khóa học');
+        return 'Quản lý khóa học';
     }
     
 
@@ -39,45 +39,45 @@ class CourseResource extends Resource
             ->schema([
                 Forms\Components\TextInput::make('title')
                     ->required()
-                    ->label(__('Tiêu đề khóa học'))
+                    ->label('Tiêu đề khóa học')
                     ->maxLength(255),
                 Forms\Components\TextInput::make('slug')
-                    ->label(__('Slug khóa học'))
+                    ->label('Slug khóa học')
                     ->required()
                     ->maxLength(255),
                 Forms\Components\Textarea::make('description')
-                    ->label(__('Mô tả khóa học'))
+                    ->label('Mô tả khóa học')
                     ->columnSpanFull(),
                 Forms\Components\Textarea::make('content')
-                    ->label(__('Nội dung khóa học'))
+                    ->label('Nội dung khóa học')
                     ->columnSpanFull(),
                 Forms\Components\FileUpload::make('featured_image')
-                    ->label(__('Hình ảnh nổi bật'))
+                    ->label('Hình ảnh nổi bật')
                     ->disk('public')
                     ->image(),
                 Forms\Components\TextInput::make('price')
-                    ->label(__('Giá khóa học'))
+                    ->label('Giá khóa học')
                     ->required()
                     ->numeric()
                     ->default(null)
                     ->prefix('₫'),
                 Forms\Components\Select::make('category_id')
-                    ->label(__('Danh mục khóa học'))
+                    ->label('Danh mục khóa học')
                     ->relationship('category', 'name')
                     ->required(),
                 Forms\Components\DatePicker::make('end_registration_date')
-                    ->label(__('Ngày kết thúc đăng ký'))
+                    ->label('Ngày kết thúc đăng ký')
                     ->required(),
                 Forms\Components\DatePicker::make('start_date')
-                    ->label(__('Ngày bắt đầu'))
+                    ->label('Ngày bắt đầu')
                     ->required(),
                 Forms\Components\Select::make('status')
                     ->required()
-                    ->label(__('Trạng thái'))
+                    ->label('Trạng thái')
                     ->options([
-                        'draft' => __('Nháp'),
-                        'published' => __('Đã xuất bản'),
-                        'archived' => __('Đã lưu trữ'),
+                        'draft' => 'Nháp',
+                        'published' => 'Đã xuất bản',
+                        'archived' => 'Đã lưu trữ',
                     ]),
             ]);
     }
@@ -87,44 +87,44 @@ class CourseResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('title')
-                    ->label(__('Tiêu đề khóa học'))
+                    ->label('Tiêu đề khóa học')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('slug')
-                    ->label(__('Slug khóa học'))
+                    ->label('Slug khóa học')
                     ->searchable(),
                 Tables\Columns\ImageColumn::make('featured_image')
-                    ->label(__('Hình ảnh nổi bật')),
+                    ->label('Hình ảnh nổi bật'),
                 Tables\Columns\TextColumn::make('price')
-                    ->label(__('Giá khóa học'))
+                    ->label('Giá khóa học')
                     ->money('VND')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('category.name')
-                    ->label(__('Danh mục khóa học'))
+                    ->label('Danh mục khóa học')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('end_registration_date')
                     ->date()
-                    ->label(__('Ngày kết thúc đăng ký'))
+                    ->label('Ngày kết thúc đăng ký')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('start_date')
                     ->date()
-                    ->label(__('Ngày bắt đầu'))
+                    ->label('Ngày bắt đầu')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('status')
-                    ->label(__('Trạng thái'))
+                    ->label('Trạng thái')
                     ->formatStateUsing(fn (string $state): string => match ($state) {
-                        'draft' => __('Nháp'),
-                        'published' => __('Đã xuất bản'),
-                        'archived' => __('Đã lưu trữ'),
+                        'draft' => 'Nháp',
+                        'published' => 'Đã xuất bản',
+                        'archived' => 'Đã lưu trữ',
                         default => $state,
                     }),
                 Tables\Columns\TextColumn::make('created_at')
-                    ->dateTime()
-                    ->label(__('Ngày tạo'))
+                    ->dateTime('d/m/Y H:i')
+                    ->label('Ngày tạo')
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('updated_at')
-                    ->dateTime()
-                    ->label(__('Ngày cập nhật'))
+                    ->dateTime('d/m/Y H:i')
+                    ->label('Ngày cập nhật')
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])

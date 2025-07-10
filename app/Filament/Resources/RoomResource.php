@@ -21,15 +21,15 @@ class RoomResource extends Resource
 
     public static function getModelLabel(): string
     {
-        return __('Phòng học');
+        return 'Phòng học';
     }
     public static function getPluralModelLabel(): string
     {
-        return __('Phòng học');
+        return 'Phòng học';
     }
     public static function getNavigationLabel(): string
     {
-        return __('Quản lý phòng học');
+        return 'Quản lý phòng học';
     }
 
     public static function form(Form $form): Form
@@ -37,32 +37,32 @@ class RoomResource extends Resource
         return $form
             ->schema([
                 Forms\Components\TextInput::make('name')
-                    ->label(__('Tên phòng học'))
+                    ->label('Tên phòng học')
                     ->required()
                     ->maxLength(100),
                 Forms\Components\TextInput::make('capacity')
-                    ->label(__('Sức chứa'))
+                    ->label('Sức chứa')
                     ->required()
                     ->numeric(),
                 Forms\Components\TextInput::make('location')
-                    ->label(__('Vị trí'))
+                    ->label('Vị trí')
                     ->maxLength(255)
                     ->default(null),
                 Forms\Components\Select::make('status')
                     ->required()
-                    ->label(__('Trạng thái'))
+                    ->label('Trạng thái')
                     ->options([
-                        'available' => __('Có sẵn'),
-                        'unavailable' => __('Không có sẵn'),
-                        'maintenance' => __('Bảo trì'),
+                        'available' => 'Có sẵn',
+                        'unavailable' => 'Không có sẵn',
+                        'maintenance' => 'Bảo trì',
                     ]),
                 Forms\Components\Select::make('equipments')
                     ->relationship('equipment', 'name')
                     ->multiple()
                     ->preload()
-                    ->label(__('Thiết bị')),
+                    ->label('Thiết bị'),
                 Forms\Components\Textarea::make('description')
-                    ->label(__('Mô tả'))
+                    ->label('Mô tả')
                     ->columnSpanFull(),
             ]);
     }
@@ -72,31 +72,31 @@ class RoomResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('name')
-                    ->label(__('Tên phòng học'))
+                    ->label('Tên phòng học')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('capacity')
-                    ->label(__('Sức chứa'))
+                    ->label('Sức chứa')
                     ->numeric()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('location')
-                    ->label(__('Vị trí'))
+                    ->label('Vị trí')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('status')
-                    ->label(__('Trạng thái'))
+                    ->label('Trạng thái')
                     ->formatStateUsing(fn (string $state): string => match ($state) {
-                        'available' => __('Có sẵn'),
-                        'unavailable' => __('Không có sẵn'),
-                        'maintenance' => __('Bảo trì'),
+                        'available' => 'Có sẵn',
+                        'unavailable' => 'Không có sẵn',
+                        'maintenance' => 'Bảo trì',
                         default => $state,
                     }),
                 Tables\Columns\TextColumn::make('created_at')
-                    ->label(__('Ngày tạo'))
-                    ->dateTime()
+                    ->label('Ngày tạo')
+                    ->dateTime('d/m/Y H:i')
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('updated_at')
-                    ->label(__('Ngày cập nhật'))
-                    ->dateTime()
+                    ->label('Ngày cập nhật')
+                    ->dateTime('d/m/Y H:i')
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])

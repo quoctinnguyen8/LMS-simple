@@ -21,15 +21,15 @@ class RoomBookingResource extends Resource
 
     public static function getModelLabel(): string
     {
-        return __('Đặt phòng');
+        return 'Đặt phòng';
     }
     public static function getPluralModelLabel(): string
     {
-        return __('Đặt phòng');
+        return 'Đặt phòng';
     }
     public static function getNavigationLabel(): string
     {
-        return __('Quản lý đặt phòng');
+        return 'Quản lý đặt phòng';
     }
 
     public static function form(Form $form): Form
@@ -37,42 +37,42 @@ class RoomBookingResource extends Resource
         return $form
             ->schema([
                 Forms\Components\select::make('booking_group_id')
-                    ->label(__('Nhóm đặt phòng'))
+                    ->label('Nhóm đặt phòng')
                     ->relationship('room_booking_group', 'title'),
                 Forms\Components\select::make('user_id')
-                    ->label(__('Người dùng'))
+                    ->label('Người dùng')
                     ->relationship('user', 'name')
                     ->required(),
                 Forms\Components\select::make('room_id')
-                    ->label(__('Phòng'))
+                    ->label('Phòng')
                     ->relationship('room', 'name')
                     ->required(),
                 Forms\Components\select::make('course_id')
-                    ->label(__('Khóa học'))
+                    ->label('Khóa học')
                     ->relationship('course', 'title')
                     ->required(),
                 Forms\Components\DatePicker::make('booking_date')
-                    ->label(__('Ngày đặt'))
+                    ->label('Ngày đặt')
                     ->required(),
                 Forms\Components\TextInput::make('start_time')
-                    ->label(__('Thời gian bắt đầu'))
+                    ->label('Thời gian bắt đầu')
                     ->required(),
                 Forms\Components\TextInput::make('end_time')
-                    ->label(__('Thời gian kết thúc'))
+                    ->label('Thời gian kết thúc')
                     ->required(),
                 Forms\Components\TextInput::make('purpose')
-                    ->label(__('Mục đích'))
+                    ->label('Mục đích')
                     ->maxLength(255)
                     ->default(null),
                 Forms\Components\Toggle::make('is_recurring')
-                    ->label(__('Lặp lại')),
+                    ->label('Lặp lại'),
                 Forms\Components\select::make('status')
-                    ->label(__('Trạng thái'))
+                    ->label('Trạng thái')
                     ->options([
-                        'pending' => __('Đang chờ'),
-                        'approved' => __('Đã phê duyệt'),
-                        'rejected' => __('Đã từ chối'),
-                        'cancelled' => __('Đã hủy'),
+                        'pending' => 'Đang chờ',
+                        'approved' => 'Đã phê duyệt',
+                        'rejected' => 'Đã từ chối',
+                        'cancelled' => 'Đã hủy',
                     ])
                     ->required(),
             ]);
@@ -83,51 +83,51 @@ class RoomBookingResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('room_booking_group.title')
-                    ->label(__('Nhóm đặt phòng'))
+                    ->label('Nhóm đặt phòng')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('user.name')
-                    ->label(__('Người dùng'))
+                    ->label('Người dùng')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('room.name')
-                    ->label(__('Phòng'))
+                    ->label('Phòng')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('course.title')
-                    ->label(__('Khóa học'))
+                    ->label('Khóa học')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('booking_date')
-                    ->label(__('Ngày đặt'))
+                    ->label('Ngày đặt')
                     ->date()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('start_time')
-                    ->label(__('Thời gian bắt đầu'))
+                    ->label('Thời gian bắt đầu')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('end_time')
-                    ->label(__('Thời gian kết thúc'))
+                    ->label('Thời gian kết thúc')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('purpose')
-                    ->label(__('Mục đích'))
+                    ->label('Mục đích')
                     ->toggleable(isToggledHiddenByDefault: true)
                     ->searchable(),
                 Tables\Columns\IconColumn::make('is_recurring')
-                    ->label(__('Lặp lại'))
+                    ->label('Lặp lại')
                     ->boolean(),
                 Tables\Columns\TextColumn::make('status')
-                    ->label(__('Trạng thái'))
+                    ->label('Trạng thái')
                     ->formatStateUsing(fn (string $state): string => match ($state) {
-                        'pending' => __('Đang chờ'),
-                        'approved' => __('Đã phê duyệt'),
-                        'rejected' => __('Đã từ chối'),
-                        'cancelled' => __('Đã hủy'),
+                        'pending' => 'Đang chờ',
+                        'approved' => 'Đã phê duyệt',
+                        'rejected' => 'Đã từ chối',
+                        'cancelled' => 'Đã hủy',
                         default => $state,
                     }),
                 Tables\Columns\TextColumn::make('created_at')
-                    ->label(__('Ngày tạo'))
-                    ->dateTime()
+                    ->label('Ngày tạo')
+                    ->dateTime('d/m/Y H:i')
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('updated_at')
-                    ->label(__('Ngày cập nhật'))
-                    ->dateTime()
+                    ->label('Ngày cập nhật')
+                    ->dateTime('d/m/Y H:i')
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])

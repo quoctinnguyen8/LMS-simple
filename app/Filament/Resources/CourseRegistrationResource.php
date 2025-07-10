@@ -20,15 +20,15 @@ class CourseRegistrationResource extends Resource
     protected static ?string $navigationIcon = 'heroicon-o-academic-cap';
     public static function getModelLabel(): string
     {
-        return __('Đăng ký khóa học');
+        return 'Đăng ký khóa học';
     }
     public static function getPluralModelLabel(): string
     {
-        return __('Đăng ký khóa học');
+        return 'Đăng ký khóa học';
     }
     public static function getNavigationLabel(): string
     {
-        return __('Quản lý đăng ký khóa học');
+        return 'Quản lý đăng ký khóa học';
     }
 
     public static function form(Form $form): Form
@@ -36,30 +36,30 @@ class CourseRegistrationResource extends Resource
         return $form
             ->schema([
                 Forms\Components\select::make('user_id')
-                    ->label(__('Người dùng'))
+                    ->label('Người dùng')
                     ->relationship('user', 'name')
                     ->required(),
                 Forms\Components\select::make('course_id')
-                    ->label(__('Khóa học'))
+                    ->label('Khóa học')
                     ->relationship('course', 'title')
                     ->required(),
                 Forms\Components\DateTimePicker::make('registration_date')
-                    ->label(__('Ngày đăng ký'))
+                    ->label('Ngày đăng ký')
                     ->required(),
                 Forms\Components\Select::make('status')
-                    ->label(__('Trạng thái'))
+                    ->label('Trạng thái')
                     ->options([
-                        'pending' => __('Đang chờ'),
-                        'approved' => __('Đã phê duyệt'),
-                        'rejected' => __('Đã từ chối'),
+                        'pending' => 'Đang chờ',
+                        'approved' => 'Đã phê duyệt',
+                        'rejected' => 'Đã từ chối',
                     ])
                     ->required(),
                 Forms\Components\Select::make('payment_status')
-                    ->label(__('Trạng thái thanh toán'))
+                    ->label('Trạng thái thanh toán')
                     ->options([
-                        'paid' => __('Đã thanh toán'),
-                        'unpaid' => __('Chưa thanh toán'),
-                        'refunded' => __('Đã hoàn tiền'),
+                        'paid' => 'Đã thanh toán',
+                        'unpaid' => 'Chưa thanh toán',
+                        'refunded' => 'Đã hoàn tiền',
                     ])
                     ->required(),
             ]);
@@ -70,41 +70,41 @@ class CourseRegistrationResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('user.name')
-                    ->label(__('Người dùng'))
+                    ->label('Người dùng')
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('course.title')
-                    ->label(__('Khóa học'))
+                    ->label('Khóa học')
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('registration_date')
-                    ->label(__('Ngày đăng ký'))
-                    ->dateTime()
+                    ->label('Ngày đăng ký')
+                    ->dateTime('d/m/Y H:i')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('status')
-                    ->label(__('Trạng thái'))
+                    ->label('Trạng thái')
                     ->formatStateUsing(fn (string $state): string => match ($state) {
-                        'pending' => __('Đang chờ'),
-                        'approved' => __('Đã phê duyệt'),
-                        'rejected' => __('Đã từ chối'),
+                        'pending' => 'Đang chờ',
+                        'approved' => 'Đã phê duyệt',
+                        'rejected' => 'Đã từ chối',
                         default => $state,
                     }),
                 Tables\Columns\TextColumn::make('payment_status')
-                    ->label(__('Trạng thái thanh toán'))
+                    ->label('Trạng thái thanh toán')
                     ->formatStateUsing(fn (string $state): string => match ($state) {
-                        'paid' => __('Đã thanh toán'),
-                        'unpaid' => __('Chưa thanh toán'),
-                        'refunded' => __('Đã hoàn tiền'),
+                        'paid' => 'Đã thanh toán',
+                        'unpaid' => 'Chưa thanh toán',
+                        'refunded' => 'Đã hoàn tiền',
                         default => $state,
                     }),
                 Tables\Columns\TextColumn::make('created_at')
-                    ->label(__('Ngày tạo'))
-                    ->dateTime()
+                    ->label('Ngày tạo')
+                    ->dateTime('d/m/Y H:i')
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('updated_at')
-                    ->label(__('Ngày cập nhật'))
-                    ->dateTime()
+                    ->label('Ngày cập nhật')
+                    ->dateTime('d/m/Y H:i')
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])

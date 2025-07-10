@@ -21,15 +21,15 @@ class EquipmentResource extends Resource
 
     public static function getModelLabel(): string
     {
-        return __('Thiết bị');
+        return 'Thiết bị';
     }
     public static function getPluralModelLabel(): string
     {
-        return __('Thiết bị');
+        return 'Thiết bị';
     }
     public static function getNavigationLabel(): string
     {
-        return __('Quản lý thiết bị');
+        return 'Quản lý thiết bị';
     }
 
     public static function form(Form $form): Form
@@ -37,11 +37,11 @@ class EquipmentResource extends Resource
         return $form
             ->schema([
                 Forms\Components\TextInput::make('name')
-                    ->label(__('Tên thiết bị'))
+                    ->label('Tên thiết bị')
                     ->required()
                     ->maxLength(100),
                 Forms\Components\TextInput::make('price')
-                    ->label(__('Giá'))
+                    ->label('Giá')
                     ->numeric()
                     ->default(null)
                     ->prefix('₫'),
@@ -53,20 +53,20 @@ class EquipmentResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('name')
-                    ->label(__('Tên thiết bị'))
+                    ->label('Tên thiết bị')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('price')
-                    ->label(__('Giá'))
+                    ->label('Giá')
                     ->money('VND')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('created_at')
-                    ->label(__('Ngày tạo'))
-                    ->dateTime()
+                    ->label('Ngày tạo')
+                    ->dateTime('d/m/Y H:i')
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('updated_at')
-                    ->label(__('Ngày cập nhật'))
-                    ->dateTime()
+                    ->label('Ngày cập nhật')
+                    ->dateTime('d/m/Y H:i')
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])

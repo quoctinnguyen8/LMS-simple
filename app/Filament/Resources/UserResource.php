@@ -21,15 +21,15 @@ class UserResource extends Resource
 
     public static function getModelLabel(): string
     {
-        return __('Người dùng');
+        return 'Người dùng';
     }
     public static function getPluralModelLabel(): string
     {
-        return __('Người dùng');
+        return 'Người dùng';
     }
     public static function getNavigationLabel(): string
     {
-        return __('Quản lý người dùng');
+        return 'Quản lý người dùng';
     }
 
     public static function form(Form $form): Form
@@ -37,16 +37,16 @@ class UserResource extends Resource
         return $form
             ->schema([
                 Forms\Components\TextInput::make('name')
-                    ->label(__('Tên người dùng'))
+                    ->label('Tên người dùng')
                     ->required()
                     ->maxLength(255),
                 Forms\Components\TextInput::make('email')
-                    ->label(__('Email người dùng'))
+                    ->label('Email người dùng')
                     ->email()
                     ->required()
                     ->maxLength(255),
                 Forms\Components\TextInput::make('password')
-                    ->label(__('Mật khẩu'))
+                    ->label('Mật khẩu')
                     ->password()
                     ->required()
                     ->maxLength(255),
@@ -58,28 +58,28 @@ class UserResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('name')
-                    ->label(__('Tên người dùng'))
+                    ->label('Tên người dùng')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('email')
-                    ->label(__('Email người dùng'))
+                    ->label('Email người dùng')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('created_at')
-                    ->label(__('Ngày tạo'))
-                    ->dateTime()
+                    ->label('Ngày tạo')
+                    ->dateTime('d/m/Y H:i')
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('updated_at')
-                    ->label(__('Ngày cập nhật'))
-                    ->dateTime()
+                    ->label('Ngày cập nhật')
+                    ->dateTime('d/m/Y H:i')
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('role')
-                    ->label(__('Vai trò'))
+                    ->label('Vai trò')
                     ->formatStateUsing(fn ($state) => match ($state) {
-                        'admin' => __('Quản trị viên'),
-                        'subadmin' => __('Quản trị viên phụ'),
-                        'user' => __('Người dùng'),
-                        default => __('Không xác định'),
+                        'admin' => 'Quản trị viên',
+                        'subadmin' => 'Quản trị viên phụ',
+                        'user' => 'Người dùng',
+                        default => 'Không xác định',
                     })
                     ->sortable(),
             ])
