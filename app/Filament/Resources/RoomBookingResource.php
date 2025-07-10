@@ -17,7 +17,7 @@ class RoomBookingResource extends Resource
 {
     protected static ?string $model = RoomBooking::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-building-office';
 
     public static function getModelLabel(): string
     {

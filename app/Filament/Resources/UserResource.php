@@ -2,9 +2,9 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\EquipmentResource\Pages;
-use App\Filament\Resources\EquipmentResource\RelationManagers;
-use App\Models\Equipment;
+use App\Filament\Resources\UserResource\Pages;
+use App\Filament\Resources\UserResource\RelationManagers;
+use App\Models\User;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -13,23 +13,23 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
-class EquipmentResource extends Resource
+class UserResource extends Resource
 {
-    protected static ?string $model = Equipment::class;
+    protected static ?string $model = User::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-device-phone-mobile';
+    protected static ?string $navigationIcon = 'heroicon-o-users';
 
     public static function getModelLabel(): string
     {
-        return __('Thiết bị');
+        return __('Người dùng');
     }
     public static function getPluralModelLabel(): string
     {
-        return __('Thiết bị');
+        return __('Người dùng');
     }
     public static function getNavigationLabel(): string
     {
-        return __('Quản lý thiết bị');
+        return __('Quản lý người dùng');
     }
 
     public static function form(Form $form): Form
@@ -37,14 +37,19 @@ class EquipmentResource extends Resource
         return $form
             ->schema([
                 Forms\Components\TextInput::make('name')
-                    ->label(__('Tên thiết bị'))
+                    ->label(__('Tên người dùng'))
                     ->required()
-                    ->maxLength(100),
-                Forms\Components\TextInput::make('price')
-                    ->label(__('Giá'))
-                    ->numeric()
-                    ->default(null)
-                    ->prefix('₫'),
+                    ->maxLength(255),
+                Forms\Components\TextInput::make('email')
+                    ->label(__('Email người dùng'))
+                    ->email()
+                    ->required()
+                    ->maxLength(255),
+                Forms\Components\TextInput::make('password')
+                    ->label(__('Mật khẩu'))
+                    ->password()
+                    ->required()
+                    ->maxLength(255),
             ]);
     }
 
@@ -53,12 +58,11 @@ class EquipmentResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('name')
-                    ->label(__('Tên thiết bị'))
+                    ->label(__('Tên người dùng'))
                     ->searchable(),
-                Tables\Columns\TextColumn::make('price')
-                    ->label(__('Giá'))
-                    ->money('VND')
-                    ->sortable(),
+                Tables\Columns\TextColumn::make('email')
+                    ->label(__('Email người dùng'))
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->label(__('Ngày tạo'))
                     ->dateTime()
@@ -69,6 +73,15 @@ class EquipmentResource extends Resource
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
+                Tables\Columns\TextColumn::make('role')
+                    ->label(__('Vai trò'))
+                    ->formatStateUsing(fn ($state) => match ($state) {
+                        'admin' => __('Quản trị viên'),
+                        'subadmin' => __('Quản trị viên phụ'),
+                        'user' => __('Người dùng'),
+                        default => __('Không xác định'),
+                    })
+                    ->sortable(),
             ])
             ->filters([
                 //
@@ -93,9 +106,9 @@ class EquipmentResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListEquipment::route('/'),
-            'create' => Pages\CreateEquipment::route('/create'),
-            'edit' => Pages\EditEquipment::route('/{record}/edit'),
+            'index' => Pages\ListUsers::route('/'),
+            'create' => Pages\CreateUser::route('/create'),
+            'edit' => Pages\EditUser::route('/{record}/edit'),
         ];
     }
 }
