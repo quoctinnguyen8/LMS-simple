@@ -53,13 +53,14 @@ class CourseResource extends Resource
                     ->columnSpanFull(),
                 Forms\Components\FileUpload::make('featured_image')
                     ->label(__('Hình ảnh nổi bật'))
+                    ->disk('public')
                     ->image(),
                 Forms\Components\TextInput::make('price')
                     ->label(__('Giá khóa học'))
                     ->required()
                     ->numeric()
-                    ->default(0)
-                    ->prefix('$'),
+                    ->default(null)
+                    ->prefix('₫'),
                 Forms\Components\Select::make('category_id')
                     ->label(__('Danh mục khóa học'))
                     ->relationship('category', 'name')
@@ -74,9 +75,9 @@ class CourseResource extends Resource
                     ->required()
                     ->label(__('Trạng thái'))
                     ->options([
-                        'draft' => 'Draft',
-                        'published' => 'Published',
-                        'archived' => 'Archived',
+                        'draft' => __('Nháp'),
+                        'published' => __('Đã xuất bản'),
+                        'archived' => __('Đã lưu trữ'),
                     ]),
             ]);
     }
@@ -95,10 +96,9 @@ class CourseResource extends Resource
                     ->label(__('Hình ảnh nổi bật')),
                 Tables\Columns\TextColumn::make('price')
                     ->label(__('Giá khóa học'))
-                    ->money()
+                    ->money('VND')
                     ->sortable(),
-                Tables\Columns\TextColumn::make('category_id')
-                    ->numeric()
+                Tables\Columns\TextColumn::make('category.name')
                     ->label(__('Danh mục khóa học'))
                     ->sortable(),
                 Tables\Columns\TextColumn::make('end_registration_date')
@@ -110,7 +110,13 @@ class CourseResource extends Resource
                     ->label(__('Ngày bắt đầu'))
                     ->sortable(),
                 Tables\Columns\TextColumn::make('status')
-                    ->label(__('Trạng thái')),
+                    ->label(__('Trạng thái'))
+                    ->formatStateUsing(fn (string $state): string => match ($state) {
+                        'draft' => __('Nháp'),
+                        'published' => __('Đã xuất bản'),
+                        'archived' => __('Đã lưu trữ'),
+                        default => $state,
+                    }),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->label(__('Ngày tạo'))

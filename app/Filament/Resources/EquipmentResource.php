@@ -44,7 +44,7 @@ class EquipmentResource extends Resource
                     ->label(__('Giá'))
                     ->numeric()
                     ->default(null)
-                    ->prefix('$'),
+                    ->prefix('₫'),
             ]);
     }
 
@@ -57,7 +57,7 @@ class EquipmentResource extends Resource
                     ->searchable(),
                 Tables\Columns\TextColumn::make('price')
                     ->label(__('Giá'))
-                    ->money()
+                    ->money('VND')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->label(__('Ngày tạo'))
