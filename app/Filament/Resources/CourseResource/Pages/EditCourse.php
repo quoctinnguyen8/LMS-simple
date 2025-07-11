@@ -16,4 +16,12 @@ class EditCourse extends EditRecord
             Actions\DeleteAction::make(),
         ];
     }
+    
+    protected function mutateFormDataBeforeSave(array $data): array
+    {
+        // Xử lý logic đặc biệt khi update nếu cần
+        // Ví dụ: log thay đổi, validation custom, etc.
+        
+        return $data;
+    }
 }

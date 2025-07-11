@@ -8,6 +8,7 @@ use App\Models\Equipment;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
+use Filament\Support\RawJs;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
@@ -41,20 +42,29 @@ class EquipmentResource extends Resource
         return $form
             ->schema([
                 Forms\Components\Section::make('Thông tin thiết bị')
-                    ->description('Nhập thông tin cơ bản của thiết bị')
+                    ->description('Thiết bị được đánh dấu là miễn phí mới có thể được chọn khi tạo phòng học, giá thuê cũng sẽ bị xóa khi lưu.')
                     ->schema([
                         Forms\Components\TextInput::make('name')
                             ->label('Tên thiết bị')
                             ->required()
-                            ->maxLength(100),
+                            ->maxLength(100)
+                            ->columnSpan(2),
                         Forms\Components\TextInput::make('price')
-                            ->label('Giá')
-                            ->numeric()
-                            ->default(null)
-                            ->prefix('₫'),
+                            ->label('Giá thuê thiết bị')
+                            ->integer()
+                            ->nullable()
+                            ->prefix('₫')
+                            ->mask(RawJs::make('$money($input)'))
+                            ->stripCharacters([',', '.'])
+                            ->dehydrateStateUsing(fn ($state) => (int) str_replace([','], '', $state))
+                            ->columnSpan(2),
+                        Forms\Components\Toggle::make('is_free')
+                            ->label('Miễn phí')
+                            ->default(false)
+                            ->inline(false)
+                            ->columnSpan(2)                        
                     ])
-                    ->columns(2)
-                    ->collapsible(),
+                    ->columns(4),
             ]);
     }
 
@@ -65,9 +75,18 @@ class EquipmentResource extends Resource
                 Tables\Columns\TextColumn::make('name')
                     ->label('Tên thiết bị')
                     ->searchable(),
+                Tables\Columns\TextColumn::make('creator.name')
+                    ->label('Người tạo')
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('price')
-                    ->label('Giá')
-                    ->money('VND')
+                    ->label('Giá thuê')
+                    ->formatStateUsing(function ($state, $record) {
+                        if ($record->is_free) {
+                            return 'Miễn phí';
+                        }
+                        return $state ? number_format($state) . ' ₫' : '-';
+                    })
                     ->sortable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->label('Ngày tạo')
@@ -81,7 +100,14 @@ class EquipmentResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                //
+                // lọc theo giá miễn phí
+                Tables\Filters\SelectFilter::make('is_free')
+                    ->label('Giá thuê')
+                    ->options([
+                        true => 'Miễn phí',
+                        false => 'Có giá thuê',
+                    ])
+                    ->multiple()
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),

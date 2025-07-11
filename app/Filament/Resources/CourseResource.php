@@ -17,7 +17,7 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 class CourseResource extends Resource
 {
     protected static ?string $model = Course::class;
-    
+
     protected static ?string $navigationIcon = 'heroicon-o-book-open';
     
     protected static ?int $navigationSort = 2;
@@ -45,6 +45,16 @@ class CourseResource extends Resource
                 Forms\Components\Section::make('Thông tin cơ bản')
                     ->description('Nhập thông tin cơ bản của khóa học')
                     ->schema([
+                        Forms\Components\FileUpload::make('featured_image')
+                            ->label('Hình ảnh')
+                            ->disk('public')
+                            ->directory('course-images')
+                            ->image()
+                            ->imageEditor()
+                            ->maxSize(2048) // 4MB
+                            ->acceptedFileTypes(['image/*'])
+                            ->helperText('Kích thước tối đa: 2MB. Định dạng: JPG, PNG, WebP,...')
+                            ->columnSpan(4),
                         Forms\Components\TextInput::make('title')
                             ->required()
                             ->label('Tên khóa học')
@@ -75,32 +85,39 @@ class CourseResource extends Resource
                             ])
                             ->default('draft')
                             ->columnSpan(2),
-                        Forms\Components\TextInput::make('price')
-                            ->label('Giá khóa học')
-                            ->required()
-                            ->numeric(12,0)
-                            ->default(null)
-                            ->prefix('₫')
-                            ->mask(RawJs::make('$money($input)'))
-                            ->stripCharacters([',', '.'])
-                            ->dehydrateStateUsing(fn ($state) => (int) str_replace([','], '', $state))
-                            ->columnSpan(2),
+                        // Nhóm giá trong 1 Grid để căn chỉnh
+                        Forms\Components\Grid::make(2)
+                        ->schema([
+                            Forms\Components\TextInput::make('price')
+                                ->label('Giá khóa học')
+                                ->required()
+                                ->integer()
+                                ->default(null)
+                                ->prefix('₫')
+                                ->mask(RawJs::make('$money($input)'))
+                                ->stripCharacters([',', '.'])
+                                ->dehydrateStateUsing(fn ($state) => (int) str_replace([','], '', $state)),
+                            Forms\Components\Toggle::make('is_price_visible')
+                                ->label('Hiển thị giá')
+                                ->default(true)
+                                ->inline(false), // Đặt toggle dọc để căn chỉnh với textbox
+                        ])
+                        ->columnSpan(2),
                         Forms\Components\DatePicker::make('start_date')
                             ->label('Ngày bắt đầu')
                             ->displayFormat('d/m/Y')
                             ->native(false)
                             ->required()
-                            ->minDate(now())
+                            ->helperText('Ngày bắt đầu khóa học')
                             ->columnSpan(1),
                         Forms\Components\DatePicker::make('end_registration_date')
                             ->label('Ngày kết thúc đăng ký')
                             ->native(false)
                             ->displayFormat('d/m/Y')
-                            ->minDate(now())
+                            ->helperText('Hạn cuối chập nhận đăng ký')
                             ->columnSpan(1),
                     ])
-                    ->columns(4)
-                    ->collapsible(),
+                    ->columns(4),
 
                 Forms\Components\Section::make('Nội dung khóa học')
                     ->description('Mô tả và nội dung chi tiết của khóa học')
@@ -108,16 +125,31 @@ class CourseResource extends Resource
                         Forms\Components\Textarea::make('description')
                             ->label('Mô tả ngắn về khóa học')
                             ->maxLength(1000)
+                            ->helperText('Mô tả ngắn gọn, hiển thị trên danh sách khóa học')
                             ->columnSpanFull(),
-                        Forms\Components\Textarea::make('content')
-                            ->label('Nội dung khóa học')
-                            ->columnSpanFull(),
-                        Forms\Components\FileUpload::make('featured_image')
-                            ->label('Hình ảnh')
-                            ->disk('public')
-                            ->image(),
-                    ])
-                    ->collapsible(),
+                        Forms\Components\RichEditor::make('content')
+                            ->label('Mô tả đầy đủ')
+                            ->columnSpanFull()
+                            ->toolbarButtons([
+                                'attachFiles',
+                                'blockquote',
+                                'bold',
+                                'bulletList',
+                                'codeBlock',
+                                'h2',
+                                'h3',
+                                'italic',
+                                'link',
+                                'orderedList',
+                                'redo',
+                                'strike',
+                                'underline',
+                                'undo',
+                            ])
+                            ->fileAttachmentsDisk('public')
+                            ->fileAttachmentsDirectory('course-attachments')
+                            ->fileAttachmentsVisibility('public'),
+                    ]),
             ]);
     }
 
@@ -129,11 +161,17 @@ class CourseResource extends Resource
                     ->label('Tên khóa học')
                     ->searchable(),
                 Tables\Columns\ImageColumn::make('featured_image')
-                    ->label('Hình ảnh'),
+                    ->label('Hình ảnh')
+                    ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('price')
                     ->label('Giá')
                     ->formatStateUsing(fn ($state) => $state ? number_format($state) . ' ₫' : '-')
+                    ->color(fn ($record) => $record->is_price_visible ? null : 'gray')
                     ->sortable(),
+                Tables\Columns\IconColumn::make('is_price_visible')
+                    ->label('Hiển thị giá')
+                    ->boolean()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('category.name')
                     ->label('Danh mục')
                     ->sortable(),
@@ -144,7 +182,8 @@ class CourseResource extends Resource
                 Tables\Columns\TextColumn::make('end_registration_date')
                     ->date('d/m/Y')
                     ->label('Ngày k.thúc đăng ký')
-                    ->sortable(),
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('status')
                     ->label('Trạng thái')
                     ->formatStateUsing(fn (string $state): string => match ($state) {
@@ -161,6 +200,10 @@ class CourseResource extends Resource
                         default => 'gray',
                     })
                     ->sortable(),
+                Tables\Columns\TextColumn::make('creator.name')
+                    ->label('Người tạo')
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime('d/m/Y H:i')
                     ->label('Ngày tạo')
@@ -182,6 +225,7 @@ class CourseResource extends Resource
             
                 Tables\Filters\SelectFilter::make('status')
                     ->label('Trạng thái')
+                    ->multiple()
                     ->options([
                         'draft' => 'Nháp',
                         'published' => 'Hiển thị',
@@ -190,7 +234,8 @@ class CourseResource extends Resource
                     ->default(null),
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
+                Tables\Actions\EditAction::make()
+                ->label('')
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

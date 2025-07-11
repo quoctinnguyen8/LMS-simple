@@ -41,31 +41,68 @@ class CourseRegistrationResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\Section::make('Thông tin đăng ký')
-                    ->description('Nhập thông tin đăng ký khóa học')
+                
+                Forms\Components\Section::make('Thông tin học viên')
+                    ->description('Thông tin cá nhân của học viên đăng ký khóa học')
                     ->schema([
-                        Forms\Components\select::make('user_id')
-                            ->label('Người dùng')
-                            ->relationship('user', 'name')
-                            ->required(),
                         Forms\Components\select::make('course_id')
                             ->label('Khóa học')
-                            ->relationship('course', 'title')
-                            ->required(),
-                        Forms\Components\DateTimePicker::make('registration_date')
-                            ->label('Ngày đăng ký')
+                            // chỉ chọn các khóa học có trạng thái là published và có ngày bắt đầu chưa quá 2 tuần tính từ hôm nay
+                            ->relationship('course', 'title',
+                                fn (Builder $query) => $query->where('status', 'published')
+                                    ->where('start_date', '>=', now()->subDays(14)
+                                )
+                            )
+                            ->required()
+                            ->native(false)
+                            ->searchable()
+                            ->preload()
+                            ->optionsLimit(15)
+                            ->columnSpan(2),
+                        Forms\Components\TextInput::make('student_name')
+                            ->label('Họ và tên học viên')
+                            ->required()
+                            ->maxLength(100),
+                        Forms\Components\TextInput::make('student_phone')
+                            ->label('Số điện thoại')
+                            ->rules(['regex:/^0[0-9]{9}$/'])
+                            ->required()
+                            ->placeholder('Bắt đầu bằng 0, 10 chữ số')
+                            ->maxLength(10),
+                        Forms\Components\TextInput::make('student_email')
+                            ->label('Email học viên')
+                            ->nullable()
+                            ->email()
+                            ->maxLength(200),
+                        Forms\Components\TextInput::make('student_address')
+                            ->label('Địa chỉ')
+                            ->maxLength(255)
+                            ->default(null),
+                        Forms\Components\DatePicker::make('student_birth_date')
+                            ->label('Ngày sinh')
                             ->displayFormat('d/m/Y')
                             ->native(false)
-                            ->required(),
+                            ->placeholder('dd/MM/yyyy')
+                            ->minDate(now()->subYears(100))
+                            ->maxDate(now()),
+                        Forms\Components\Select::make('student_gender')
+                            ->label('Giới tính')
+                            ->native(false)
+                            ->options([
+                                'male' => 'Nam',
+                                'female' => 'Nữ',
+                                'other' => 'Khác',
+                            ]),
                     ])
-                    ->columns(3)
+                    ->columns(2)
                     ->collapsible(),
 
                 Forms\Components\Section::make('Trạng thái')
                     ->description('Trạng thái đăng ký và thanh toán')
                     ->schema([
                         Forms\Components\Select::make('status')
-                            ->label('Trạng thái')
+                            ->label('Trạng thái đăng ký')
+                            ->native(false)
                             ->options([
                                 'pending' => 'Đang chờ',
                                 'confirmed' => 'Đã xác nhận',
@@ -75,52 +112,13 @@ class CourseRegistrationResource extends Resource
                             ->required(),
                         Forms\Components\Select::make('payment_status')
                             ->label('Trạng thái thanh toán')
+                            ->native(false)
                             ->options([
                                 'paid' => 'Đã thanh toán',
                                 'unpaid' => 'Chưa thanh toán',
                                 'refunded' => 'Đã hoàn tiền',
                             ])
                             ->required(),
-                    ])
-                    ->columns(2)
-                    ->collapsible(),
-                Forms\Components\Section::make('Thông tin học viên')
-                    ->description('Thông tin cá nhân của học viên đăng ký khóa học')
-                    ->schema([
-                        Forms\Components\TextInput::make('student_name')
-                            ->label('Họ và tên học viên')
-                            ->required()
-                            ->maxLength(100),
-                        Forms\Components\TextInput::make('student_email')
-                            ->label('Email học viên')
-                            ->required()
-                            ->email()
-                            ->maxLength(100),
-                        Forms\Components\TextInput::make('student_phone')
-                            ->label('Số điện thoại')
-                            ->rules(['regex:/^0[0-9]{9}$/'])
-                            ->required()
-                            ->unique(ignoreRecord: true)
-                            ->tel(),
-                        Forms\Components\TextInput::make('student_address')
-                            ->label('Địa chỉ')
-                            ->maxLength(255)
-                            ->default(null),
-                        Forms\Components\DatePicker::make('student_birth_date')
-                            ->label('Ngày sinh')
-                            ->displayFormat('d/m/Y')
-                            ->native(false)
-                            ->required()
-                            ->minDate(now()->subYears(100))
-                            ->maxDate(now()),
-                        Forms\Components\Select::make('student_gender')
-                            ->label('Giới tính')
-                            ->options([
-                                'male' => 'Nam',
-                                'female' => 'Nữ',
-                                'other' => 'Khác',
-                            ])
-                            ->default('other'),
                     ])
                     ->columns(2)
                     ->collapsible(),

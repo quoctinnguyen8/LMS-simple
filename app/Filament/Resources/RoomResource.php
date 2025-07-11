@@ -48,9 +48,9 @@ class RoomResource extends Resource
                             ->required()
                             ->maxLength(100),
                         Forms\Components\TextInput::make('capacity')
-                            ->label('Sức chứa')
+                            ->label('Sức chứa tối đa (người)')
                             ->required()
-                            ->numeric(),
+                            ->integer(),
                         Forms\Components\TextInput::make('location')
                             ->label('Vị trí')
                             ->maxLength(255)
@@ -62,24 +62,44 @@ class RoomResource extends Resource
                                 'available' => 'Có sẵn',
                                 'unavailable' => 'Không có sẵn',
                                 'maintenance' => 'Bảo trì',
-                            ]),
+                            ])
+                            ->default('available'),
                     ])
-                    ->columns(2)
-                    ->collapsible(),
+                    ->columns(2),
 
                 Forms\Components\Section::make('Thiết bị và mô tả')
                     ->description('Thiết bị có sẵn và mô tả chi tiết')
                     ->schema([
                         Forms\Components\Select::make('equipments')
-                            ->relationship('equipment', 'name')
+                            ->relationship('equipment', 'name', fn ($query) => $query->where('is_free', true))
                             ->multiple()
                             ->preload()
-                            ->label('Thiết bị'),
-                        Forms\Components\Textarea::make('description')
+                            ->optionsLimit(10)
+                            ->label('Thiết bị có sẵn'),
+                        Forms\Components\RichEditor::make('description')
                             ->label('Mô tả')
+                            ->placeholder('Nhập mô tả chi tiết về phòng học')
+                            ->toolbarButtons([
+                                'attachFiles',
+                                'blockquote',
+                                'bold',
+                                'bulletList',
+                                'codeBlock',
+                                'h2',
+                                'h3',
+                                'italic',
+                                'link',
+                                'orderedList',
+                                'redo',
+                                'strike',
+                                'underline',
+                                'undo',
+                            ])
+                            ->fileAttachmentsDisk('public')
+                            ->fileAttachmentsDirectory('room-attachments')
+                            ->fileAttachmentsVisibility('public')
                             ->columnSpanFull(),
-                    ])
-                    ->collapsible(),
+                    ]),
             ]);
     }
 
@@ -94,6 +114,13 @@ class RoomResource extends Resource
                     ->label('Sức chứa')
                     ->numeric()
                     ->sortable(),
+                Tables\Columns\TextColumn::make('equipment.name')
+                    ->label('Thiết bị')
+                    ->listWithLineBreaks()
+                    ->limitList(2)
+                    ->expandableLimitedList()
+                    ->badge()
+                    ->color('success'),
                 Tables\Columns\TextColumn::make('location')
                     ->label('Vị trí')
                     ->searchable(),
