@@ -115,10 +115,18 @@ class CourseRegistrationResource extends Resource
                             ->native(false)
                             ->options([
                                 'paid' => 'Đã thanh toán',
-                                'unpaid' => 'Chưa thanh toán',
-                                'refunded' => 'Đã hoàn tiền',
+                                'pending' => 'Chờ thanh toán',
+                                'cancelled' => 'Đã hủy',
                             ])
                             ->required(),
+                        Forms\Components\TextInput::make('actual_price')
+                            ->label('Giá thực tế (₫)')
+                            ->numeric()
+                            ->prefix('₫')
+                            ->placeholder('Giá tại thời điểm đăng ký')
+                            ->helperText('Giá khóa học tại thời điểm đăng ký (tự động lưu)')
+                            ->disabled(fn ($context) => $context === 'create') // Chỉ disable khi tạo mới
+                            ->dehydrated(fn ($context) => $context !== 'create'), // Chỉ lưu khi edit
                     ])
                     ->columns(2)
                     ->collapsible(),
@@ -154,10 +162,22 @@ class CourseRegistrationResource extends Resource
                     ->label('Trạng thái thanh toán')
                     ->formatStateUsing(fn (string $state): string => match ($state) {
                         'paid' => 'Đã thanh toán',
-                        'unpaid' => 'Chưa thanh toán',
-                        'refunded' => 'Đã hoàn tiền',
+                        'pending' => 'Chờ thanh toán',
+                        'cancelled' => 'Đã hủy',
                         default => $state,
+                    })
+                    ->badge()
+                    ->color(fn (string $state): string => match ($state) {
+                        'paid' => 'success',
+                        'pending' => 'warning',
+                        'cancelled' => 'danger',
+                        default => 'gray',
                     }),
+                Tables\Columns\TextColumn::make('actual_price')
+                    ->label('Giá thực tế')
+                    ->formatStateUsing(fn ($state) => $state ? number_format($state) . ' ₫' : '-')
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('created_at')
                     ->label('Ngày tạo')
                     ->dateTime('d/m/Y H:i')

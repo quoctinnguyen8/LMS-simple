@@ -49,6 +49,7 @@ class CourseRegistration extends Model
 		'registration_date',
 		'status',
 		'payment_status',
+		'actual_price',
 		'student_name',
 		'student_email',
 		'student_phone',

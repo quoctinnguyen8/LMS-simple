@@ -18,6 +18,14 @@ class CreateCourseRegistration extends CreateRecord
             $data['created_by'] = Auth::id();
         }
 
+        // Lưu giá thực tế của khóa học tại thời điểm đăng ký
+        if (isset($data['course_id'])) {
+            $course = \App\Models\Course::find($data['course_id']);
+            if ($course) {
+                $data['actual_price'] = $course->price;
+            }
+        }
+
         return $data;
     }
 }

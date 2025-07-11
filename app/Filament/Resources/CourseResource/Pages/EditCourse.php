@@ -10,12 +10,12 @@ class EditCourse extends EditRecord
 {
     protected static string $resource = CourseResource::class;
 
-    protected function getHeaderActions(): array
-    {
-        return [
-            Actions\DeleteAction::make(),
-        ];
-    }
+    // protected function getHeaderActions(): array
+    // {
+    //     return [
+    //         Actions\DeleteAction::make(),
+    //     ];
+    // }
     
     protected function mutateFormDataBeforeSave(array $data): array
     {

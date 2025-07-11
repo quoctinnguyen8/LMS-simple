@@ -7,6 +7,7 @@ use App\Filament\Resources\CourseResource\RelationManagers;
 use App\Models\Course;
 use Filament\Forms;
 use Filament\Forms\Form;
+use Filament\Infolists;
 use Filament\Resources\Resource;
 use Filament\Support\RawJs;
 use Filament\Tables;
@@ -159,7 +160,13 @@ class CourseResource extends Resource
             ->columns([
                 Tables\Columns\TextColumn::make('title')
                     ->label('Tên khóa học')
-                    ->searchable(),
+                    ->searchable()
+                    ->description(function ($record){
+                        if ($record->course_registrations_count === 0) {
+                            return '';
+                        }
+                        return $record->course_registrations_count . ' học viên đã đăng ký';
+                    }),
                 Tables\Columns\ImageColumn::make('featured_image')
                     ->label('Hình ảnh')
                     ->toggleable(isToggledHiddenByDefault: true),
@@ -215,6 +222,8 @@ class CourseResource extends Resource
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
+            ->defaultSort('start_date', 'desc')
+            ->modifyQueryUsing(fn (Builder $query) => $query->withCount('course_registrations'))
             ->filters([
                 Tables\Filters\SelectFilter::make('category_id')
                     ->label('Danh mục')
@@ -234,8 +243,83 @@ class CourseResource extends Resource
                     ->default(null),
             ])
             ->actions([
-                Tables\Actions\EditAction::make()
-                ->label('')
+                Tables\Actions\ActionGroup::make([
+                    Tables\Actions\Action::make('viewStudents')
+                        ->label('Danh sách học viên')
+                        ->icon('heroicon-o-users')
+                        ->modalHeading(fn ($record) => 'Danh sách học viên - ' . $record->title)
+                        ->modalWidth('7xl')
+                        ->disabled(fn ($record) => $record->course_registrations_count === 0)
+                        ->modalContent(function ($record) {
+                            $registrations = $record->course_registrations()->with('creator')->get();
+                            
+                            if ($registrations->isEmpty()) {
+                                return view('filament.components.empty-state', [
+                                    'message' => 'Chưa có học viên nào đăng ký khóa học này.'
+                                ]);
+                            }
+                            
+                            return view('filament.components.students-list', [
+                                'registrations' => $registrations,
+                                'course' => $record
+                            ]);
+                        }),
+                    Tables\Actions\EditAction::make()
+                        ->label('Chỉnh sửa')
+                        ->icon('heroicon-o-pencil-square'),
+                    // Xóa
+                    Tables\Actions\DeleteAction::make()
+                        ->label(function ($record) {
+                            $paidStudentsCount = $record->course_registrations()
+                                ->where('payment_status', 'paid')
+                                ->count();
+                            return $paidStudentsCount > 0 ? 'Không thể xóa' : 'Xóa';
+                        })
+                        ->icon('heroicon-o-trash')
+                        ->successNotificationTitle('Khóa học đã được xóa thành công.')
+                        ->color('danger')
+                        ->requiresConfirmation()
+                        ->modalHeading('Xóa khóa học')
+                        ->modalDescription(function ($record) {
+                            $paidStudentsCount = $record->course_registrations()
+                                ->where('payment_status', 'paid')
+                                ->count();
+                            
+                            if ($paidStudentsCount > 0) {
+                                return 'Không thể xóa khóa học này vì đã có ' . $paidStudentsCount . ' học viên đã thanh toán học phí.';
+                            }
+                            
+                            return 'Bạn có chắc chắn muốn xóa khóa học "' . $record->title . '"? Hành động này không thể hoàn tác.';
+                        })
+                        ->modalSubmitActionLabel('Xóa')
+                        ->modalCancelActionLabel('Hủy')
+                        ->disabled(function ($record) {
+                            $paidStudentsCount = $record->course_registrations()
+                                ->where('payment_status', 'paid')
+                                ->count();
+                            return $paidStudentsCount > 0;
+                        })
+                        ->action(function ($record) {
+                            $paidStudentsCount = $record->course_registrations()
+                                ->where('payment_status', 'paid')
+                                ->count();
+                                
+                            if ($paidStudentsCount > 0) {
+                                \Filament\Notifications\Notification::make()
+                                    ->title('Không thể xóa')
+                                    ->body('Khóa học này đã có ' . $paidStudentsCount . ' học viên đã thanh toán học phí, không thể xóa.')
+                                    ->danger()
+                                    ->send();
+                                return false;
+                            }
+                            $record->delete();
+                        }),
+                ])
+                ->icon('heroicon-o-ellipsis-vertical')
+                ->color('gray')
+                ->tooltip('Thao tác')
+                ->extraAttributes(['class' => 'border-gray-500 border'])
+                ->iconButton()
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
