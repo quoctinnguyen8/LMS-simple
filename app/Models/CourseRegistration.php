@@ -20,6 +20,12 @@ use Illuminate\Database\Eloquent\Model;
  * @property string $payment_status
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
+ * @property string|null $user_name
+ * @property string|null $user_email
+ * @property string|null $user_phone
+ * @property string|null $user_address
+ * @property Carbon|null $user_birth_date
+ * @property string $user_gender
  * 
  * @property Course $course
  * @property User $user
@@ -33,7 +39,8 @@ class CourseRegistration extends Model
 	protected $casts = [
 		'user_id' => 'int',
 		'course_id' => 'int',
-		'registration_date' => 'datetime'
+		'registration_date' => 'datetime',
+		'student_birth_date' => 'datetime'
 	];
 
 	protected $fillable = [
@@ -41,7 +48,13 @@ class CourseRegistration extends Model
 		'course_id',
 		'registration_date',
 		'status',
-		'payment_status'
+		'payment_status',
+		'student_name',
+		'student_email',
+		'student_phone',
+		'student_address',
+		'student_birth_date',
+		'student_gender'
 	];
 
 	public function course()

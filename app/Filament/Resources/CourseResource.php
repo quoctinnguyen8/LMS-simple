@@ -17,8 +17,6 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 class CourseResource extends Resource
 {
     protected static ?string $model = Course::class;
-
-    protected static ?string $navigationIcon = 'heroicon-o-book-open';
     
     protected static ?int $navigationSort = 2;
 
@@ -70,8 +68,8 @@ class CourseResource extends Resource
                             ->label('Trạng thái')
                             ->options([
                                 'draft' => 'Nháp',
-                                'published' => 'Đã xuất bản',
-                                'archived' => 'Đã lưu trữ',
+                                'published' => 'Hiển thị',
+                                'archived' => 'Lưu trữ',
                             ])
                             ->default('draft')
                             ->columnSpan(2),
@@ -137,13 +135,13 @@ class CourseResource extends Resource
                 Tables\Columns\TextColumn::make('category.name')
                     ->label('Danh mục')
                     ->sortable(),
-                Tables\Columns\TextColumn::make('end_registration_date')
-                    ->date('d/m/Y')
-                    ->label('Ngày k.thúc đăng ký')
-                    ->sortable(),
                 Tables\Columns\TextColumn::make('start_date')
                     ->date('d/m/Y')
                     ->label('Ngày bắt đầu')
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('end_registration_date')
+                    ->date('d/m/Y')
+                    ->label('Ngày k.thúc đăng ký')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('status')
                     ->label('Trạng thái')

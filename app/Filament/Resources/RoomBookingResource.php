@@ -16,10 +16,9 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 class RoomBookingResource extends Resource
 {
     protected static ?string $model = RoomBooking::class;
-
-    protected static ?string $navigationIcon = 'heroicon-o-bell';
     
     protected static ?int $navigationSort = 1;
+    
     protected static ?string $navigationGroup = 'Thuê phòng học';
 
     public static function getModelLabel(): string
@@ -67,11 +66,13 @@ class RoomBookingResource extends Resource
                         Forms\Components\DatePicker::make('booking_date')
                             ->label('Ngày đặt')
                             ->required(),
-                        Forms\Components\TextInput::make('start_time')
+                        Forms\Components\TimePicker::make('start_time')
                             ->label('Thời gian bắt đầu')
+                            ->seconds(false)
                             ->required(),
-                        Forms\Components\TextInput::make('end_time')
+                        Forms\Components\TimePicker::make('end_time')
                             ->label('Thời gian kết thúc')
+                            ->seconds(false)
                             ->required(),
                         Forms\Components\TextInput::make('purpose')
                             ->label('Mục đích')
@@ -119,13 +120,15 @@ class RoomBookingResource extends Resource
                     ->sortable(),
                 Tables\Columns\TextColumn::make('booking_date')
                     ->label('Ngày đặt')
-                    ->date()
+                    ->date('d/m/Y')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('start_time')
                     ->label('Thời gian bắt đầu')
+                    ->time('H:i')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('end_time')
                     ->label('Thời gian kết thúc')
+                    ->time('H:i')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('purpose')
                     ->label('Mục đích')

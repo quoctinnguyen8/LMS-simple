@@ -16,10 +16,9 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 class RoomBookingGroupResource extends Resource
 {
     protected static ?string $model = RoomBookingGroup::class;
-
-    protected static ?string $navigationIcon = 'heroicon-o-building-office';
     
     protected static ?int $navigationSort = 2;
+
     protected static ?string $navigationGroup = 'Thuê phòng học';
     
     public static function getModelLabel(): string
@@ -71,9 +70,11 @@ class RoomBookingGroupResource extends Resource
                     ->schema([
                         Forms\Components\TimePicker::make('start_time')
                             ->label('Thời gian bắt đầu')
+                            ->seconds(false)
                             ->required(),
                         Forms\Components\TimePicker::make('end_time')
                             ->label('Thời gian kết thúc')
+                            ->seconds(false)
                             ->required(),
                         Forms\Components\select::make('recurrence_type')
                             ->label('Loại lặp lại')
@@ -134,8 +135,10 @@ class RoomBookingGroupResource extends Resource
                     ->label('Mục đích')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('start_time')
+                    ->time('H:i')
                     ->label('Thời gian bắt đầu'),
                 Tables\Columns\TextColumn::make('end_time')
+                    ->time('H:i')
                     ->label('Thời gian kết thúc'),
                 Tables\Columns\TextColumn::make('recurrence_type')
                     ->label('Loại lặp lại')
@@ -149,11 +152,11 @@ class RoomBookingGroupResource extends Resource
                     ->searchable(),
                 Tables\Columns\TextColumn::make('start_date')
                     ->label('Ngày bắt đầu')
-                    ->date()
+                    ->date('d/m/Y')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('end_date')
                     ->label('Ngày kết thúc')
-                    ->date()
+                    ->date('d/m/Y')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('status')
                     ->label('Trạng thái')

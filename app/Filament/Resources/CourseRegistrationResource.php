@@ -17,9 +17,8 @@ class CourseRegistrationResource extends Resource
 {
     protected static ?string $model = CourseRegistration::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-academic-cap';
-    
     protected static ?int $navigationSort = 1;
+
     protected static ?string $navigationGroup = 'Khóa học';
 
 
@@ -65,8 +64,9 @@ class CourseRegistrationResource extends Resource
                             ->label('Trạng thái')
                             ->options([
                                 'pending' => 'Đang chờ',
-                                'approved' => 'Đã phê duyệt',
-                                'rejected' => 'Đã từ chối',
+                                'confirmed' => 'Đã xác nhận',
+                                'canceled' => 'Đã hủy',
+                                'completed' => 'Đã hoàn thành',
                             ])
                             ->required(),
                         Forms\Components\Select::make('payment_status')
@@ -80,6 +80,44 @@ class CourseRegistrationResource extends Resource
                     ])
                     ->columns(2)
                     ->collapsible(),
+                Forms\Components\Section::make('Thông tin học viên')
+                    ->description('Thông tin cá nhân của học viên đăng ký khóa học')
+                    ->schema([
+                        Forms\Components\TextInput::make('student_name')
+                            ->label('Họ và tên học viên')
+                            ->required()
+                            ->maxLength(100),
+                        Forms\Components\TextInput::make('student_email')
+                            ->label('Email học viên')
+                            ->required()
+                            ->email()
+                            ->maxLength(100),
+                        Forms\Components\TextInput::make('student_phone')
+                            ->label('Số điện thoại')
+                            ->rules(['required', 'regex:/^0[0-9]{9}$/'])
+                            ->unique(ignoreRecord: true)
+                            ->tel(),
+                        Forms\Components\TextInput::make('student_address')
+                            ->label('Địa chỉ')
+                            ->maxLength(255)
+                            ->default(null),
+                        Forms\Components\DatePicker::make('student_birth_date')
+                            ->label('Ngày sinh')
+                            ->displayFormat('d/m/Y')
+                            ->required()
+                            ->minDate(now()->subYears(100))
+                            ->maxDate(now()),
+                        Forms\Components\Select::make('student_gender')
+                            ->label('Giới tính')
+                            ->options([
+                                'male' => 'Nam',
+                                'female' => 'Nữ',
+                                'other' => 'Khác',
+                            ])
+                            ->default('other'),
+                    ])
+                    ->columns(2)
+                    ->collapsible(),
             ]);
     }
 
@@ -87,8 +125,8 @@ class CourseRegistrationResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('user.name')
-                    ->label('Người dùng')
+                Tables\Columns\TextColumn::make('student_name')
+                    ->label('Tên học viên')
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('course.title')
@@ -103,8 +141,9 @@ class CourseRegistrationResource extends Resource
                     ->label('Trạng thái')
                     ->formatStateUsing(fn (string $state): string => match ($state) {
                         'pending' => 'Đang chờ',
-                        'approved' => 'Đã phê duyệt',
-                        'rejected' => 'Đã từ chối',
+                        'confirmed' => 'Đã xác nhận',
+                        'canceled' => 'Đã hủy',
+                        'completed' => 'Đã hoàn thành',
                         default => $state,
                     }),
                 Tables\Columns\TextColumn::make('payment_status')
