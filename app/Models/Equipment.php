@@ -28,13 +28,22 @@ class Equipment extends Model
 	protected $table = 'equipments';
 
 	protected $casts = [
-		'price' => 'float'
+		'created_by' => 'int',
+		'price' => 'decimal:2',
+		'is_free' => 'boolean'
 	];
 
 	protected $fillable = [
+		'created_by',
 		'name',
-		'price'
+		'price',
+		'is_free'
 	];
+
+	public function creator()
+	{
+		return $this->belongsTo(User::class, 'created_by');
+	}
 
 	public function rooms()
 	{

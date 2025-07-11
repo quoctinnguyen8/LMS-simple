@@ -39,24 +39,33 @@ class Course extends Model
 	protected $table = 'courses';
 
 	protected $casts = [
-		'price' => 'float',
+		'price' => 'int',
 		'category_id' => 'int',
+		'created_by' => 'int',
+		'is_price_visible' => 'boolean',
 		'end_registration_date' => 'datetime',
 		'start_date' => 'datetime'
 	];
 
 	protected $fillable = [
+		'created_by',
 		'title',
 		'slug',
 		'description',
 		'content',
 		'featured_image',
 		'price',
+		'is_price_visible',
 		'category_id',
 		'end_registration_date',
 		'start_date',
 		'status'
 	];
+
+	public function creator()
+	{
+		return $this->belongsTo(User::class, 'created_by');
+	}
 
 	public function category()
 	{

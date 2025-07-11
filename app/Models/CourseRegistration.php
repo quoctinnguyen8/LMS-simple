@@ -37,14 +37,14 @@ class CourseRegistration extends Model
 	protected $table = 'course_registrations';
 
 	protected $casts = [
-		'user_id' => 'int',
+		'created_by' => 'int',
 		'course_id' => 'int',
 		'registration_date' => 'datetime',
 		'student_birth_date' => 'datetime'
 	];
 
 	protected $fillable = [
-		'user_id',
+		'created_by',
 		'course_id',
 		'registration_date',
 		'status',
@@ -57,13 +57,13 @@ class CourseRegistration extends Model
 		'student_gender'
 	];
 
+	public function creator()
+	{
+		return $this->belongsTo(User::class, 'created_by');
+	}
+
 	public function course()
 	{
 		return $this->belongsTo(Course::class);
-	}
-
-	public function user()
-	{
-		return $this->belongsTo(User::class);
 	}
 }
