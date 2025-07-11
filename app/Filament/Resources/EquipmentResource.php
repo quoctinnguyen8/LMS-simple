@@ -16,6 +16,8 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 class EquipmentResource extends Resource
 {
     protected static ?string $model = Equipment::class;
+
+    protected static ?string $navigationIcon = 'heroicon-o-archive-box';
     
     protected static ?int $navigationSort = 4;
 

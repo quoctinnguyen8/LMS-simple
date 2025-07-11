@@ -18,6 +18,8 @@ class CourseResource extends Resource
 {
     protected static ?string $model = Course::class;
     
+    protected static ?string $navigationIcon = 'heroicon-o-book-open';
+    
     protected static ?int $navigationSort = 2;
 
     protected static ?string $navigationGroup = 'Khóa học';

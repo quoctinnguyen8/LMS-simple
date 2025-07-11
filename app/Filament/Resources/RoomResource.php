@@ -16,6 +16,8 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 class RoomResource extends Resource
 {
     protected static ?string $model = Room::class;
+
+    protected static ?string $navigationIcon = 'heroicon-o-building-office';
     
     protected static ?int $navigationSort = 2;
     

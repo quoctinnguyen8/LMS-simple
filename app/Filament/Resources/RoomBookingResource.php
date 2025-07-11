@@ -17,6 +17,8 @@ class RoomBookingResource extends Resource
 {
     protected static ?string $model = RoomBooking::class;
     
+    protected static ?string $navigationIcon = 'heroicon-o-calendar';
+
     protected static ?int $navigationSort = 1;
     
     protected static ?string $navigationGroup = 'Thuê phòng học';

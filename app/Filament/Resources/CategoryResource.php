@@ -19,6 +19,8 @@ class CategoryResource extends Resource
     
     protected static ?int $navigationSort = 3;
 
+    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+
     protected static ?string $navigationGroup = 'Khóa học';
 
     public static function getModelLabel(): string
