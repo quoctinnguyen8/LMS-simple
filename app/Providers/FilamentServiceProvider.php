@@ -17,12 +17,9 @@ class FilamentServiceProvider extends ServiceProvider
     {
         Filament::serving(function () {
             Filament::registerNavigationGroups([
-                NavigationGroup::make('Khóa học')
-                ->icon('heroicon-o-academic-cap'),
-                NavigationGroup::make('Thuê phòng học')
-                ->icon('heroicon-o-building-office'),
-                NavigationGroup::make('Người dùng')
-                    ->icon('heroicon-o-users'),
+                NavigationGroup::make('Khóa học'),
+                NavigationGroup::make('Thuê phòng học'),
+                NavigationGroup::make('Người dùng'),
             ]);
         });
     }
