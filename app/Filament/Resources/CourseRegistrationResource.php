@@ -52,6 +52,8 @@ class CourseRegistrationResource extends Resource
                             ->required(),
                         Forms\Components\DateTimePicker::make('registration_date')
                             ->label('Ngày đăng ký')
+                            ->displayFormat('d/m/Y')
+                            ->native(false)
                             ->required(),
                     ])
                     ->columns(3)
@@ -94,7 +96,8 @@ class CourseRegistrationResource extends Resource
                             ->maxLength(100),
                         Forms\Components\TextInput::make('student_phone')
                             ->label('Số điện thoại')
-                            ->rules(['required', 'regex:/^0[0-9]{9}$/'])
+                            ->rules(['regex:/^0[0-9]{9}$/'])
+                            ->required()
                             ->unique(ignoreRecord: true)
                             ->tel(),
                         Forms\Components\TextInput::make('student_address')
@@ -104,6 +107,7 @@ class CourseRegistrationResource extends Resource
                         Forms\Components\DatePicker::make('student_birth_date')
                             ->label('Ngày sinh')
                             ->displayFormat('d/m/Y')
+                            ->native(false)
                             ->required()
                             ->minDate(now()->subYears(100))
                             ->maxDate(now()),

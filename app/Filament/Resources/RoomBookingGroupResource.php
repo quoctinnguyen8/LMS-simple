@@ -70,10 +70,14 @@ class RoomBookingGroupResource extends Resource
                     ->schema([
                         Forms\Components\TimePicker::make('start_time')
                             ->label('Thời gian bắt đầu')
+                            ->displayFormat('H:i')
+                            ->native(false)
                             ->seconds(false)
                             ->required(),
                         Forms\Components\TimePicker::make('end_time')
                             ->label('Thời gian kết thúc')
+                            ->displayFormat('H:i')
+                            ->native(false)
                             ->seconds(false)
                             ->required(),
                         Forms\Components\select::make('recurrence_type')
@@ -96,9 +100,15 @@ class RoomBookingGroupResource extends Resource
                     ->schema([
                         Forms\Components\DatePicker::make('start_date')
                             ->label('Ngày bắt đầu')
+                            ->displayFormat('d/m/Y')
+                            ->native(false)
+                            ->minDate(now())
                             ->required(),
                         Forms\Components\DatePicker::make('end_date')
                             ->label('Ngày kết thúc')
+                            ->displayFormat('d/m/Y')
+                            ->native(false)
+                            ->minDate(now())
                             ->required(),
                         Forms\Components\Select::make('status')
                             ->label('Trạng thái')

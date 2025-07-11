@@ -65,13 +65,20 @@ class RoomBookingResource extends Resource
                     ->schema([
                         Forms\Components\DatePicker::make('booking_date')
                             ->label('Ngày đặt')
+                            ->displayFormat('d/m/Y')
+                            ->minDate(now())
+                            ->native(false)
                             ->required(),
                         Forms\Components\TimePicker::make('start_time')
                             ->label('Thời gian bắt đầu')
+                            ->displayFormat('H:i')
                             ->seconds(false)
+                            ->native(false)
                             ->required(),
                         Forms\Components\TimePicker::make('end_time')
                             ->label('Thời gian kết thúc')
+                            ->displayFormat('H:i')
+                            ->native(false)
                             ->seconds(false)
                             ->required(),
                         Forms\Components\TextInput::make('purpose')
