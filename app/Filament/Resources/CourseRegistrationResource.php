@@ -8,6 +8,7 @@ use App\Models\CourseRegistration;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
+use Filament\Support\RawJs;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
@@ -120,11 +121,13 @@ class CourseRegistrationResource extends Resource
                             ])
                             ->required(),
                         Forms\Components\TextInput::make('actual_price')
-                            ->label('Giá thực tế (₫)')
-                            ->numeric()
+                            ->label('Đã thu')
+                            ->integer()
+                            ->default(null)
                             ->prefix('₫')
-                            ->placeholder('Giá tại thời điểm đăng ký')
-                            ->helperText('Giá khóa học tại thời điểm đăng ký (tự động lưu)')
+                            ->mask(RawJs::make('$money($input)'))
+                            ->stripCharacters([',', '.'])
+                            ->dehydrateStateUsing(fn ($state) => (int) str_replace([','], '', $state))
                             ->disabled(fn ($context) => $context === 'create') // Chỉ disable khi tạo mới
                             ->dehydrated(fn ($context) => $context !== 'create'), // Chỉ lưu khi edit
                     ])
@@ -174,7 +177,7 @@ class CourseRegistrationResource extends Resource
                         default => 'gray',
                     }),
                 Tables\Columns\TextColumn::make('actual_price')
-                    ->label('Giá thực tế')
+                    ->label('Đã thu')
                     ->formatStateUsing(fn ($state) => $state ? number_format($state) . ' ₫' : '-')
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
@@ -190,7 +193,36 @@ class CourseRegistrationResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                //
+                // lọc theo khóa học
+                Tables\Filters\SelectFilter::make('course_id')
+                    ->label('Khóa học')
+                    ->relationship('course', 'title')
+                    ->native(false)
+                    ->searchable()
+                    ->preload()
+                    ->optionsLimit(15),
+                // lọc theo trạng thái thanh toán
+                Tables\Filters\SelectFilter::make('payment_status')
+                    ->label('Trạng thái thanh toán')
+                    ->options([
+                        'paid' => 'Đã thanh toán',
+                        'pending' => 'Chờ thanh toán',
+                        'cancelled' => 'Đã hủy',
+                    ])
+                    ->multiple()
+                    ->native(false),
+                // lọc theo trạng thái đăng ký
+                Tables\Filters\SelectFilter::make('status')
+                    ->label('Trạng thái đăng ký')
+                    ->options([
+                        'pending' => 'Đang chờ',
+                        'confirmed' => 'Đã xác nhận',
+                        'canceled' => 'Đã hủy',
+                        'completed' => 'Đã hoàn thành',
+                    ])
+                    ->multiple()
+                    ->native(false),
+
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),

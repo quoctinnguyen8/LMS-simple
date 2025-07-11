@@ -12,8 +12,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('course_registrations', function (Blueprint $table) {
-            $table->decimal('actual_price', 10, 2)->nullable()->after('payment_status')
-                ->comment('Giá thực tế khi đăng ký (lưu để tránh thay đổi khi admin sửa giá khóa học)');
+            $table->decimal('actual_price', 15, 0)->nullable()->after('payment_status')
+                ->comment('Số tiền đã thu của học viên');
         });
     }
 
