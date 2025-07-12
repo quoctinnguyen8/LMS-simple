@@ -82,15 +82,12 @@ class CourseResource extends Resource
                             ->minValue(1)
                             ->default(10)
                             ->columnSpan(1),
-                        Forms\Components\Select::make('status')
-                            ->required()
-                            ->label('Trạng thái')
-                            ->options([
-                                'draft' => 'Nháp',
-                                'published' => 'Hiển thị',
-                                'archived' => 'Lưu trữ',
-                            ])
-                            ->default('draft')
+                        Forms\Components\Toggle::make('status')
+                            ->label('Xuất bản khóa học')
+                            ->default(false)
+                            ->inline(false)
+                            ->formatStateUsing(fn ($state) => $state === 'published')
+                            ->dehydrateStateUsing(fn ($state) => $state ? 'published' : 'draft')
                             ->columnSpan(1),
                         Forms\Components\TextInput::make('price')
                             ->label('Giá khóa học')
@@ -118,7 +115,8 @@ class CourseResource extends Resource
 
                         Forms\Components\Toggle::make('allow_overflow')
                             ->label('Cho phép nhận thêm học viên khi đã đủ số lượng tối đa')
-                            ->helperText('Hệ thống vẫn cho phép đăng ký từ trang chủ nhưng không vượt quá 100% so với số lượng tối đa')
+                            ->helperText('Hệ thống vẫn cho phép đăng ký từ trang chủ nhưng không vượt quá 100% so với số lượng tối đa. '
+                                    . 'Thao tác của quản trị viên không bị ảnh hưởng và vẫn có thể đăng ký khóa học thay cho học viên')
                             ->default(true)
                             ->inline(false)
                             ->columnSpan(2),
@@ -297,6 +295,19 @@ class CourseResource extends Resource
                     Tables\Actions\EditAction::make()
                         ->label('Chỉnh sửa')
                         ->icon('heroicon-o-pencil-square'),
+                    Tables\Actions\Action::make('publish')
+                        ->label('Xuất bản ngay')
+                        ->icon('heroicon-o-rocket-launch')
+                        ->visible(fn ($record) => $record->status === 'draft')
+                        ->action(function ($record) {
+                            $record->update(['status' => 'published']);
+                            
+                            \Filament\Notifications\Notification::make()
+                                ->title('Đã xuất bản khóa học')
+                                ->body('Khóa học "' . $record->title . '" đã được xuất bản thành công.')
+                                ->success()
+                                ->send();
+                        }),
                     Tables\Actions\Action::make('archive')
                         ->label(fn ($record) => $record->status === 'archived' ? 'Bỏ lưu trữ' : 'Lưu trữ')
                         ->icon(fn ($record) => $record->status === 'archived' ? 'heroicon-o-archive-box-arrow-down' : 'heroicon-o-archive-box')
@@ -362,7 +373,89 @@ class CourseResource extends Resource
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+                    Tables\Actions\BulkAction::make('archive')
+                        ->label('Lưu trữ')
+                        ->icon('heroicon-o-archive-box')
+                        ->color('warning')
+                        ->requiresConfirmation()
+                        ->modalHeading('Lưu trữ khóa học')
+                        ->modalDescription('Bạn có chắc chắn muốn lưu trữ các khóa học đã chọn? Chúng sẽ không hiển thị cho người dùng.')
+                        ->modalSubmitActionLabel('Lưu trữ')
+                        ->action(function ($records) {
+                            $count = $records->count();
+                            $records->each(function ($record) {
+                                $record->update(['status' => 'archived']);
+                            });
+                            
+                            \Filament\Notifications\Notification::make()
+                                ->title('Đã lưu trữ khóa học')
+                                ->body("Đã lưu trữ {$count} khóa học thành công.")
+                                ->success()
+                                ->send();
+                        }),
+                    Tables\Actions\BulkAction::make('unarchive')
+                        ->label('Bỏ lưu trữ')
+                        ->icon('heroicon-o-archive-box-arrow-down')
+                        ->color('success')
+                        ->requiresConfirmation()
+                        ->modalHeading('Bỏ lưu trữ khóa học')
+                        ->modalDescription('Bạn có chắc chắn muốn bỏ lưu trữ các khóa học đã chọn? Chúng sẽ chuyển về trạng thái nháp.')
+                        ->modalSubmitActionLabel('Bỏ lưu trữ')
+                        ->action(function ($records) {
+                            $count = $records->count();
+                            $records->each(function ($record) {
+                                $record->update(['status' => 'draft']);
+                            });
+                            
+                            \Filament\Notifications\Notification::make()
+                                ->title('Đã bỏ lưu trữ khóa học')
+                                ->body("Đã bỏ lưu trữ {$count} khóa học thành công. Các khóa học đã chuyển về trạng thái nháp.")
+                                ->success()
+                                ->send();
+                        }),
+                    Tables\Actions\DeleteBulkAction::make()
+                        ->requiresConfirmation()
+                        ->modalHeading('Xóa khóa học')
+                        ->modalDescription('Bạn có chắc chắn muốn xóa các khóa học đã chọn? Chỉ những khóa học chưa có học viên đăng ký mới bị xóa.')
+                        ->modalSubmitActionLabel('Xóa')
+                        ->action(function ($records) {
+                            $deletableRecords = $records->filter(function ($record) {
+                                return $record->course_registrations_count == 0;
+                            });
+                            
+                            $protectedRecords = $records->filter(function ($record) {
+                                return $record->course_registrations_count > 0;
+                            });
+                            
+                            $deletedCount = $deletableRecords->count();
+                            $protectedCount = $protectedRecords->count();
+                            
+                            // Xóa các khóa học có thể xóa
+                            $deletableRecords->each(function ($record) {
+                                $record->delete();
+                            });
+                            
+                            // Thông báo kết quả
+                            if ($deletedCount > 0 && $protectedCount > 0) {
+                                \Filament\Notifications\Notification::make()
+                                    ->title('Xóa một phần thành công')
+                                    ->body("Đã xóa {$deletedCount} khóa học. {$protectedCount} khóa học không thể xóa vì đã có học viên đăng ký.")
+                                    ->warning()
+                                    ->send();
+                            } elseif ($deletedCount > 0) {
+                                \Filament\Notifications\Notification::make()
+                                    ->title('Xóa thành công')
+                                    ->body("Đã xóa {$deletedCount} khóa học thành công.")
+                                    ->success()
+                                    ->send();
+                            } else {
+                                \Filament\Notifications\Notification::make()
+                                    ->title('Không thể xóa')
+                                    ->body("Tất cả {$protectedCount} khóa học đã chọn đều có học viên đăng ký, không thể xóa.")
+                                    ->danger()
+                                    ->send();
+                            }
+                        }),
                 ]),
             ]);
     }
