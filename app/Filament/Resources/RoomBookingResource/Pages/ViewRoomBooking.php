@@ -4,20 +4,16 @@ namespace App\Filament\Resources\RoomBookingResource\Pages;
 
 use App\Filament\Resources\RoomBookingResource;
 use Filament\Actions;
-use Filament\Resources\Pages\EditRecord;
+use Filament\Resources\Pages\ViewRecord;
 
-class EditRoomBooking extends EditRecord
+class ViewRoomBooking extends ViewRecord
 {
     protected static string $resource = RoomBookingResource::class;
 
     protected function getHeaderActions(): array
     {
         return [
+            Actions\EditAction::make(),
         ];
-    }
-
-    protected function getRedirectUrl(): string
-    {
-        return $this->getResource()::getUrl('index');
     }
 }

@@ -7,29 +7,32 @@
 namespace App\Models;
 
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 
 /**
  * Class RoomBooking
  * 
  * @property int $id
- * @property int|null $booking_group_id
- * @property int $user_id
- * @property int $room_id
- * @property int|null $course_id
- * @property Carbon $booking_date
- * @property Carbon $start_time
- * @property Carbon $end_time
- * @property string|null $purpose
- * @property bool $is_recurring
+ * @property int|null $room_id
+ * @property string|null $reason
+ * @property Carbon $start_date
+ * @property Carbon|null $end_date
  * @property string $status
+ * @property int|null $approved_by
+ * @property int|null $rejected_by
+ * @property int|null $cancelled_by
+ * @property int|null $created_by
+ * @property string|null $customer_name
+ * @property string|null $customer_email
+ * @property string|null $customer_phone
+ * @property string|null $booking_code
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * 
- * @property RoomBookingGroup|null $room_booking_group
- * @property Course|null $course
- * @property Room $room
- * @property User $user
+ * @property User|null $user
+ * @property Room|null $room
+ * @property Collection|RoomBookingDetail[] $room_booking_details
  *
  * @package App\Models
  */
@@ -38,38 +41,36 @@ class RoomBooking extends Model
 	protected $table = 'room_bookings';
 
 	protected $casts = [
-		'booking_group_id' => 'int',
-		'user_id' => 'int',
 		'room_id' => 'int',
-		'course_id' => 'int',
-		'booking_date' => 'datetime',
-		'start_time' => 'datetime',
-		'end_time' => 'datetime',
-		'is_recurring' => 'bool'
+		'start_date' => 'date',
+		'end_date' => 'date',
+		'approved_by' => 'int',
+		'rejected_by' => 'int',
+		'cancelled_by' => 'int',
+		'created_by' => 'int',
+		'repeat_days' => 'array'
 	];
 
 	protected $fillable = [
-		'booking_group_id',
-		'user_id',
 		'room_id',
-		'course_id',
-		'booking_date',
+		'reason',
+		'start_date',
+		'end_date',
 		'start_time',
 		'end_time',
-		'purpose',
-		'is_recurring',
-		'status'
+		'participants_count',
+		'notes',
+		'status',
+		'approved_by',
+		'rejected_by',
+		'cancelled_by',
+		'created_by',
+		'customer_name',
+		'customer_email',
+		'customer_phone',
+		'booking_code',
+		'repeat_days'
 	];
-
-	public function room_booking_group()
-	{
-		return $this->belongsTo(RoomBookingGroup::class, 'booking_group_id');
-	}
-
-	public function course()
-	{
-		return $this->belongsTo(Course::class);
-	}
 
 	public function room()
 	{
@@ -78,6 +79,26 @@ class RoomBooking extends Model
 
 	public function user()
 	{
-		return $this->belongsTo(User::class);
+		return $this->belongsTo(User::class, 'created_by');
+	}
+
+	public function approvedBy()
+	{
+		return $this->belongsTo(User::class, 'approved_by');
+	}
+
+	public function rejectedBy()
+	{
+		return $this->belongsTo(User::class, 'rejected_by');
+	}
+
+	public function cancelledBy()
+	{
+		return $this->belongsTo(User::class, 'cancelled_by');
+	}
+
+	public function room_booking_details()
+	{
+		return $this->hasMany(RoomBookingDetail::class);
 	}
 }
