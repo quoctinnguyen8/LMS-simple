@@ -139,6 +139,7 @@ class CourseRegistrationResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
+            ->recordUrl(null) // Vô hiệu hóa click để chỉnh sửa
             ->columns([
                 Tables\Columns\TextColumn::make('student_name')
                     ->label('Tên học viên')

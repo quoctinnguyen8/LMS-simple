@@ -13,7 +13,7 @@ class EditRoomBooking extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
-            Actions\DeleteAction::make(),
+            // Đã loại bỏ nút xóa theo yêu cầu
         ];
     }
 }

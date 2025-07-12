@@ -114,6 +114,7 @@ class RoomBookingResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
+            ->recordUrl(null) // Vô hiệu hóa click để chỉnh sửa
             ->columns([
                 Tables\Columns\TextColumn::make('room_booking_group.title')
                     ->label('Nhóm đặt phòng')

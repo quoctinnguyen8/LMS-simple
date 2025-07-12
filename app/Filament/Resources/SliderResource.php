@@ -107,6 +107,7 @@ class SliderResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
+            ->recordUrl(null) // Vô hiệu hóa click để chỉnh sửa
             ->description('Quản lý sliders hiển thị trên trang chủ. Bạn có thể kéo thả để sắp xếp thứ tự hiển thị của các slider.')
             ->columns([
                 Tables\Columns\ImageColumn::make('image_url')

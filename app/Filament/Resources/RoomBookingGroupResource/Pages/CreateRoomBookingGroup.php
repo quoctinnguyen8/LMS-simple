@@ -9,4 +9,9 @@ use Filament\Resources\Pages\CreateRecord;
 class CreateRoomBookingGroup extends CreateRecord
 {
     protected static string $resource = RoomBookingGroupResource::class;
+    
+    protected function getRedirectUrl(): string
+    {
+        return $this->getResource()::getUrl('index');
+    }
 }

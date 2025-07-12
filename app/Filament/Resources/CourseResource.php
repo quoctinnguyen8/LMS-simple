@@ -165,6 +165,7 @@ class CourseResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
+            ->recordUrl(null) // Vô hiệu hóa click để chỉnh sửa
             ->columns([
                 Tables\Columns\TextColumn::make('title')
                     ->label('Tên khóa học')

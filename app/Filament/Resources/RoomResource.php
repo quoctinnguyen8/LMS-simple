@@ -116,6 +116,7 @@ class RoomResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
+            ->recordUrl(null) // Vô hiệu hóa click để chỉnh sửa
             ->columns([
                 Tables\Columns\ImageColumn::make('image')
                     ->label('Hình ảnh')
