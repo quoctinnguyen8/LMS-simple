@@ -43,6 +43,16 @@ class RoomResource extends Resource
                 Forms\Components\Section::make('Thông tin cơ bản')
                     ->description('Nhập thông tin cơ bản của phòng học')
                     ->schema([
+                        Forms\Components\FileUpload::make('image')
+                            ->label('Hình ảnh')
+                            ->disk('public')
+                            ->directory('room-images')
+                            ->image()
+                            ->imageEditor()
+                            ->maxSize(2048) // 4MB
+                            ->acceptedFileTypes(['image/*'])
+                            ->helperText('Kích thước tối đa: 2MB. Định dạng: JPG, PNG, WebP,...')
+                            ->columnSpan(4),
                         Forms\Components\TextInput::make('name')
                             ->label('Tên phòng học')
                             ->required()
@@ -107,6 +117,9 @@ class RoomResource extends Resource
     {
         return $table
             ->columns([
+                Tables\Columns\ImageColumn::make('image')
+                    ->label('Hình ảnh')
+                    ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('name')
                     ->label('Tên phòng học')
                     ->searchable(),

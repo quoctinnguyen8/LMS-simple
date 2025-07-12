@@ -41,7 +41,8 @@ class Room extends Model
 		'capacity',
 		'location',
 		'description',
-		'status'
+		'status',
+		'image'
 	];
 
 	public function room_booking_groups()
