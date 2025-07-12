@@ -48,12 +48,13 @@ class CourseRegistrationResource extends Resource
                     ->schema([
                         Forms\Components\select::make('course_id')
                             ->label('Khóa học')
-                            // chỉ chọn các khóa học có trạng thái là published và có ngày bắt đầu chưa quá 2 tuần tính từ hôm nay
+                            // chỉ chọn các khóa học có trạng thái là published và có ngày bắt đầu chưa quá 30 ngày tính từ hôm nay
                             ->relationship('course', 'title',
                                 fn (Builder $query) => $query->where('status', 'published')
-                                    ->where('start_date', '>=', now()->subDays(14)
+                                    ->where('start_date', '>=', now()->subDays(30)
                                 )
                             )
+                            ->helperText('Chỉ hiển thị các khóa học đã được xuất bản và có ngày bắt đầu từ ' . now()->subDays(30)->format('d/m/Y'))
                             ->required()
                             ->native(false)
                             ->searchable()
