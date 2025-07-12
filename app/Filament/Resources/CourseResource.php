@@ -76,6 +76,12 @@ class CourseResource extends Resource
                             ->preload()
                             ->required()
                             ->columnSpan(2),
+                        Forms\Components\TextInput::make('max_students')
+                            ->label('Số học viên tối đa')
+                            ->numeric()
+                            ->minValue(1)
+                            ->default(10)
+                            ->columnSpan(1),
                         Forms\Components\Select::make('status')
                             ->required()
                             ->label('Trạng thái')
@@ -85,26 +91,18 @@ class CourseResource extends Resource
                                 'archived' => 'Lưu trữ',
                             ])
                             ->default('draft')
+                            ->columnSpan(1),
+                        Forms\Components\TextInput::make('price')
+                            ->label('Giá khóa học')
+                            ->required()
+                            ->integer()
+                            ->default(null)
+                            ->prefix('₫')
+                            ->mask(RawJs::make('$money($input)'))
+                            ->stripCharacters([',', '.'])
+                            ->dehydrateStateUsing(fn ($state) => (int) str_replace([','], '', $state))
                             ->columnSpan(2),
-                        // Nhóm giá trong 1 Grid để căn chỉnh
-                        Forms\Components\Grid::make(2)
-                        ->schema([
-                            Forms\Components\TextInput::make('price')
-                                ->label('Giá khóa học')
-                                ->required()
-                                ->integer()
-                                ->default(null)
-                                ->prefix('₫')
-                                ->mask(RawJs::make('$money($input)'))
-                                ->stripCharacters([',', '.'])
-                                ->dehydrateStateUsing(fn ($state) => (int) str_replace([','], '', $state)),
-                            Forms\Components\Toggle::make('is_price_visible')
-                                ->label('Hiển thị giá')
-                                ->default(true)
-                                ->inline(false), // Đặt toggle dọc để căn chỉnh với textbox
-                        ])
-                        ->columnSpan(2),
-                        Forms\Components\DatePicker::make('start_date')
+                    Forms\Components\DatePicker::make('start_date')
                             ->label('Ngày bắt đầu')
                             ->displayFormat('d/m/Y')
                             ->native(false)
@@ -117,6 +115,18 @@ class CourseResource extends Resource
                             ->displayFormat('d/m/Y')
                             ->helperText('Hạn cuối chập nhận đăng ký')
                             ->columnSpan(1),
+
+                        Forms\Components\Toggle::make('allow_overflow')
+                            ->label('Cho phép nhận thêm học viên khi đã đủ số lượng tối đa')
+                            ->helperText('Hệ thống vẫn cho phép đăng ký từ trang chủ nhưng không vượt quá 100% so với số lượng tối đa')
+                            ->default(true)
+                            ->inline(false)
+                            ->columnSpan(2),
+                        Forms\Components\Toggle::make('is_price_visible')
+                            ->label('Hiển thị giá')
+                            ->default(true)
+                            ->inline(false) // Đặt toggle dọc để căn chỉnh với textbox
+                            ->columnSpan(2)
                     ])
                     ->columns(4),
 
@@ -162,10 +172,14 @@ class CourseResource extends Resource
                     ->label('Tên khóa học')
                     ->searchable()
                     ->description(function ($record){
-                        if ($record->course_registrations_count === 0) {
-                            return '';
+                        $maxStudents = $record->max_students;
+                        if (empty($maxStudents)){
+                            return $record->course_registrations_count . ' học viên đã đăng ký';
                         }
-                        return $record->course_registrations_count . ' học viên đã đăng ký';
+                        if ($record->allow_overflow) {
+                            $maxStudents .= "+";
+                        }
+                        return $record->course_registrations_count . '/' . $maxStudents . ' học viên đã đăng ký';
                     }),
                 Tables\Columns\ImageColumn::make('featured_image')
                     ->label('Hình ảnh')
@@ -174,6 +188,9 @@ class CourseResource extends Resource
                     ->label('Giá')
                     ->formatStateUsing(fn ($state) => $state ? number_format($state) . ' ₫' : '-')
                     ->color(fn ($record) => $record->is_price_visible ? null : 'gray')
+                    ->tooltip(function ($record) {
+                        return $record->is_price_visible ? null : 'Giá khóa học này không hiển thị cho người dùng';
+                    })
                     ->sortable(),
                 Tables\Columns\IconColumn::make('is_price_visible')
                     ->label('Hiển thị giá')
@@ -193,6 +210,11 @@ class CourseResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('status')
                     ->label('Trạng thái')
+                    ->tooltip(function ($record) {
+                        if ($record->status === 'draft' || $record->status === 'archived') {
+                            return 'Trạng thái này sẽ không hiển thị khóa học cho người dùng'; ;
+                        }
+                    })
                     ->formatStateUsing(fn (string $state): string => match ($state) {
                         'draft' => 'Nháp',
                         'published' => 'Hiển thị',
@@ -240,7 +262,14 @@ class CourseResource extends Resource
                         'published' => 'Hiển thị',
                         'archived' => 'Lưu trữ',
                     ])
-                    ->default(null),
+                    ->query(function (Builder $query, array $data): Builder {
+                        if (empty($data['values'])) {
+                            // Nếu không có filter nào được chọn, hiển thị mặc định (draft + published)
+                            return $query->whereIn('status', ['draft', 'published']);
+                        }
+                        // Nếu có filter được chọn, áp dụng filter đó (override query mặc định)
+                        return $query->whereIn('status', $data['values']);
+                    }),
             ])
             ->actions([
                 Tables\Actions\ActionGroup::make([
@@ -249,7 +278,8 @@ class CourseResource extends Resource
                         ->icon('heroicon-o-users')
                         ->modalHeading(fn ($record) => 'Danh sách học viên - ' . $record->title)
                         ->modalWidth('7xl')
-                        ->disabled(fn ($record) => $record->course_registrations_count === 0)
+                        ->modalSubmitAction(false)
+                        ->modalCancelAction(false)
                         ->modalContent(function ($record) {
                             $registrations = $record->course_registrations()->with('creator')->get();
                             
@@ -267,13 +297,30 @@ class CourseResource extends Resource
                     Tables\Actions\EditAction::make()
                         ->label('Chỉnh sửa')
                         ->icon('heroicon-o-pencil-square'),
+                    Tables\Actions\Action::make('archive')
+                        ->label(fn ($record) => $record->status === 'archived' ? 'Bỏ lưu trữ' : 'Lưu trữ')
+                        ->icon(fn ($record) => $record->status === 'archived' ? 'heroicon-o-archive-box-arrow-down' : 'heroicon-o-archive-box')
+                        ->color(fn ($record) => $record->status === 'archived' ? 'success' : 'warning')
+                        ->requiresConfirmation()
+                        ->modalHeading(fn ($record) => $record->status === 'archived' ? 'Bỏ lưu trữ khóa học' : 'Lưu trữ khóa học')
+                        ->modalDescription(fn ($record) => $record->status === 'archived' 
+                            ? 'Bạn có muốn bỏ lưu trữ khóa học "' . $record->title . '"? Khóa học sẽ chuyển về trạng thái nháp.'
+                            : 'Bạn có muốn lưu trữ khóa học "' . $record->title . '"? Khóa học sẽ không hiển thị cho người dùng.')
+                        ->modalSubmitActionLabel(fn ($record) => $record->status === 'archived' ? 'Bỏ lưu trữ' : 'Lưu trữ')
+                        ->action(function ($record) {
+                            $newStatus = $record->status === 'archived' ? 'draft' : 'archived';
+                            $record->update(['status' => $newStatus]);
+                            
+                            \Filament\Notifications\Notification::make()
+                                ->title($newStatus === 'archived' ? 'Đã lưu trữ khóa học' : 'Đã bỏ lưu trữ khóa học')
+                                ->body('Khóa học "' . $record->title . '" đã được ' . ($newStatus === 'archived' ? 'lưu trữ' : 'bỏ lưu trữ') . ' thành công.')
+                                ->success()
+                                ->send();
+                        }),
                     // Xóa
                     Tables\Actions\DeleteAction::make()
                         ->label(function ($record) {
-                            $paidStudentsCount = $record->course_registrations()
-                                ->where('payment_status', 'paid')
-                                ->count();
-                            return $paidStudentsCount > 0 ? 'Không thể xóa' : 'Xóa';
+                            return $record->course_registrations_count > 0 ? 'Không thể xóa' : 'Xóa';
                         })
                         ->icon('heroicon-o-trash')
                         ->successNotificationTitle('Khóa học đã được xóa thành công.')
@@ -281,12 +328,10 @@ class CourseResource extends Resource
                         ->requiresConfirmation()
                         ->modalHeading('Xóa khóa học')
                         ->modalDescription(function ($record) {
-                            $paidStudentsCount = $record->course_registrations()
-                                ->where('payment_status', 'paid')
-                                ->count();
+                            $studentsCount = $record->course_registrations_count;
                             
-                            if ($paidStudentsCount > 0) {
-                                return 'Không thể xóa khóa học này vì đã có ' . $paidStudentsCount . ' học viên đã thanh toán học phí.';
+                            if ($studentsCount > 0) {
+                                return 'Không thể xóa khóa học này vì đã có ' . $studentsCount . ' học viên đăng ký.';
                             }
                             
                             return 'Bạn có chắc chắn muốn xóa khóa học "' . $record->title . '"? Hành động này không thể hoàn tác.';
@@ -294,20 +339,14 @@ class CourseResource extends Resource
                         ->modalSubmitActionLabel('Xóa')
                         ->modalCancelActionLabel('Hủy')
                         ->disabled(function ($record) {
-                            $paidStudentsCount = $record->course_registrations()
-                                ->where('payment_status', 'paid')
-                                ->count();
-                            return $paidStudentsCount > 0;
+                            return $record->course_registrations_count > 0;
                         })
                         ->action(function ($record) {
-                            $paidStudentsCount = $record->course_registrations()
-                                ->where('payment_status', 'paid')
-                                ->count();
-                                
-                            if ($paidStudentsCount > 0) {
+                            $studentsCount = $record->course_registrations_count;
+                            if ($studentsCount > 0) {
                                 \Filament\Notifications\Notification::make()
                                     ->title('Không thể xóa')
-                                    ->body('Khóa học này đã có ' . $paidStudentsCount . ' học viên đã thanh toán học phí, không thể xóa.')
+                                    ->body('Khóa học này đã có ' . $studentsCount . ' học viên đăng ký, không thể xóa.')
                                     ->danger()
                                     ->send();
                                 return false;
@@ -318,7 +357,7 @@ class CourseResource extends Resource
                 ->icon('heroicon-o-ellipsis-vertical')
                 ->color('gray')
                 ->tooltip('Thao tác')
-                ->extraAttributes(['class' => 'border-gray-500 border'])
+                ->extraAttributes(['class' => 'border'])
                 ->iconButton()
             ])
             ->bulkActions([

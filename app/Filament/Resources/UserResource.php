@@ -21,7 +21,7 @@ class UserResource extends Resource
 
     protected static ?int $navigationSort = 1;
     
-    protected static ?string $navigationGroup = 'Người dùng';
+    protected static ?string $navigationGroup = 'Trang web';
 
     public static function getModelLabel(): string
     {
