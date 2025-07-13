@@ -10,11 +10,11 @@ class RoomController extends Controller
     function index()
     {
         $rooms = Room::all();
-        return view('room', ['rooms' => $rooms]);
+        return view('rooms.index', ['rooms' => $rooms]);
     }
     function show($id)
     {
         $room = Room::findOrFail($id);
-        return view('room-detail', ['room' => $room]);
+        return view('rooms.detail', ['room' => $room]);
     }
 }

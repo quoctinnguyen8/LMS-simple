@@ -672,8 +672,157 @@ select {
     border-radius: 4px;
     margin-top: 10px;
 }
+
 .alert-danger {
     background-color: #f8d7da;
     color: #721c24;
     border: 1px solid #f5c6cb;
+}
+/* slider */
+.slider {
+    position: relative;
+    max-width: 1200px;
+    margin: 0 auto;
+    overflow: hidden;
+    border-radius: 12px; /* Bo góc nhẹ hơn */
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08); /* Bóng mờ nhẹ hơn */
+}
+
+.slider-container {
+    position: relative;
+    width: 100%;
+    height: 450px;
+}
+
+.slide {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateX(15px); /* Giảm dịch chuyển để nhẹ nhàng hơn */
+    transition: opacity 1s cubic-bezier(0.33, 0, 0, 1), transform 1s cubic-bezier(0.33, 0, 0, 1), visibility 1s; /* Chuyển động mượt mà hơn */
+    cursor: pointer;
+    will-change: opacity, transform;
+}
+
+.slide.active {
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(0);
+}
+
+.slide img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    filter: brightness(0.95); /* Tăng độ sáng nhẹ để dễ nhìn */
+}
+
+.slide-content {
+    position: absolute;
+    bottom: 30px;
+    left: 30px;
+    color: white;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5); /* Giảm text-shadow để nhẹ nhàng hơn */
+    font-family: 'Roboto', sans-serif;
+    font-size: 1.4rem;
+    max-width: 60%;
+}
+
+.slide-content h2 {
+    margin: 0;
+    font-size: 1.8rem; /* Giảm kích thước chữ để tránh áp đảo */
+    font-weight: 600;
+}
+
+.slide-content p {
+    margin: 5px 0 0;
+    font-size: 0.9rem;
+}
+
+.slider-prev, .slider-next {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(0, 102, 204, 0.6); /* Giảm độ tương phản của nút */
+    color: white;
+    border: none;
+    padding: 10px 16px;
+    cursor: pointer;
+    font-size: 18px;
+    border-radius: 8px;
+    transition: background 0.4s ease, transform 0.3s ease; /* Hiệu ứng hover chậm hơn */
+}
+
+.slider-prev:hover, .slider-next:hover {
+    background: rgba(0, 102, 204, 0.8);
+    transform: translateY(-50%) scale(1.05); /* Giảm độ phóng to khi hover */
+}
+
+.slider-prev {
+    left: 15px;
+}
+
+.slider-next {
+    right: 15px;
+}
+
+.slider-dots {
+    text-align: center;
+    padding: 15px 0;
+}
+
+.dot {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    margin: 0 6px;
+    background: #d0d0d0; /* Màu xám nhẹ hơn, dễ nhìn */
+    border-radius: 50%;
+    cursor: pointer;
+    transition: background 0.4s ease, transform 0.3s ease;
+}
+
+.dot.active {
+    background: #0066cc;
+    transform: scale(1.1); /* Giảm độ phóng to khi active */
+}
+
+.dot:hover {
+    background: #80aaff; /* Màu hover nhẹ hơn */
+}
+
+/* Fade animation keyframes */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateX(15px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes fadeOut {
+    from {
+        opacity: 1;
+        transform: translateX(0);
+    }
+    to {
+        opacity: 0;
+        transform: translateX(-15px);
+    }
+}
+
+.slide.active {
+    animation: fadeIn 1s cubic-bezier(0.33, 0, 0, 1);
+}
+
+.slide:not(.active) {
+    animation: fadeOut 1s cubic-bezier(0.33, 0, 0, 1);
 }

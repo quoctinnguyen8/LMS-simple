@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Room;
 use App\Models\Course;
+use App\Models\Slider;
 
 class HomeController extends Controller
 {
@@ -12,6 +13,7 @@ class HomeController extends Controller
     {
         $rooms = Room::all();
         $courses = Course::all();
-        return view('home', compact('rooms', 'courses'));
+        $slides = Slider::where('is_active', 1)->orderBy('position', 'asc')->get();
+        return view('home', compact('rooms', 'courses', 'slides'));
     }
 }

@@ -14,7 +14,7 @@ class CourseController extends Controller
     public function index()
     {
         $courses = Course::all();
-        return view('course', ['courses' => $courses]);
+        return view('courses.index', ['courses' => $courses]);
     }
     public function show($id)
     {
@@ -23,7 +23,7 @@ class CourseController extends Controller
             ->where('id', '!=', $id)
             ->take(3)
             ->get();
-        return view('course-detail')->with('course', $course)
+        return view('courses.detail')->with('course', $course)
             ->with('relatedCourses', $relatedCourses);
     }
 
