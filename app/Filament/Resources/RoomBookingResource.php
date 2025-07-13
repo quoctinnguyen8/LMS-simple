@@ -232,6 +232,12 @@ class RoomBookingResource extends Resource
                             return 'Lỗi giờ';
                         }
                     }),
+                
+                Tables\Columns\TextColumn::make('is_duplicate')
+                    ->label('Trùng lịch')
+                    ->badge()
+                    ->formatStateUsing(fn (bool $state): string => $state ? 'Có' : 'Không')
+                    ->color(fn (bool $state): string => $state ? 'danger' : 'success'),
 
                 Tables\Columns\TextColumn::make('repeat_days')
                     ->label('Ngày lặp lại')
@@ -248,7 +254,8 @@ class RoomBookingResource extends Resource
                             'saturday' => 'T7',
                             'sunday' => 'CN',
                         ];
-                        $days = array_map(fn($day) => $dayNames[$day] ?? $day, $state);
+                        $arrayState = explode(',', $state);
+                        $days = array_map(fn($day) => $dayNames[trim($day)] ??  $day, $arrayState);
                         return implode(', ', $days);
                     })
                     ->toggleable(isToggledHiddenByDefault: true),

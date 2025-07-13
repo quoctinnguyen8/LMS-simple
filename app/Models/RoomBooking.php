@@ -61,6 +61,7 @@ class RoomBooking extends Model
 		'participants_count',
 		'notes',
 		'status',
+		'is_duplicate',
 		'approved_by',
 		'rejected_by',
 		'cancelled_by',
