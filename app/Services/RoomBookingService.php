@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\RoomBookingDetail;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
@@ -28,7 +29,7 @@ class RoomBookingService
         return $data;
     }
 
-    public function createBookingDetails($record, $data): void
+    public function createBookingDetails($record, $data, $isCreateAction = true): void
     {
         $totalDays = 0;
         $hasConflicts = false;
@@ -108,9 +109,10 @@ class RoomBookingService
         }
 
         // Thông báo cho booking thường
+        $actionName = $isCreateAction ? 'Tạo' : 'Cập nhật';
         \Filament\Notifications\Notification::make()
-            ->title('Tạo đặt phòng thành công')
-            ->body('Đã tạo đặt phòng cho ' . $totalDays . ' ngày' .
+            ->title($actionName . ' đặt phòng thành công')
+            ->body('Đã ' . strtolower($actionName) . ' đặt phòng cho ' . $totalDays . ' ngày' .
             ($hasConflicts ? ' (có xung đột lịch)' : ''))
             ->success()
             ->when($hasConflicts, fn ($notification) => $notification->warning()->icon('heroicon-o-exclamation-triangle'))
@@ -135,5 +137,11 @@ class RoomBookingService
             })->exists();
 
         return $conflicts;
+    }
+
+    // Xóa chi tiết đặt phòng
+    public function deleteBookingDetails($bookingId): void
+    {
+        RoomBookingDetail::where('room_booking_id', $bookingId)->delete();
     }
 }
