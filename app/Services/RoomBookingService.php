@@ -33,6 +33,14 @@ class RoomBookingService
     {
         $totalDays = 0;
         $hasConflicts = false;
+        $BookingApproved = false;
+        if (!$isCreateAction) {
+            //kiêm tra booking đã duyệt hay chưa
+            if ($record->status === 'approved') {
+                $BookingApproved = true;
+            }
+        }
+        $staus = $BookingApproved ? 'approved' : 'pending';
 
         Log::info('createBookingDetails called', ['record_id' => $record->id, 'data' => $data]);
 
@@ -65,13 +73,13 @@ class RoomBookingService
             // Tạo các bản ghi chi tiết cho từng ngày lặp lại
             foreach ($repeatDates as $date) {
                 // Kiểm tra xung đột lịch
-                $conflicts = $this->checkConflict($record->room_id, $data['start_time'], $data['end_time'], $date);
+                $conflicts = $this->checkConflict($record->room_id, $data['start_time'], $data['end_time'], $date, $record->id);
                 \App\Models\RoomBookingDetail::create([
                     'room_booking_id' => $record->id,
                     'booking_date' => $date,
                     'start_time' => $data['start_time'],
                     'end_time' => $data['end_time'],
-                    'status' => 'pending',
+                    'status' => $staus,
                     'created_at' => now(),
                     'updated_at' => now(),
                 ]);
@@ -85,13 +93,13 @@ class RoomBookingService
             // Nếu không có repeat_days thì tạo chi tiết cho từng ngày đơn lẻ
             for ($date = $startDate; $date->lte($endDate); $date->addDay()) {
                 // Kiểm tra xung đột lịch
-                $conflicts = $this->checkConflict($record->room_id, $data['start_time'], $data['end_time'], $date->format('Y-m-d'));
+                $conflicts = $this->checkConflict($record->room_id, $data['start_time'], $data['end_time'], $date, $record->id);
                 \App\Models\RoomBookingDetail::create([
                     'room_booking_id' => $record->id,
-                    'booking_date' => $date->format('Y-m-d'),
+                    'booking_date' => $date,
                     'start_time' => $data['start_time'],
                     'end_time' => $data['end_time'],
-                    'status' => 'pending',
+                    'status' => $staus,
                     'created_at' => now(),
                     'updated_at' => now(),
                 ]);
@@ -106,6 +114,8 @@ class RoomBookingService
         // Cập nhật trạng thái xung đột vào booking chính
         if ($hasConflicts) {
             $record->update(['is_duplicate' => true]);
+        } else {
+            $record->update(['is_duplicate' => false]);
         }
 
         // Thông báo cho booking thường
@@ -113,18 +123,19 @@ class RoomBookingService
         \Filament\Notifications\Notification::make()
             ->title($actionName . ' đặt phòng thành công')
             ->body('Đã ' . strtolower($actionName) . ' đặt phòng cho ' . $totalDays . ' ngày' .
-            ($hasConflicts ? ' (có xung đột lịch)' : ''))
+                ($hasConflicts ? ' (có xung đột lịch)' : ''))
             ->success()
-            ->when($hasConflicts, fn ($notification) => $notification->warning()->icon('heroicon-o-exclamation-triangle'))
+            ->when($hasConflicts, fn($notification) => $notification->warning()->icon('heroicon-o-exclamation-triangle'))
             ->send();
     }
     //hàm check xung đột lịch
-    public function checkConflict($roomId, $startTime, $endTime, $bookingDate): bool
+    public function checkConflict($roomId, $startTime, $endTime, $bookingDate, $bookingId): bool
     {
-        $conflicts = \App\Models\RoomBookingDetail::whereHas('room_booking', function ($query) use ($roomId) {
+        $conflicts = \App\Models\RoomBookingDetail::whereHas('room_booking', function ($query) use ($roomId, $bookingId) {
+            // Chỉ lấy các booking không bị hủy hoặc từ chối
             $query->where('room_id', $roomId)
-                ->where('status', '!=', 'cancelled')
-                ->where('status', '!=', 'rejected');
+                ->where('status', 'approved')
+                ->where('id', '!=', $bookingId); // Loại trừ booking hiện tại nếu có
         })
             ->where('booking_date', $bookingDate)
             ->where(function ($query) use ($startTime, $endTime) {
@@ -142,6 +153,36 @@ class RoomBookingService
     // Xóa chi tiết đặt phòng
     public function deleteBookingDetails($bookingId): void
     {
+        $booking = \App\Models\RoomBooking::find($bookingId);
+        if ($booking->status === 'approved') {
+            RoomBookingDetail::where('room_booking_id', $bookingId)
+                ->where('booking_date', '>', now()->format('Y-m-d'))
+                ->delete();
+            return;
+        }
         RoomBookingDetail::where('room_booking_id', $bookingId)->delete();
+    }
+
+    //duyệt lại toàn bộ những booking detail khác liên quan đến phòng này và cập thật trạng thái is_duplicate cho booking đó
+    public function updateDuplicateStatus($roomId): void
+    {
+        // Lấy tất cả các booking liên quan đến phòng này
+        $bookings = \App\Models\RoomBooking::where('room_id', $roomId)
+            ->where('status', 'pending')
+            ->get();
+        foreach ($bookings as $booking) {
+            // Lấy tất cả các chi tiết đặt phòng liên quan đến booking này
+            $bookingDetails = \App\Models\RoomBookingDetail::where('room_booking_id', $booking->id)->get();
+            foreach ($bookingDetails as $detail) {
+                if ($this->checkConflict($booking->room_id, $detail->start_time, $detail->end_time, $detail->booking_date, $booking->id)) {
+                    // Nếu có xung đột, cập nhật trạng thái is_duplicate
+                    $booking->update(['is_duplicate' => true]);
+                    break;
+                } else {
+                    // Nếu không có xung đột, cập nhật trạng thái is_duplicate là false
+                    $booking->update(['is_duplicate' => false]);
+                }
+            }
+        }
     }
 }
