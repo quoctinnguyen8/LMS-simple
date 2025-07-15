@@ -12,15 +12,6 @@ class InitialDataSeeder extends Seeder
      */
     public function run(): void
     {
-        // Insert some initial settings
-        DB::table('settings')->insert([
-            ['setting_key' => 'center_name', 'setting_value' => 'Learning Center', 'created_at' => now(), 'updated_at' => now()],
-            ['setting_key' => 'address', 'setting_value' => '123 Education Street, Knowledge City', 'created_at' => now(), 'updated_at' => now()],
-            ['setting_key' => 'phone', 'setting_value' => '+1234567890', 'created_at' => now(), 'updated_at' => now()],
-            ['setting_key' => 'email', 'setting_value' => 'contact@learningcenter.com', 'created_at' => now(), 'updated_at' => now()],
-            ['setting_key' => 'logo', 'setting_value' => 'logo.png', 'created_at' => now(), 'updated_at' => now()],
-        ]);
-
         // Insert sample rooms
         DB::table('rooms')->insert([
             [
