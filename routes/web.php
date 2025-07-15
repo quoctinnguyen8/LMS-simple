@@ -12,3 +12,4 @@ Route::get('/courses/{id}', [CourseController::class, 'show'])->name('courses.sh
 Route::post('/courses/registration/', [CourseController::class, 'course_registration'])->name('courses.registration');
 Route::get('/rooms', [RoomController::class, 'index'])->name('rooms.index');
 Route::get('/rooms/{id}', [RoomController::class, 'show'])->name('rooms.show');
+Route::post('/rooms/bookings', [RoomController::class, 'roomBookings'])->name('rooms.bookings');

@@ -17,7 +17,7 @@ class EditRoomBooking extends EditRecord
         return [];
     }
 
-    // chặn truy cập nếu status không phải là 'pending', 'approved'
+        // chặn truy cập nếu status không phải là 'pending', 'approved'
     public function mount(int|string $record): void
     {
         parent::mount($record);

@@ -16,10 +16,13 @@
                 </p>
                 <p id="room-description"><strong>Mô tả:</strong> {{ $room->description }}</p>
                 <p id="room-location"><strong>Vị trí:</strong> {{ $room->location }}</p>
-                <p id="room-equipment"><strong>Trang thiết bị:</strong>
+                <p id="room-equipment"><strong>Trang thiết bị có sẵn:</strong>
                     @foreach ($room->equipment as $equipment)
                         {{ $equipment->name }}{{ !$loop->last ? ', ' : '' }}
                     @endforeach
+                    @if ($room->equipment->isEmpty())
+                        Không có trang thiết bị
+                    @endif
                 </p>
             </div>
             <div class="room-image">
@@ -31,32 +34,49 @@
                 <!-- Calendar will be added here in future -->
                 <div class="calendar-placeholder">
                     <h2>Lịch đặt phòng</h2>
-                    <p>Xem trước lịch đặt phòng của phòng này</p>
+                    @if ($bookingDetails->isEmpty())
+                        <p>Chưa có lịch sử đặt phòng.</p>
+                    @else
+                        <ul class="booking-list">
+                            @foreach ($bookingDetails as $booking)
+                                <li class="booking-item">
+                                    <strong>{{ $booking->booking_date->format('d/m/Y') }}</strong>
+                                    <span class="booking-time">({{ $booking->start_time->format('H:i') }} -
+                                        {{ $booking->end_time->format('H:i') }})</span>
+                                </li>
+                            @endforeach
+                        </ul>
+                    @endif
                 </div>
             </div>
 
-            <form class="booking-form">
+            <form class="booking-form" action="{{ route('rooms.bookings') }}" method="POST">
+                @csrf
+                <input type="hidden" name="room_id" value="{{ $room->id }}">
                 <h2>Đặt phòng</h2>
-                <div class="form-group">
-                    <label for="room-name">Họ và tên</label>
-                    <input type="text" id="room-name" required>
+                <div class="form-row">
+                    <div class="form-group half">
+                        <x-app-input name="name" label="Họ và tên" required />
+                    </div>
+                    <div class="form-group half">
+                        <x-app-input name="email" type="email" label="Email" required />
+                    </div>
+                    <div class="form-group half">
+                        <x-app-input name="phone" type="tel" label="Số điện thoại" required />
+                    </div>
                 </div>
-
-                <div class="form-group">
-                    <label for="room-email">Email</label>
-                    <input type="email" id="room-email" required>
+                <div class="form-row">
+                    <div class="form-group half">
+                        <x-app-input name="reason" label="Lý do đặt phòng" required />
+                    </div>
+                    <div class="form-group half">
+                        <x-app-input name="participants_count" type="number" label="Số người tham gia" required />
+                    </div>
                 </div>
-
                 <div class="form-group">
-                    <label for="room-title">Tiêu đề đặt phòng</label>
-                    <input type="text" id="room-title" required>
+                    <label for="notes">Ghi chú</label>
+                    <textarea id="notes" name="notes" rows="3" placeholder="Ghi chú"></textarea>
                 </div>
-
-                <div class="form-group">
-                    <label for="room-purpose">Mục đích sử dụng</label>
-                    <input type="text" id="room-purpose" required>
-                </div>
-
                 <div class="form-group">
                     <label for="room-type">Loại đặt phòng</label>
                     <select id="room-type" onchange="toggleRecurrence(this.value)">
@@ -68,35 +88,31 @@
                 <div id="recurrence-days" class="form-group hidden">
                     <label>Chọn ngày trong tuần</label>
                     <div class="checkbox-group">
-                        <label><input type="checkbox" name="recurrence-days" value="0"> Chủ nhật</label>
-                        <label><input type="checkbox" name="recurrence-days" value="1"> Thứ 2</label>
-                        <label><input type="checkbox" name="recurrence-days" value="2"> Thứ 3</label>
-                        <label><input type="checkbox" name="recurrence-days" value="3"> Thứ 4</label>
-                        <label><input type="checkbox" name="recurrence-days" value="4"> Thứ 5</label>
-                        <label><input type="checkbox" name="recurrence-days" value="5"> Thứ 6</label>
-                        <label><input type="checkbox" name="recurrence-days" value="6"> Thứ 7</label>
+                        <label><input type="checkbox" name="repeat_days[]" value="monday"> Thứ 2</label>
+                        <label><input type="checkbox" name="repeat_days[]" value="tuesday"> Thứ 3</label>
+                        <label><input type="checkbox" name="repeat_days[]" value="wednesday"> Thứ 4</label>
+                        <label><input type="checkbox" name="repeat_days[]" value="thursday"> Thứ 5</label>
+                        <label><input type="checkbox" name="repeat_days[]" value="friday"> Thứ 6</label>
+                        <label><input type="checkbox" name="repeat_days[]" value="saturday"> Thứ 7</label>
+                        <label><input type="checkbox" name="repeat_days[]" value="sunday"> Chủ nhật</label>
                     </div>
                 </div>
 
                 <div class="form-row">
                     <div class="form-group half">
-                        <label for="room-start-date">Ngày bắt đầu</label>
-                        <input type="date" id="room-start-date" min="2025-07-12" required>
+                        <x-app-input name="start_date" type="date" label="Ngày bắt đầu" required />
                     </div>
                     <div class="form-group half">
-                        <label for="room-end-date">Ngày kết thúc</label>
-                        <input type="date" id="room-end-date" min="2025-07-12" required>
+                        <x-app-input name="end_date" type="date" label="Ngày kết thúc" required />
                     </div>
                 </div>
 
                 <div class="form-row">
                     <div class="form-group half">
-                        <label for="room-start-time">Giờ bắt đầu</label>
-                        <input type="time" id="room-start-time" required>
+                        <x-app-input name="start_time" type="time" label="Giờ bắt đầu" required />
                     </div>
                     <div class="form-group half">
-                        <label for="room-end-time">Giờ kết thúc</label>
-                        <input type="time" id="room-end-time" required>
+                        <x-app-input name="end_time" type="time" label="Giờ kết thúc" required />
                     </div>
                 </div>
 
