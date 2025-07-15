@@ -386,6 +386,20 @@ class RoomBookingResource extends Resource
                 // group actions
                 Tables\Actions\ActionGroup::make([
                     Tables\Actions\ViewAction::make(),
+                    //thêm cái nút chỗ action tên là xem ngày đặt phòng, nhấn vào nó hiện modal, show hết data của details
+                    Tables\Actions\Action::make('view_details')
+                        ->label('Xem ngày đặt phòng')
+                        ->icon('heroicon-o-calendar')
+                        ->modalHeading(fn($record) => 'Chi tiết đặt phòng - ' . $record->booking_code)
+                        ->modalWidth('7xl')
+                        ->modalSubmitAction(false)
+                        ->modalCancelAction(false)
+                        ->modalContent(function ($record) {
+                            return view('filament.components.booking-details-list', [
+                                'booking' => $record,
+                                'details' => $record->room_booking_details()->orderBy('booking_date')->get(),
+                            ]);
+                        }),
                     // thêm chức năng duyệt, từ chối, hủy đặt phòng
                     Tables\Actions\Action::make('approve')
                         ->label('Duyệt yêu cầu đặt phòng')
