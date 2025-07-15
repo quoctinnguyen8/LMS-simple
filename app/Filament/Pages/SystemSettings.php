@@ -14,6 +14,7 @@ use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Section;
+use Filament\Forms\Components\Select;
 
 class SystemSettings extends Page
 {
@@ -43,6 +44,9 @@ class SystemSettings extends Page
                 'zalo_embed' => $settings['zalo_embed'] ?? '',
                 'custom_css' => $settings['custom_css'] ?? '',
                 'custom_js' => $settings['custom_js'] ?? '',
+                'course_unit' => $settings['course_unit'] ?? 'khóa',
+                'room_rental_unit' => $settings['room_rental_unit'] ?? 'buổi',
+                'room_unit_to_hour' => $settings['room_unit_to_hour'] ?? '1',
             ]);
         } catch (\Exception $e) {
             // Fallback nếu có lỗi
@@ -58,6 +62,9 @@ class SystemSettings extends Page
                 'zalo_embed' => '',
                 'custom_css' => '',
                 'custom_js' => '',
+                'course_unit' => 'khóa',
+                'room_rental_unit' => 'buổi',
+                'room_unit_to_hour' => '1',
             ]);
         }
     }
@@ -94,11 +101,13 @@ class SystemSettings extends Page
                     ->description('Logo và nội dung giới thiệu')
                     ->schema([
                         FileUpload::make('logo')
-                            ->label('Logo trung tâm')
+                            ->label('Logo')
                             ->image()
                             ->directory('logos')
                             ->visibility('public')
                             ->imageEditor()
+                            ->acceptedFileTypes(['image/*'])
+                            ->required()
                             ->imageEditorAspectRatios([
                                 '16:9',
                                 '4:3',
@@ -123,8 +132,53 @@ class SystemSettings extends Page
                                 'underline',
                                 'undo',
                             ])
+                            ->helperText('Nội dung sẽ hiển thị trên trang chủ')
                             ->columnSpanFull(),
                     ]),
+
+                Section::make('Cài đặt đơn vị tính tiền')
+                    ->description('Cấu hình đơn vị tính tiền cho khóa học và thuê phòng')
+                    ->schema([
+                        Select::make('course_unit')
+                            ->label('Đơn vị tính tiền khóa học')
+                            ->options([
+                                'buổi' => 'Buổi',
+                                'khóa' => 'Khóa',
+                                'tháng' => 'Tháng',
+                                'học phần' => 'Học phần',
+                                'tuần' => 'Tuần',
+                                'kỳ' => 'Kỳ',
+                                'năm' => 'Năm',
+                            ])
+                            ->default('khóa')
+                            ->required()
+                            ->helperText('Chọn đơn vị tính tiền cho khóa học'),
+                        
+                        Select::make('room_rental_unit')
+                            ->label('Đơn vị tính tiền thuê phòng')
+                            ->options([
+                                'giờ' => 'Giờ',
+                                'buổi' => 'Buổi',
+                                'ngày' => 'Ngày',
+                                'tuần' => 'Tuần',
+                                'tháng' => 'Tháng',
+                            ])
+                            ->default('buổi')
+                            ->required()
+                            ->helperText('Chọn đơn vị tính tiền cho thuê phòng'),
+                        
+                        TextInput::make('room_unit_to_hour')
+                            ->label('Quy đổi đ.vị tính tiền thuê phòng sang giờ')
+                            ->placeholder('1')
+                            ->helperText('1 đơn vị = ? giờ (Ví dụ: 1 buổi = 4 giờ thì nhập 4)')
+                            ->numeric()
+                            ->step(0.1)
+                            ->minValue(0.1)
+                            ->default('1')
+                            ->required()
+                            ->suffix('giờ'),
+                    ])
+                    ->columns(3),
 
                 Section::make('Tích hợp mạng xã hội')
                     ->description('Nhúng bản đồ, fanpage và zalo')

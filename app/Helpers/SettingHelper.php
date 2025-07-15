@@ -70,6 +70,50 @@ class SettingHelper
             'zalo_embed' => self::get('zalo_embed', ''),
             'custom_css' => self::get('custom_css', ''),
             'custom_js' => self::get('custom_js', ''),
+            'course_unit' => self::get('course_unit', 'khóa'),
+            'room_rental_unit' => self::get('room_rental_unit', 'buổi'),
+            'room_unit_to_hour' => self::get('room_unit_to_hour', '1'),
         ];
+    }
+
+    /**
+     * Get course unit setting
+     */
+    public static function getCourseUnit(): string
+    {
+        return self::get('course_unit', 'khóa');
+    }
+
+    /**
+     * Get room rental unit setting
+     */
+    public static function getRoomRentalUnit(): string
+    {
+        return self::get('room_rental_unit', 'buổi');
+    }
+
+    /**
+     * Get room unit to hour conversion rate
+     */
+    public static function getRoomUnitToHour(): float
+    {
+        return (float) self::get('room_unit_to_hour', '1');
+    }
+
+    /**
+     * Convert room units to hours
+     */
+    public static function convertRoomUnitsToHours(float $units): float
+    {
+        return $units * self::getRoomUnitToHour();
+    }
+
+    /**
+     * Convert hours to room units
+     */
+    public static function convertHoursToRoomUnits(float $hours): float
+    {
+        $rate = self::getRoomUnitToHour();
+        return $rate > 0 ? $hours / $rate : $hours;
     }
 }

@@ -46,6 +46,25 @@
         @endif
     </div>
 
+    {{-- Pricing Units --}}
+    <div class="pricing-units">
+        <h3>Đơn vị tính tiền</h3>
+        @if(!empty($settings['course_unit']))
+            <div class="pricing-unit">
+                <strong>Khóa học:</strong> {{ $settings['course_unit'] }}
+            </div>
+        @endif
+
+        @if(!empty($settings['room_rental_unit']))
+            <div class="pricing-unit">
+                <strong>Thuê phòng:</strong> {{ $settings['room_rental_unit'] }}
+                @if(!empty($settings['room_unit_to_hour']) && $settings['room_unit_to_hour'] != '1')
+                    (1 {{ $settings['room_rental_unit'] }} = {{ $settings['room_unit_to_hour'] }} giờ)
+                @endif
+            </div>
+        @endif
+    </div>
+
     {{-- Google Map --}}
     @if(!empty($settings['google_map']))
         <div class="google-map">
@@ -130,6 +149,24 @@
 
 .phone a:hover, .email a:hover {
     text-decoration: underline;
+}
+
+.pricing-units {
+    margin-bottom: 30px;
+    padding: 20px;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+}
+
+.pricing-units h3 {
+    font-size: 1.5rem;
+    margin-bottom: 15px;
+    color: #333;
+}
+
+.pricing-unit {
+    margin-bottom: 10px;
+    font-size: 1.1rem;
 }
 
 .google-map, .facebook-fanpage, .zalo-embed {
