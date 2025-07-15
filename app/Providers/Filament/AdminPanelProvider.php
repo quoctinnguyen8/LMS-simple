@@ -2,6 +2,8 @@
 
 namespace App\Providers\Filament;
 
+use App\Helpers\SettingHelper;
+use App\Models\Setting;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
@@ -26,6 +28,7 @@ class AdminPanelProvider extends PanelProvider
             ->default()
             ->id('admin')
             ->path('admin')
+            ->brandName(SettingHelper::getSystemInfo()['center_name'] ?? 'Learning Center')
             ->login()
             ->colors([
                 'primary' => Color::Amber,
