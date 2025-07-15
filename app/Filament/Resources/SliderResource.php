@@ -172,9 +172,7 @@ class SliderResource extends Resource
             ])
             ->actions([
                 Tables\Actions\ActionGroup::make([
-                    Tables\Actions\ViewAction::make()
-                        ->label('Xem')
-                        ->icon('heroicon-o-eye'),
+                    Tables\Actions\ViewAction::make(),
                     Tables\Actions\EditAction::make()
                         ->label('Sửa')
                         ->icon('heroicon-o-pencil-square'),
@@ -231,6 +229,7 @@ class SliderResource extends Resource
             'index' => Pages\ListSliders::route('/'),
             'create' => Pages\CreateSlider::route('/create'),
             'edit' => Pages\EditSlider::route('/{record}/edit'),
+            'view' => Pages\ViewSlider::route('/{record}'),
         ];
     }
 }
