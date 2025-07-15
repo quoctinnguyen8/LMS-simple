@@ -4,6 +4,7 @@ namespace App\Helpers;
 
 use App\Models\Setting;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Log;
 
 class SettingHelper
 {
@@ -12,10 +13,15 @@ class SettingHelper
      */
     public static function get(string $key, mixed $default = null): mixed
     {
-        return Cache::remember("setting_{$key}", 3600, function () use ($key, $default) {
-            $setting = Setting::where('setting_key', $key)->first();
-            return $setting ? $setting->setting_value : $default;
-        });
+        try {
+            return Cache::remember("setting_{$key}", 3600, function () use ($key, $default) {
+                $setting = Setting::where('setting_key', $key)->first();
+                return $setting ? $setting->setting_value : $default;
+            });
+        } catch (\Exception $e) {
+            Log::error("Error getting setting '{$key}': " . $e->getMessage());
+            return $default;
+        }
     }
 
     /**
@@ -23,12 +29,17 @@ class SettingHelper
      */
     public static function set(string $key, mixed $value): void
     {
-        Setting::updateOrCreate(
-            ['setting_key' => $key],
-            ['setting_value' => $value]
-        );
-        
-        Cache::forget("setting_{$key}");
+        try {
+            Setting::updateOrCreate(
+                ['setting_key' => $key],
+                ['setting_value' => $value]
+            );
+            
+            Cache::forget("setting_{$key}");
+        } catch (\Exception $e) {
+            Log::error("Error setting '{$key}': " . $e->getMessage());
+            throw $e; // Re-throw để caller biết có lỗi
+        }
     }
 
     /**
@@ -36,9 +47,14 @@ class SettingHelper
      */
     public static function all(): array
     {
-        return Cache::remember('all_settings', 3600, function () {
-            return Setting::pluck('setting_value', 'setting_key')->toArray();
-        });
+        try {
+            return Cache::remember('all_settings', 3600, function () {
+                return Setting::pluck('setting_value', 'setting_key')->toArray();
+            });
+        } catch (\Exception $e) {
+            Log::error("Error getting all settings: " . $e->getMessage());
+            return [];
+        }
     }
 
     /**
@@ -46,11 +62,16 @@ class SettingHelper
      */
     public static function clearCache(): void
     {
-        $settings = Setting::all();
-        foreach ($settings as $setting) {
-            Cache::forget("setting_{$setting->setting_key}");
+        try {
+            $settings = Setting::all();
+            foreach ($settings as $setting) {
+                Cache::forget("setting_{$setting->setting_key}");
+            }
+            Cache::forget('all_settings');
+        } catch (\Exception $e) {
+            Log::error("Error clearing settings cache: " . $e->getMessage());
+            // Không throw lại vì clear cache không quan trọng lắm
         }
-        Cache::forget('all_settings');
     }
 
     /**
@@ -58,22 +79,42 @@ class SettingHelper
      */
     public static function getSystemInfo(): array
     {
-        return [
-            'center_name' => self::get('center_name', ''),
-            'address' => self::get('address', ''),
-            'phone' => self::get('phone', ''),
-            'email' => self::get('email', ''),
-            'logo' => self::get('logo', ''),
-            'description' => self::get('description', ''),
-            'google_map' => self::get('google_map', ''),
-            'facebook_fanpage' => self::get('facebook_fanpage', ''),
-            'zalo_embed' => self::get('zalo_embed', ''),
-            'custom_css' => self::get('custom_css', ''),
-            'custom_js' => self::get('custom_js', ''),
-            'course_unit' => self::get('course_unit', 'khóa'),
-            'room_rental_unit' => self::get('room_rental_unit', 'buổi'),
-            'room_unit_to_hour' => self::get('room_unit_to_hour', '1'),
-        ];
+        try {
+            return [
+                'center_name' => self::get('center_name', ''),
+                'address' => self::get('address', ''),
+                'phone' => self::get('phone', ''),
+                'email' => self::get('email', ''),
+                'logo' => self::get('logo', ''),
+                'description' => self::get('description', ''),
+                'google_map' => self::get('google_map', ''),
+                'facebook_fanpage' => self::get('facebook_fanpage', ''),
+                'zalo_embed' => self::get('zalo_embed', ''),
+                'custom_css' => self::get('custom_css', ''),
+                'custom_js' => self::get('custom_js', ''),
+                'course_unit' => self::get('course_unit', 'khóa'),
+                'room_rental_unit' => self::get('room_rental_unit', 'buổi'),
+                'room_unit_to_hour' => self::get('room_unit_to_hour', '1'),
+            ];
+        } catch (\Exception $e) {
+            Log::error("Error getting system info: " . $e->getMessage());
+            return [
+                'center_name' => '',
+                'address' => '',
+                'phone' => '',
+                'email' => '',
+                'logo' => '',
+                'description' => '',
+                'google_map' => '',
+                'facebook_fanpage' => '',
+                'zalo_embed' => '',
+                'custom_css' => '',
+                'custom_js' => '',
+                'course_unit' => 'khóa',
+                'room_rental_unit' => 'buổi',
+                'room_unit_to_hour' => '1',
+            ];
+        }
     }
 
     /**
@@ -81,7 +122,12 @@ class SettingHelper
      */
     public static function getCourseUnit(): string
     {
-        return self::get('course_unit', 'khóa');
+        try {
+            return self::get('course_unit', 'khóa');
+        } catch (\Exception $e) {
+            Log::error("Error getting course unit: " . $e->getMessage());
+            return 'khóa';
+        }
     }
 
     /**
@@ -89,7 +135,12 @@ class SettingHelper
      */
     public static function getRoomRentalUnit(): string
     {
-        return self::get('room_rental_unit', 'buổi');
+        try {
+            return self::get('room_rental_unit', 'buổi');
+        } catch (\Exception $e) {
+            Log::error("Error getting room rental unit: " . $e->getMessage());
+            return 'buổi';
+        }
     }
 
     /**
@@ -97,7 +148,12 @@ class SettingHelper
      */
     public static function getRoomUnitToHour(): float
     {
-        return (float) self::get('room_unit_to_hour', '1');
+        try {
+            return (float) self::get('room_unit_to_hour', '1');
+        } catch (\Exception $e) {
+            Log::error("Error getting room unit to hour: " . $e->getMessage());
+            return 1.0;
+        }
     }
 
     /**
@@ -105,7 +161,12 @@ class SettingHelper
      */
     public static function convertRoomUnitsToHours(float $units): float
     {
-        return $units * self::getRoomUnitToHour();
+        try {
+            return $units * self::getRoomUnitToHour();
+        } catch (\Exception $e) {
+            Log::error("Error converting room units to hours: " . $e->getMessage());
+            return $units; // Fallback: trả về giá trị gốc
+        }
     }
 
     /**
@@ -113,7 +174,12 @@ class SettingHelper
      */
     public static function convertHoursToRoomUnits(float $hours): float
     {
-        $rate = self::getRoomUnitToHour();
-        return $rate > 0 ? $hours / $rate : $hours;
+        try {
+            $rate = self::getRoomUnitToHour();
+            return $rate > 0 ? $hours / $rate : $hours;
+        } catch (\Exception $e) {
+            Log::error("Error converting hours to room units: " . $e->getMessage());
+            return $hours; // Fallback: trả về giá trị gốc
+        }
     }
 }
