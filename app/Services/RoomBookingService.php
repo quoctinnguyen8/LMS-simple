@@ -24,7 +24,7 @@ class RoomBookingService
             }
         }
 
-        $data['created_by'] = Auth::id();
+        $data['created_by'] = Auth::id() ?? null;
 
         return $data;
     }

@@ -11,7 +11,7 @@ class RoomRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +22,19 @@ class RoomRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'room_id' => 'required|exists:rooms,id',
+            'reason' => 'required|string|max:255',
+            'start_date' => 'required|date',
+            'end_date' => 'nullable|date|after_or_equal:start_date',
+            'start_time' => 'required|date_format:H:i',
+            'end_time' => 'required|date_format:H:i|after:start_time',
+            'participants_count' => 'nullable|integer|min:1',
+            'notes' => 'nullable|string|max:500',
+            'repeat_days' => 'nullable|array',
+            'repeat_days.*' => 'string|in:monday,tuesday,wednesday,thursday,friday,saturday,sunday',
+            'name' => 'nullable|string|max:100',
+            'email' => 'nullable|email|max:100',
+            'phone' => 'nullable|string|max:15',
         ];
     }
 }

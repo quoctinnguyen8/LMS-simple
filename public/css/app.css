@@ -253,73 +253,6 @@ main {
     transform: translateY(-2px);
 }
 
-/* Forms */
-.course-enroll,
-.booking-form {
-    background: var(--white);
-    border-radius: 16px;
-    padding: 32px;
-    box-shadow: var(--shadow);
-    margin: 2rem auto;
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-}
-
-.course-enroll label,
-.booking-form label {
-    font-weight: 500;
-    color: var(--dark);
-    margin-bottom: 6px;
-    display: block;
-}
-
-.course-enroll input,
-.course-enroll select,
-.course-enroll textarea,
-.booking-form input,
-.booking-form select,
-.booking-form textarea {
-    width: 100%;
-    padding: 12px 16px;
-    border: 1px solid var(--gray);
-    border-radius: 8px;
-    font-size: 1rem;
-    transition: all 0.3s ease;
-}
-
-.course-enroll input:focus,
-.course-enroll select:focus,
-.course-enroll textarea:focus,
-.booking-form input:focus,
-.booking-form select:focus,
-.booking-form textarea:focus {
-    outline: none;
-    border-color: var(--primary);
-    box-shadow: 0 0 0 3px rgba(58, 110, 165, 0.1);
-}
-
-.course-enroll button,
-.booking-form button {
-    display: inline-block;
-    padding: 10px 20px;
-    background: var(--primary);
-    color: var(--white);
-    text-decoration: none;
-    border-radius: 8px;
-    border: none;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    font-weight: 500;
-    font-size: 1rem;
-    text-align: center;
-}
-
-.course-enroll button:hover,
-.booking-form button:hover {
-    background: var(--accent);
-    transform: translateY(-2px);
-}
 
 /* Improved Checkbox Group */
 .checkbox-group {
@@ -505,13 +438,33 @@ footer {
         max-width: 100%;
     }
 
-    .course-enroll,
-    .booking-form {
-        padding: 24px;
-    }
-
     .checkbox-group {
         grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    }
+
+    .half {
+        flex: 1 1 100%;
+    }
+
+    .form-group {
+        margin-bottom: 1rem;
+    }
+
+    .form-row {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    .form-row .half {
+        flex: 1 1 100%;
+    }
+
+    .booking-container {
+        flex-direction: column;
+    }
+
+    .calendar-placeholder {
+        width: 100%;
     }
 }
 
@@ -528,17 +481,20 @@ footer {
     margin-top: 2rem;
 }
 
-.booking-calendar,
-.booking-form {
+.booking-calendar {
     flex: 1;
+}
+
+.booking-form {
+    flex: 2;
     min-width: 300px;
 }
 
 .calendar-placeholder {
-    background-color: #f5f5f5;
+    background-color: var(--white);
     padding: 2rem;
+    width: 100%;
     border-radius: 8px;
-    height: 400px;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -546,18 +502,91 @@ footer {
     text-align: center;
 }
 
-.booking-form {
-    background-color: #f9f9f9;
+.course-enroll {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.booking-form,
+.course-enroll {
+    background-color: var(--white);
     padding: 2rem;
     border-radius: 8px;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
 
-.booking-form h2 {
+.booking-form h2,
+.course-enroll h2 {
     margin-top: 0;
     margin-bottom: 1.5rem;
     text-align: center;
-    color: #333;
+    color: var(--dark);
+}
+
+.booking-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    max-height: 300px;
+    overflow-y: auto;
+    border-radius: 8px;
+    background-color: #ffffff;
+}
+
+/* Custom scrollbar for WebKit browsers */
+.booking-list::-webkit-scrollbar {
+    width: 10px;
+}
+
+.booking-list::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 8px;
+}
+
+.booking-item {
+    padding: 12px 15px;
+    display: flex;
+    align-items: center;
+    background-color: #ffffff;
+    transition: all 0.3s ease;
+    position: relative;
+    cursor: pointer;
+}
+
+.booking-item:last-child {
+    border-bottom: none;
+}
+
+.booking-item::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 100%;
+    width: 4px;
+    background-color: var(--primary);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.booking-item:hover::before {
+    opacity: 1;
+}
+
+.booking-item strong {
+    color: #1e3a8a; 
+    font-weight: 600;
+    margin-right: 10px;
+    font-size: 1.1rem;
+}
+
+.booking-time {
+    color: #6b7280;
+    font-size: 0.9rem;
+    font-style: italic;
 }
 
 .form-group {
@@ -581,10 +610,19 @@ label {
 }
 
 input,
+textarea {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid var(--gray);
+    border-radius: 4px;
+    font-size: 1rem;
+    box-shadow: inset 0 1px 3px var(--shadow);
+}
+
 select {
     width: 100%;
     padding: 0.75rem;
-    border: 1px solid #ddd;
+    border: 1px solid var(--gray);
     border-radius: 4px;
     font-size: 1rem;
 }
@@ -609,8 +647,8 @@ select {
 .btn-submit {
     width: 100%;
     padding: 0.75rem;
-    background-color: #4CAF50;
-    color: white;
+    background-color: var(--primary);
+    color: var(--white);
     border: none;
     border-radius: 4px;
     font-size: 1rem;
@@ -620,7 +658,7 @@ select {
 }
 
 .btn-submit:hover {
-    background-color: #45a049;
+    background-color: var(--accent);
 }
 
 .notify {
@@ -678,14 +716,17 @@ select {
     color: #721c24;
     border: 1px solid #f5c6cb;
 }
+
 /* slider */
 .slider {
     position: relative;
     max-width: 1200px;
     margin: 0 auto;
     overflow: hidden;
-    border-radius: 12px; /* Bo góc nhẹ hơn */
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08); /* Bóng mờ nhẹ hơn */
+    border-radius: 12px;
+    /* Bo góc nhẹ hơn */
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+    /* Bóng mờ nhẹ hơn */
 }
 
 .slider-container {
@@ -702,8 +743,10 @@ select {
     height: 100%;
     opacity: 0;
     visibility: hidden;
-    transform: translateX(15px); /* Giảm dịch chuyển để nhẹ nhàng hơn */
-    transition: opacity 1s cubic-bezier(0.33, 0, 0, 1), transform 1s cubic-bezier(0.33, 0, 0, 1), visibility 1s; /* Chuyển động mượt mà hơn */
+    transform: translateX(15px);
+    /* Giảm dịch chuyển để nhẹ nhàng hơn */
+    transition: opacity 1s cubic-bezier(0.33, 0, 0, 1), transform 1s cubic-bezier(0.33, 0, 0, 1), visibility 1s;
+    /* Chuyển động mượt mà hơn */
     cursor: pointer;
     will-change: opacity, transform;
 }
@@ -719,7 +762,8 @@ select {
     height: 100%;
     object-fit: cover;
     display: block;
-    filter: brightness(0.95); /* Tăng độ sáng nhẹ để dễ nhìn */
+    filter: brightness(0.95);
+    /* Tăng độ sáng nhẹ để dễ nhìn */
 }
 
 .slide-content {
@@ -727,7 +771,8 @@ select {
     bottom: 30px;
     left: 30px;
     color: white;
-    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5); /* Giảm text-shadow để nhẹ nhàng hơn */
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+    /* Giảm text-shadow để nhẹ nhàng hơn */
     font-family: 'Roboto', sans-serif;
     font-size: 1.4rem;
     max-width: 60%;
@@ -735,7 +780,8 @@ select {
 
 .slide-content h2 {
     margin: 0;
-    font-size: 1.8rem; /* Giảm kích thước chữ để tránh áp đảo */
+    font-size: 1.8rem;
+    /* Giảm kích thước chữ để tránh áp đảo */
     font-weight: 600;
 }
 
@@ -744,23 +790,28 @@ select {
     font-size: 0.9rem;
 }
 
-.slider-prev, .slider-next {
+.slider-prev,
+.slider-next {
     position: absolute;
     top: 50%;
     transform: translateY(-50%);
-    background: rgba(0, 102, 204, 0.6); /* Giảm độ tương phản của nút */
+    background: rgba(0, 102, 204, 0.6);
+    /* Giảm độ tương phản của nút */
     color: white;
     border: none;
     padding: 10px 16px;
     cursor: pointer;
     font-size: 18px;
     border-radius: 8px;
-    transition: background 0.4s ease, transform 0.3s ease; /* Hiệu ứng hover chậm hơn */
+    transition: background 0.4s ease, transform 0.3s ease;
+    /* Hiệu ứng hover chậm hơn */
 }
 
-.slider-prev:hover, .slider-next:hover {
+.slider-prev:hover,
+.slider-next:hover {
     background: rgba(0, 102, 204, 0.8);
-    transform: translateY(-50%) scale(1.05); /* Giảm độ phóng to khi hover */
+    transform: translateY(-50%) scale(1.05);
+    /* Giảm độ phóng to khi hover */
 }
 
 .slider-prev {
@@ -781,7 +832,8 @@ select {
     width: 10px;
     height: 10px;
     margin: 0 6px;
-    background: #d0d0d0; /* Màu xám nhẹ hơn, dễ nhìn */
+    background: #d0d0d0;
+    /* Màu xám nhẹ hơn, dễ nhìn */
     border-radius: 50%;
     cursor: pointer;
     transition: background 0.4s ease, transform 0.3s ease;
@@ -789,11 +841,13 @@ select {
 
 .dot.active {
     background: #0066cc;
-    transform: scale(1.1); /* Giảm độ phóng to khi active */
+    transform: scale(1.1);
+    /* Giảm độ phóng to khi active */
 }
 
 .dot:hover {
-    background: #80aaff; /* Màu hover nhẹ hơn */
+    background: #80aaff;
+    /* Màu hover nhẹ hơn */
 }
 
 /* Fade animation keyframes */
@@ -802,6 +856,7 @@ select {
         opacity: 0;
         transform: translateX(15px);
     }
+
     to {
         opacity: 1;
         transform: translateX(0);
@@ -813,6 +868,7 @@ select {
         opacity: 1;
         transform: translateX(0);
     }
+
     to {
         opacity: 0;
         transform: translateX(-15px);
