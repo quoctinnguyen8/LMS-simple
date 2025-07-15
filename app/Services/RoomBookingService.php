@@ -82,6 +82,7 @@ class RoomBookingService
                     'status' => $staus,
                     'created_at' => now(),
                     'updated_at' => now(),
+                    'is_duplicate' => $conflicts,
                 ]);
                 if ($conflicts) {
                     $hasConflicts = true;
@@ -102,6 +103,7 @@ class RoomBookingService
                     'status' => $staus,
                     'created_at' => now(),
                     'updated_at' => now(),
+                    'is_duplicate' => $conflicts,
                 ]);
                 if ($conflicts) {
                     $hasConflicts = true;
@@ -172,17 +174,16 @@ class RoomBookingService
             ->get();
         foreach ($bookings as $booking) {
             // Lấy tất cả các chi tiết đặt phòng liên quan đến booking này
+            $hasConflict = false;
             $bookingDetails = \App\Models\RoomBookingDetail::where('room_booking_id', $booking->id)->get();
             foreach ($bookingDetails as $detail) {
-                if ($this->checkConflict($booking->room_id, $detail->start_time, $detail->end_time, $detail->booking_date, $booking->id)) {
-                    // Nếu có xung đột, cập nhật trạng thái is_duplicate
-                    $booking->update(['is_duplicate' => true]);
-                    break;
-                } else {
-                    // Nếu không có xung đột, cập nhật trạng thái is_duplicate là false
-                    $booking->update(['is_duplicate' => false]);
-                }
+                $conflict = $this->checkConflict($booking->room_id, $detail->start_time, $detail->end_time, $detail->booking_date, $booking->id);
+                $detail->update(['is_duplicate' => $conflict]);
+                if ($conflict) 
+                    $hasConflict = true;
             }
+            // Cập nhật trạng thái is_duplicate cho booking chính
+            $booking->update(['is_duplicate' => $hasConflict]);
         }
     }
 }

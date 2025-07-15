@@ -42,7 +42,8 @@ class RoomBookingDetail extends Model
 		'approved_by' => 'int',
 		'rejected_by' => 'int',
 		'cancelled_by' => 'int',
-		'cancelled_by_customer' => 'bool'
+		'cancelled_by_customer' => 'bool',
+		'is_duplicate' => 'bool'
 	];
 
 	protected $fillable = [
@@ -54,7 +55,8 @@ class RoomBookingDetail extends Model
 		'approved_by',
 		'rejected_by',
 		'cancelled_by',
-		'cancelled_by_customer'
+		'cancelled_by_customer',
+		'is_duplicate'
 	];
 
 	public function user()
