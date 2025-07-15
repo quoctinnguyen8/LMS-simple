@@ -19,6 +19,7 @@ use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteBulkAction;
 use Illuminate\Support\Facades\Auth;
 use App\Services\RoomBookingService;
+use Filament\Support\Enums\MaxWidth;
 
 class RoomBookingResource extends Resource
 {
@@ -391,7 +392,7 @@ class RoomBookingResource extends Resource
                         ->label('Xem ngày đặt phòng')
                         ->icon('heroicon-o-calendar')
                         ->modalHeading(fn($record) => 'Chi tiết đặt phòng - ' . $record->booking_code)
-                        ->modalWidth('7xl')
+                        ->modalWidth('xl')
                         ->modalSubmitAction(false)
                         ->modalCancelAction(false)
                         ->modalContent(function ($record) {
@@ -457,10 +458,13 @@ class RoomBookingResource extends Resource
                     // chỉ xóa các yêu cầu bị từ chối
                     Tables\Actions\DeleteAction::make()
                         ->label(function (RoomBooking $record) {
-                            return $record->status === 'rejected' ? 'Xóa yêu cầu' : 'Không thể xóa';
-                        })
-                        ->tooltip(function (RoomBooking $record) {
-                            return $record->status != 'rejected' ? 'Hãy từ chối yêu cầu này trước' : null;
+                            $record->status === 'rejected' ? 'Xóa yêu cầu' : 'Hãy từ chối yêu cầu này trước';
+                            return match ($record->status) {
+                                'pending' => 'Hãy từ chối trước',
+                                'approved' => 'Không thể xóa',
+                                'cacelled' => 'Không thể xóa',
+                                default => 'Xóa yêu cầu',
+                            };
                         })
                         ->disabled(fn(RoomBooking $record) => $record->status !== 'rejected')
                         ->requiresConfirmation()
@@ -473,11 +477,11 @@ class RoomBookingResource extends Resource
                             $record->room_booking_details()->delete();
                         })
                 ])
-                    ->icon('heroicon-o-ellipsis-vertical')
-                    ->color('gray')
-                    ->tooltip('Thao tác')
-                    ->extraAttributes(['class' => 'border'])
-                    ->iconButton(),
+                ->icon('heroicon-o-ellipsis-vertical')
+                ->color('gray')
+                ->tooltip('Thao tác')
+                ->extraAttributes(['class' => 'border'])
+                ->iconButton(),
             ])
             ->bulkActions([
                 BulkActionGroup::make([
