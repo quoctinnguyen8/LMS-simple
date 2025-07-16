@@ -19,6 +19,7 @@ class FilamentServiceProvider extends ServiceProvider
             Filament::registerNavigationGroups([
                 NavigationGroup::make('Khóa học'),
                 NavigationGroup::make('Thuê phòng học'),
+                NavigationGroup::make('Quản lý tin tức'),
                 NavigationGroup::make('Trang web'),
             ]);
         });
