@@ -62,33 +62,63 @@ class CourseResource extends Resource
                             ->maxLength(255)
                             ->live(onBlur: true)
                             ->afterStateUpdated(fn (string $operation, $state, Forms\Set $set) => $operation === 'create' ? $set('slug', \Illuminate\Support\Str::slug($state)) : null)
-                            ->columnSpan(2),
+                            ->columnSpan([
+                                'default' => 4,
+                                'sm' => 4,
+                                'md' => 2,
+                                'lg' => 2,
+                                'xl' => 2,
+                            ]),
                         Forms\Components\TextInput::make('slug')
                             ->label('Slug')
                             ->placeholder('URL thân thiện, ví dụ: khoa-hoc-tieng-trung')
                             ->required()
                             ->maxLength(255)
-                            ->columnSpan(2),
+                            ->columnSpan([
+                                'default' => 4,
+                                'sm' => 4,
+                                'md' => 2,
+                                'lg' => 2,
+                                'xl' => 2,
+                            ]),
                         Forms\Components\Select::make('category_id')
                             ->label('Danh mục khóa học')
                             ->relationship('category', 'name')
                             ->searchable()
                             ->preload()
                             ->required()
-                            ->columnSpan(2),
+                            ->columnSpan([
+                                'default' => 4,
+                                'sm' => 4,
+                                'md' => 2,
+                                'lg' => 2,
+                                'xl' => 2,
+                            ]),
                         Forms\Components\TextInput::make('max_students')
                             ->label('Số học viên tối đa')
                             ->numeric()
                             ->minValue(1)
                             ->default(10)
-                            ->columnSpan(1),
+                            ->columnSpan([
+                                'default' => 4,
+                                'sm' => 4,
+                                'md' => 1,
+                                'lg' => 1,
+                                'xl' => 1,
+                            ]),
                         Forms\Components\Toggle::make('status')
                             ->label('Xuất bản khóa học')
                             ->default(false)
                             ->inline(false)
                             ->formatStateUsing(fn ($state) => $state === 'published')
                             ->dehydrateStateUsing(fn ($state) => $state ? 'published' : 'draft')
-                            ->columnSpan(1),
+                            ->columnSpan([
+                                'default' => 4,
+                                'sm' => 4,
+                                'md' => 1,
+                                'lg' => 1,
+                                'xl' => 1,
+                            ]),
                         Forms\Components\TextInput::make('price')
                             ->label('Giá khóa học')
                             ->required()
@@ -98,20 +128,38 @@ class CourseResource extends Resource
                             ->mask(RawJs::make('$money($input)'))
                             ->stripCharacters([',', '.'])
                             ->dehydrateStateUsing(fn ($state) => (int) str_replace([','], '', $state))
-                            ->columnSpan(2),
+                            ->columnSpan([
+                                'default' => 4,
+                                'sm' => 4,
+                                'md' => 2,
+                                'lg' => 2,
+                                'xl' => 2,
+                            ]),
                     Forms\Components\DatePicker::make('start_date')
                             ->label('Ngày bắt đầu')
                             ->displayFormat('d/m/Y')
                             ->native(false)
                             ->required()
                             ->helperText('Ngày bắt đầu khóa học')
-                            ->columnSpan(1),
+                            ->columnSpan([
+                                'default' => 4,
+                                'sm' => 4,
+                                'md' => 1,
+                                'lg' => 1,
+                                'xl' => 1,
+                            ]),
                         Forms\Components\DatePicker::make('end_registration_date')
                             ->label('Ngày kết thúc đăng ký')
                             ->native(false)
                             ->displayFormat('d/m/Y')
                             ->helperText('Hạn cuối chập nhận đăng ký')
-                            ->columnSpan(1),
+                            ->columnSpan([
+                                'default' => 4,
+                                'sm' => 4,
+                                'md' => 1,
+                                'lg' => 1,
+                                'xl' => 1,
+                            ]),
 
                         Forms\Components\Toggle::make('allow_overflow')
                             ->label('Cho phép nhận thêm học viên khi đã đủ số lượng tối đa')
@@ -119,12 +167,24 @@ class CourseResource extends Resource
                                     . 'Thao tác của quản trị viên không bị ảnh hưởng và vẫn có thể đăng ký khóa học thay cho học viên')
                             ->default(true)
                             ->inline(false)
-                            ->columnSpan(2),
+                            ->columnSpan([
+                                'default' => 4,
+                                'sm' => 4,
+                                'md' => 2,
+                                'lg' => 2,
+                                'xl' => 2,
+                            ]),
                         Forms\Components\Toggle::make('is_price_visible')
                             ->label('Hiển thị giá')
                             ->default(true)
                             ->inline(false) // Đặt toggle dọc để căn chỉnh với textbox
-                            ->columnSpan(2)
+                            ->columnSpan([
+                                'default' => 4,
+                                'sm' => 4,
+                                'md' => 2,
+                                'lg' => 2,
+                                'xl' => 2,
+                            ]),
                     ])
                     ->columns(4),
 
