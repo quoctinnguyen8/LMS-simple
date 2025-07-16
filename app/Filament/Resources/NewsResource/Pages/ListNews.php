@@ -18,10 +18,10 @@ class ListNews extends ListRecords
         ];
     }
     
-    protected function getHeaderWidgets(): array
-    {
-        return [
-            NewsResource\Widgets\NewsStatsOverview::class,
-        ];
-    }
+    // protected function getHeaderWidgets(): array
+    // {
+    //     return [
+            
+    //     ];
+    // }
 }

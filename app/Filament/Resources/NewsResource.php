@@ -4,7 +4,6 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\NewsResource\Pages;
 use App\Filament\Resources\NewsResource\RelationManagers;
-use App\Filament\Resources\NewsResource\Widgets;
 use App\Models\News;
 use App\Models\NewsCategory;
 use App\Models\User;
@@ -349,12 +348,11 @@ class NewsResource extends Resource
         ];
     }
     
-    public static function getWidgets(): array
-    {
-        return [
-            Widgets\NewsStatsOverview::class,
-        ];
-    }
+    // public static function getWidgets(): array
+    // {
+    //     return [
+    //     ];
+    // }
 
     public static function getPages(): array
     {
