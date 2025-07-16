@@ -7,6 +7,7 @@ use App\Filament\Resources\NewsCategoryResource\RelationManagers;
 use App\Models\NewsCategory;
 use Filament\Forms;
 use Filament\Forms\Form;
+use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -66,16 +67,9 @@ class NewsCategoryResource extends Resource
             ->columns([
                 Tables\Columns\TextColumn::make('name')
                     ->label('Tên danh mục')
+                    ->description(fn (NewsCategory $record) => $record->slug)
                     ->searchable()
                     ->sortable(),
-                    
-                Tables\Columns\TextColumn::make('slug')
-                    ->label('Slug')
-                    ->searchable()
-                    ->copyable()
-                    ->copyMessage('Đã sao chép slug!')
-                    ->badge()
-                    ->color('gray'),
                     
                 Tables\Columns\TextColumn::make('news_count')
                     ->label('Số tin tức')
@@ -108,7 +102,26 @@ class NewsCategoryResource extends Resource
                 Tables\Actions\EditAction::make()
                     ->label('Sửa'),
                 Tables\Actions\DeleteAction::make()
-                    ->label('Xóa'),
+                    ->label('Xóa')
+                    // cảnh báo xóa các tin tức liên quan
+                    ->requiresConfirmation()
+                    ->modalHeading('Xác nhận xóa danh mục')
+                    ->modalDescription(function (NewsCategory $record) {
+                        $newsCount = $record->news()->count();
+                        if ($newsCount > 0) {
+                            return "Bạn có chắc chắn muốn xóa danh mục '{$record->name}'? Có {$newsCount} tin tức trong danh mục này cũng sẽ bị xóa.";
+                        }
+                        return "Bạn có chắc chắn muốn xóa danh mục '{$record->name}'?";
+                    })
+                    ->action(function (NewsCategory $record) {
+                        $record->news()->delete(); // Xóa các tin tức liên quan
+                        $record->delete(); // Xóa danh mục
+                        Notification::make()
+                            ->title('Danh mục đã được xóa')
+                            ->success()
+                            ->send();
+                    })
+                    ->color('danger'),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
@@ -126,7 +139,7 @@ class NewsCategoryResource extends Resource
     public static function getRelations(): array
     {
         return [
-            RelationManagers\NewsRelationManager::class,
+            // RelationManagers\NewsRelationManager::class,
         ];
     }
 

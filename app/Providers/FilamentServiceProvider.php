@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use Filament\Facades\Filament;
 use Filament\Navigation\NavigationGroup;
+use Filament\Navigation\UserMenuItem;
 use Illuminate\Support\ServiceProvider;
 
 class FilamentServiceProvider extends ServiceProvider
@@ -21,6 +22,15 @@ class FilamentServiceProvider extends ServiceProvider
                 NavigationGroup::make('Thuê phòng học'),
                 NavigationGroup::make('Quản lý tin tức'),
                 NavigationGroup::make('Trang web'),
+            ]);
+
+            // Thêm menu đổi mật khẩu vào User Menu
+            Filament::registerUserMenuItems([
+                UserMenuItem::make()
+                    ->label('Đổi mật khẩu')
+                    ->url(route('filament.admin.pages.change-password'))
+                    ->icon('heroicon-o-key')
+                    ->sort(10),
             ]);
         });
     }

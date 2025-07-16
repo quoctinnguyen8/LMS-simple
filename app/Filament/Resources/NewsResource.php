@@ -186,6 +186,11 @@ class NewsResource extends Resource
                     
                 Tables\Columns\TextColumn::make('title')
                     ->label('Tiêu đề')
+                    ->description(fn (News $record) => $record->slug)
+                    ->icon(function (News $record) {
+                        return $record->is_featured ? 'heroicon-o-star' : 'heroicon-o-newspaper';
+                    })
+                    ->iconColor(fn (News $record) => $record->is_featured ? 'primary' : 'gray')
                     ->searchable()
                     ->sortable()
                     ->limit(50)
@@ -200,7 +205,7 @@ class NewsResource extends Resource
                 Tables\Columns\TextColumn::make('user.name')
                     ->label('Tác giả')
                     ->sortable()
-                    ->toggleable(),
+                    ->toggleable(isToggledHiddenByDefault: true),
                     
                 Tables\Columns\IconColumn::make('is_published')
                     ->label('Xuất bản')
@@ -209,14 +214,6 @@ class NewsResource extends Resource
                     ->falseIcon('heroicon-o-x-circle')
                     ->trueColor('success')
                     ->falseColor('danger'),
-                    
-                Tables\Columns\IconColumn::make('is_featured')
-                    ->label('Nổi bật')
-                    ->boolean()
-                    ->trueIcon('heroicon-o-star')
-                    ->falseIcon('heroicon-o-star')
-                    ->trueColor('warning')
-                    ->falseColor('gray'),
                     
                 Tables\Columns\TextColumn::make('view_count')
                     ->label('Lượt xem')
@@ -290,21 +287,36 @@ class NewsResource extends Resource
                     }),
             ])
             ->actions([
-                Tables\Actions\EditAction::make()
-                    ->label('Sửa'),
-                Tables\Actions\Action::make('toggle_published')
-                    ->label(fn (News $record): string => $record->is_published ? 'Ẩn' : 'Xuất bản')
-                    ->icon(fn (News $record): string => $record->is_published ? 'heroicon-o-eye-slash' : 'heroicon-o-eye')
-                    ->color(fn (News $record): string => $record->is_published ? 'warning' : 'success')
-                    ->action(function (News $record): void {
-                        $record->update([
-                            'is_published' => !$record->is_published,
-                            'published_at' => !$record->is_published ? null : ($record->published_at ?? now()),
-                        ]);
-                    })
-                    ->requiresConfirmation(),
-                Tables\Actions\DeleteAction::make()
-                    ->label('Xóa'),
+                // group actions
+                Tables\Actions\ActionGroup::make([
+                    Tables\Actions\EditAction::make()
+                        ->label('Sửa'),
+                    Tables\Actions\Action::make('toggle_published')
+                        ->label(fn (News $record): string => $record->is_published ? 'Ẩn tin tức' : 'Xuất bản ngay')
+                        ->icon(fn (News $record): string => $record->is_published ? 'heroicon-o-eye-slash' : 'heroicon-o-eye')
+                        ->action(function (News $record): void {
+                            $record->update([
+                                'is_published' => !$record->is_published,
+                                'published_at' => !$record->is_published ? now() : null,
+                            ]);
+                        }),
+                    // nổi bật/ẩn tin tức
+                    Tables\Actions\Action::make('toggle_featured')
+                        ->label(fn (News $record): string => $record->is_featured ? 'Ẩn tin tức nổi bật' : 'Đặt là nổi bật')
+                        ->icon(fn (News $record): string => $record->is_featured ? 'heroicon-o-star' : 'heroicon-o-star')
+                        ->action(function (News $record): void {
+                            $record->update([
+                                'is_featured' => !$record->is_featured,
+                            ]);
+                        }),
+                    Tables\Actions\DeleteAction::make()
+                        ->label('Xóa'),
+                ])
+                ->iconButton()
+                ->icon('heroicon-o-ellipsis-vertical')
+                ->color('gray')
+                ->tooltip('Thao tác')
+                ->extraAttributes(['class' => 'border']),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
@@ -313,6 +325,7 @@ class NewsResource extends Resource
                     Tables\Actions\BulkAction::make('toggle_published')
                         ->label('Thay đổi trạng thái xuất bản')
                         ->icon('heroicon-o-eye')
+                        ->modalWidth('sm')
                         ->form([
                             Forms\Components\Select::make('is_published')
                                 ->label('Trạng thái')
