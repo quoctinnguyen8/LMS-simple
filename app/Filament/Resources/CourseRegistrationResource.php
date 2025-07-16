@@ -42,17 +42,22 @@ class CourseRegistrationResource extends Resource
     {
         return $form
             ->schema([
-                
+
                 Forms\Components\Section::make('Thông tin học viên')
                     ->description('Thông tin cá nhân của học viên đăng ký khóa học')
                     ->schema([
                         Forms\Components\select::make('course_id')
                             ->label('Khóa học')
                             // chỉ chọn các khóa học có trạng thái là published và có ngày bắt đầu chưa quá 30 ngày tính từ hôm nay
-                            ->relationship('course', 'title',
-                                fn (Builder $query) => $query->where('status', 'published')
-                                    ->where('start_date', '>=', now()->subDays(30)
-                                )
+                            ->relationship(
+                                'course',
+                                'title',
+                                fn(Builder $query) => $query->where('status', 'published')
+                                    ->where(
+                                        'start_date',
+                                        '>=',
+                                        now()->subDays(30)
+                                    )
                             )
                             ->helperText('Chỉ hiển thị các khóa học đã được xuất bản và có ngày bắt đầu từ ' . now()->subDays(30)->format('d/m/Y'))
                             ->required()
@@ -159,8 +164,8 @@ class CourseRegistrationResource extends Resource
                             ->native(false)
                             ->options([
                                 'paid' => 'Đã thanh toán',
-                                'pending' => 'Chờ thanh toán',
-                                'cancelled' => 'Đã hủy',
+                                'unpaid' => 'Chưa thanh toán',
+                                'refunded' => 'Đã hoàn tiền'
                             ])
                             ->required(),
                         Forms\Components\TextInput::make('actual_price')
@@ -170,9 +175,9 @@ class CourseRegistrationResource extends Resource
                             ->prefix('₫')
                             ->mask(RawJs::make('$money($input)'))
                             ->stripCharacters([',', '.'])
-                            ->dehydrateStateUsing(fn ($state) => (int) str_replace([','], '', $state))
-                            ->disabled(fn ($context) => $context === 'create') // Chỉ disable khi tạo mới
-                            ->dehydrated(fn ($context) => $context !== 'create'), // Chỉ lưu khi edit
+                            ->dehydrateStateUsing(fn($state) => (int) str_replace([','], '', $state))
+                            ->disabled(fn($context) => $context === 'create') // Chỉ disable khi tạo mới
+                            ->dehydrated(fn($context) => $context !== 'create'), // Chỉ lưu khi edit
                     ])
                     ->columns(2)
                     ->collapsible(),
@@ -198,7 +203,7 @@ class CourseRegistrationResource extends Resource
                     ->sortable(),
                 Tables\Columns\TextColumn::make('status')
                     ->label('Trạng thái')
-                    ->formatStateUsing(fn (string $state): string => match ($state) {
+                    ->formatStateUsing(fn(string $state): string => match ($state) {
                         'pending' => 'Đang chờ',
                         'confirmed' => 'Đã xác nhận',
                         'canceled' => 'Đã hủy',
@@ -207,22 +212,22 @@ class CourseRegistrationResource extends Resource
                     }),
                 Tables\Columns\TextColumn::make('payment_status')
                     ->label('Trạng thái thanh toán')
-                    ->formatStateUsing(fn (string $state): string => match ($state) {
+                    ->formatStateUsing(fn(string $state): string => match ($state) {
                         'paid' => 'Đã thanh toán',
-                        'pending' => 'Chờ thanh toán',
-                        'cancelled' => 'Đã hủy',
+                        'unpaid' => 'Chưa thanh toán',
+                        'refunded' => 'Đã hoàn tiền',
                         default => $state,
                     })
                     ->badge()
-                    ->color(fn (string $state): string => match ($state) {
+                    ->color(fn(string $state): string => match ($state) {
                         'paid' => 'success',
-                        'pending' => 'warning',
-                        'cancelled' => 'danger',
-                        default => 'gray',
+                        'unpaid' => 'warning',
+                        'refunded' => 'danger',
+                        default => 'gray'
                     }),
                 Tables\Columns\TextColumn::make('actual_price')
                     ->label('Đã thu')
-                    ->formatStateUsing(fn ($state) => $state ? number_format($state) . ' ₫' : '-')
+                    ->formatStateUsing(fn($state) => $state ? number_format($state) . ' ₫' : '-')
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('created_at')
@@ -250,8 +255,8 @@ class CourseRegistrationResource extends Resource
                     ->label('Trạng thái thanh toán')
                     ->options([
                         'paid' => 'Đã thanh toán',
-                        'pending' => 'Chờ thanh toán',
-                        'cancelled' => 'Đã hủy',
+                        'unpaid' => 'Chưa thanh toán',
+                        'refunded' => 'Đã hoàn tiền'
                     ])
                     ->multiple()
                     ->native(false),

@@ -1,4 +1,4 @@
-<x-layouts >
+<x-layouts title="Trang Chủ">
     @if ($slides->count())
         <section class="slider">
             <div class="slider-container">
@@ -31,15 +31,18 @@
                         <img src="{{ Storage::url($course->featured_image) }}" alt="{{ $course->title }}">
                     </div>
                     <div class="card-info">
-                        <span class="badge">
-                            @php
-                                $statusText = match ($course->status) {
-                                    'draft' => 'Chưa mở',
-                                    'published' => 'Đang mở',
-                                    default => 'Đóng',
-                                };
-                            @endphp
-                            {{ $statusText }}
+                        @php
+                            $statusConfig = match ($course->status) {
+                                'draft' => ['style' => 'background-color: gray; color: white;', 'text' => 'Chưa mở'],
+                                'published' => [
+                                    'style' => 'background-color: green; color: white;',
+                                    'text' => 'Đang mở',
+                                ],
+                                default => ['style' => 'background-color: red; color: white;', 'text' => 'Đóng'],
+                            };
+                        @endphp
+                        <span class="badge" style="{{ $statusConfig['style'] }}">
+                            {{ $statusConfig['text'] }}
                         </span>
                         <h2>{{ $course->title }}</h2>
                         <p>{{ $course->description }}</p>
@@ -57,19 +60,26 @@
                         <img src="{{ Storage::url($room->image) }}" alt="{{ $room->name }}">
                     </div>
                     <div class="card-info">
-                        <span class="badge">
-                            @php
-                                $statusText = match ($room->status) {
-                                    'available' => 'Trống',
-                                    'maintenance' => 'Bảo trì',
-                                    default => 'Đang sử dụng',
-                                };
-                            @endphp
-                            {{ $statusText }}
+                        @php
+                            $statusConfig = match ($room->status) {
+                                'available' => ['style' => 'background-color: green; color: white;', 'text' => 'Trống'],
+                                'maintenance' => [
+                                    'style' => 'background-color: orange; color: white;',
+                                    'text' => 'Bảo trì',
+                                ],
+                                default => [
+                                    'style' => 'background-color: red; color: white;',
+                                    'text' => 'Đang sử dụng',
+                                ],
+                            };
+                        @endphp
+                        <span class="badge" style="{{ $statusConfig['style'] }}">
+                            {{ $statusConfig['text'] }}
                         </span>
                         <h2>{{ $room->name }}</h2>
                         <p>{{ $room->description }}</p>
-                        <p><strong>Sức chứa:</strong> {{ $room->capacity }} người</p>
+                        <p><strong>Giá thuê:</strong> {{ number_format($room->price, 0, ',', '.') }}
+                            VNĐ/{{ App\Helpers\SettingHelper::get('room_rental_unit') }}</p>
                         <a href="{{ route('rooms.show', $room->id) }}" class="btn">Xem Chi Tiết</a>
                     </div>
                 </div>

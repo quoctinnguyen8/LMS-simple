@@ -8,7 +8,19 @@
                         <img src="{{ Storage::url($course->featured_image) }}" alt="{{ $course->title }}">
                     </div>
                     <div class="card-info">
-                        <span class="badge">{{ $course->status ? 'Đang mở' : 'Đóng' }}</span>
+                        @php
+                            $statusConfig = match ($course->status) {
+                                'draft' => ['style' => 'background-color: gray; color: white;', 'text' => 'Chưa mở'],
+                                'published' => [
+                                    'style' => 'background-color: green; color: white;',
+                                    'text' => 'Đang mở',
+                                ],
+                                default => ['style' => 'background-color: red; color: white;', 'text' => 'Đóng'],
+                            };
+                        @endphp
+                        <span class="badge" style="{{ $statusConfig['style'] }}">
+                            {{ $statusConfig['text'] }}
+                        </span>
                         <h2>{{ $course->title }}</h2>
                         <p>{{ $course->description }}</p>
                         <p><strong>Giá:</strong> {{ number_format($course->price, 0, ',', '.') }} VNĐ</p>

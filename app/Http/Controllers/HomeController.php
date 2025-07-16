@@ -12,7 +12,9 @@ class HomeController extends Controller
     public function index()
     {
         $rooms = Room::all();
-        $courses = Course::all();
+        $courses = Course::where('status','!=', 'draft')
+            ->orderBy('created_at', 'desc')
+            ->get();
         $slides = Slider::where('is_active', 1)->orderBy('position', 'asc')->get();
         return view('home', compact('rooms', 'courses', 'slides'));
     }

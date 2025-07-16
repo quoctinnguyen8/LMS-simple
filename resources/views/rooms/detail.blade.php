@@ -18,6 +18,7 @@
                 </p>
                 <p id="room-description"><strong>Mô tả:</strong> {{ $room->description }}</p>
                 <p id="room-location"><strong>Vị trí:</strong> {{ $room->location }}</p>
+                <p id="room-price"><strong>Giá thuê:</strong> {{ number_format($room->price, 0, ',', '.') }} VNĐ/{{ App\Helpers\SettingHelper::get('room_rental_unit') }}</p>
                 <p id="room-equipment"><strong>Trang thiết bị có sẵn:</strong>
                     @foreach ($room->equipment as $equipment)
                         {{ $equipment->name }}{{ !$loop->last ? ', ' : '' }}

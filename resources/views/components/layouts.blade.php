@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>{{ $attributes['title'] ?? App\Helpers\SettingHelper::get('center_name', 'Trung tâm đào tạo') }}</title>
+    <title>{{ $attributes['title'] ? $attributes['title']. ' - ' .  App\Helpers\SettingHelper::get('center_name', 'Trung tâm đào tạo') : App\Helpers\SettingHelper::get('center_name', 'Trung tâm đào tạo') }}</title>
     <link rel="icon" href="{{ asset('storage/' . App\Helpers\SettingHelper::get('logo')) }}"
         type="image/x-icon">
     <meta name="description" content="{{ $attributes['description'] ?? App\Helpers\SettingHelper::get('seo_description', '') }}">

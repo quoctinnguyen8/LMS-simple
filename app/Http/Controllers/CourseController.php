@@ -13,18 +13,15 @@ class CourseController extends Controller
 {
     public function index()
     {
-        $courses = Course::all();
+        $courses = Course::where('status', '!=', 'draft')
+            ->orderBy('created_at', 'desc')
+            ->get();
         return view('courses.index', ['courses' => $courses]);
     }
     public function show($id)
     {
         $course = Course::findOrFail($id);
-        $relatedCourses = Course::where('category_id', $course->category_id)
-            ->where('id', '!=', $id)
-            ->take(3)
-            ->get();
-        return view('courses.detail')->with('course', $course)
-            ->with('relatedCourses', $relatedCourses);
+        return view('courses.detail')->with('course', $course);
     }
 
     public function course_registration(CourseRequest $request)
