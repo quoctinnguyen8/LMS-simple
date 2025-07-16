@@ -1,4 +1,4 @@
-<x-layouts title="Trang chủ">
+<x-layouts >
     @if ($slides->count())
         <section class="slider">
             <div class="slider-container">
@@ -23,7 +23,7 @@
     @endif
 
     <section class="courses">
-        <h1>Khóa Học Tiếng Anh</h1>
+        <h1>Khóa Học</h1>
         <div class="course-list">
             @foreach ($courses as $course)
                 <div class="course-card">

@@ -92,7 +92,13 @@ class RoomBookingResource extends Resource
                             ->required()
                             ->native(false)
                             ->displayFormat('d/m/Y')
-                            ->columnSpan(1),
+                            ->columnSpan([
+                                'default' => 2,
+                                'sm' => 2,
+                                'md' => 1,
+                                'lg' => 1,
+                                'xl' => 1,
+                            ]),
                         Forms\Components\TimePicker::make('start_time')
                             ->label('Giờ bắt đầu')
                             ->required()
@@ -102,14 +108,26 @@ class RoomBookingResource extends Resource
                             ->minutesStep(5)
                             ->seconds(false) // Ẩn giây
                             ->default('08:00') // Giá trị mặc định
-                            ->columnSpan(1),
+                            ->columnSpan([
+                                'default' => 2,
+                                'sm' => 2,
+                                'md' => 1,
+                                'lg' => 1,
+                                'xl' => 1,
+                            ]),
                         Forms\Components\DatePicker::make('end_date')
                             ->label('Ngày kết thúc')
                             ->required()
                             ->native(false)
                             ->displayFormat('d/m/Y')
                             ->afterOrEqual('start_date')
-                            ->columnSpan(1),
+                            ->columnSpan([
+                                'default' => 2,
+                                'sm' => 2,
+                                'md' => 1,
+                                'lg' => 1,
+                                'xl' => 1,
+                            ]),
                         Forms\Components\TimePicker::make('end_time')
                             ->label('Giờ kết thúc')
                             ->required()
@@ -120,7 +138,13 @@ class RoomBookingResource extends Resource
                             ->seconds(false)
                             ->default('09:00')
                             ->after('start_time')
-                            ->columnSpan(1),
+                            ->columnSpan([
+                                'default' => 2,
+                                'sm' => 2,
+                                'md' => 1,
+                                'lg' => 1,
+                                'xl' => 1,
+                            ]),
 
                         Forms\Components\CheckboxList::make('repeat_days')
                             ->label('Ngày lặp lại trong tuần')

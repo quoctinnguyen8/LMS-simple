@@ -31,7 +31,7 @@ class SystemSettings extends Page
     {
         try {
             $settings = SettingHelper::all();
-            
+
             $this->form->fill([
                 'center_name' => $settings['center_name'] ?? '',
                 'address' => $settings['address'] ?? '',
@@ -47,6 +47,7 @@ class SystemSettings extends Page
                 'course_unit' => $settings['course_unit'] ?? 'khóa',
                 'room_rental_unit' => $settings['room_rental_unit'] ?? 'buổi',
                 'room_unit_to_hour' => $settings['room_unit_to_hour'] ?? '1',
+                'seo_description' => $settings['seo_description'] ?? '',
             ]);
         } catch (\Exception $e) {
             // Fallback nếu có lỗi
@@ -65,6 +66,7 @@ class SystemSettings extends Page
                 'course_unit' => 'khóa',
                 'room_rental_unit' => 'buổi',
                 'room_unit_to_hour' => '1',
+                'seo_description' => '',
             ]);
         }
     }
@@ -80,7 +82,7 @@ class SystemSettings extends Page
                             ->label('Tên trung tâm')
                             ->required()
                             ->maxLength(255),
-                        
+
                         TextInput::make('phone')
                             ->label('Số điện thoại')
                             ->tel()
@@ -93,8 +95,8 @@ class SystemSettings extends Page
 
                         Textarea::make('address')
                             ->label('Địa chỉ')
-                            ->rows(3),        
-                        ])
+                            ->rows(3),
+                    ])
                     ->columns(2),
 
                 Section::make('Hình ảnh & Nội dung')
@@ -113,7 +115,10 @@ class SystemSettings extends Page
                                 '4:3',
                                 '1:1',
                             ]),
-                        
+                        Textarea::make('seo_description')
+                            ->label('Nội dung SEO')
+                            ->helperText('Mô tả ngắn gọn về trung tâm để hiển thị trên các công cụ tìm kiếm')
+                            ->columnSpanFull(),
                         RichEditor::make('description')
                             ->label('Giới thiệu trung tâm')
                             ->toolbarButtons([
@@ -153,7 +158,7 @@ class SystemSettings extends Page
                             ->default('khóa')
                             ->required()
                             ->helperText('Chọn đơn vị tính tiền cho khóa học'),
-                        
+
                         Select::make('room_rental_unit')
                             ->label('Đơn vị tính tiền thuê phòng')
                             ->options([
@@ -166,7 +171,7 @@ class SystemSettings extends Page
                             ->default('buổi')
                             ->required()
                             ->helperText('Chọn đơn vị tính tiền cho thuê phòng'),
-                        
+
                         TextInput::make('room_unit_to_hour')
                             ->label('Quy đổi đ.vị tính tiền thuê phòng sang giờ')
                             ->placeholder('1')
@@ -191,7 +196,7 @@ class SystemSettings extends Page
                             ->extraAttributes([
                                 'style' => 'font-family: "Fira Code", "JetBrains Mono", "Monaco", "Cascadia Code", "Roboto Mono", monospace; font-size: 14px;'
                             ]),
-                        
+
                         Textarea::make('facebook_fanpage')
                             ->label('Nhúng Facebook Fanpage')
                             ->placeholder('Dán mã embed HTML của Facebook Fanpage')
@@ -200,7 +205,7 @@ class SystemSettings extends Page
                             ->extraAttributes([
                                 'style' => 'font-family: "Fira Code", "JetBrains Mono", "Monaco", "Cascadia Code", "Roboto Mono", monospace; font-size: 14px;'
                             ]),
-                        
+
                         Textarea::make('zalo_embed')
                             ->label('Nhúng Zalo')
                             ->placeholder('Dán mã embed HTML của Zalo')
@@ -225,7 +230,7 @@ body {
     font-family: \'Arial\', sans-serif;
 }')
                             ->helperText('Thêm CSS tùy chỉnh để thay đổi giao diện website'),
-                        
+
                         Textarea::make('custom_js')
                             ->label('JavaScript tùy chỉnh')
                             ->rows(8)

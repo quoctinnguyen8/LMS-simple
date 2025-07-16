@@ -1,4 +1,6 @@
-<x-layouts title="Chi tiết khóa học">
+<x-layouts title="Khóa Học - {{ $course->title }}"
+    description="{{ $course->seo_description }}"
+    image="{{ asset('storage/' . $course->featured_image) }}">
     <section class="course-detail">
         <div class="course-header">
             <div class="course-info">

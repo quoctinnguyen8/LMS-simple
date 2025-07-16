@@ -131,6 +131,11 @@ class CourseResource extends Resource
                 Forms\Components\Section::make('Nội dung khóa học')
                     ->description('Mô tả và nội dung chi tiết của khóa học')
                     ->schema([
+                         Forms\Components\Textarea::make('seo_description')
+                            ->label('Mô tả SEO')
+                            ->helperText('Mô tả ngắn gọn về phòng học để hiển thị trên các công cụ tìm kiếm')
+                            ->maxLength(255)
+                            ->columnSpanFull(),
                         Forms\Components\Textarea::make('description')
                             ->label('Mô tả ngắn về khóa học')
                             ->maxLength(1000)

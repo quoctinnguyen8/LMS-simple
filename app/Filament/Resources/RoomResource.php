@@ -8,6 +8,7 @@ use App\Models\Room;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
+use Filament\Support\RawJs;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
@@ -52,15 +53,26 @@ class RoomResource extends Resource
                             ->maxSize(2048) // 4MB
                             ->acceptedFileTypes(['image/*'])
                             ->helperText('Kích thước tối đa: 2MB. Định dạng: JPG, PNG, WebP,...')
-                            ->columnSpan(4),
+                            ->columnSpanFull(),
                         Forms\Components\TextInput::make('name')
                             ->label('Tên phòng học')
                             ->required()
-                            ->maxLength(100),
+                            ->maxLength(100)
+                            ->columnSpanFull(),
                         Forms\Components\TextInput::make('capacity')
                             ->label('Sức chứa tối đa (người)')
                             ->required()
                             ->integer(),
+                        Forms\Components\TextInput::make('price')
+                            ->label('Giá thuê')
+                            ->required()
+                            ->integer()
+                            ->prefix('₫')
+                            ->numeric()
+                            ->default(null)
+                            ->mask(RawJs::make('$money($input)'))
+                            ->stripCharacters([',', '.'])
+                            ->dehydrateStateUsing(fn ($state) => (int) str_replace([','], '', $state)),
                         Forms\Components\TextInput::make('location')
                             ->label('Vị trí')
                             ->maxLength(255)
@@ -72,8 +84,7 @@ class RoomResource extends Resource
                                 'available' => 'Có sẵn',
                                 'unavailable' => 'Không có sẵn',
                                 'maintenance' => 'Bảo trì',
-                            ])
-                            ->default('available'),
+                            ]),
                     ])
                     ->columns(2),
 
@@ -86,6 +97,11 @@ class RoomResource extends Resource
                             ->preload()
                             ->optionsLimit(10)
                             ->label('Thiết bị có sẵn'),
+                        Forms\Components\Textarea::make('seo_description')
+                            ->label('Mô tả SEO')
+                            ->helperText('Mô tả ngắn gọn về phòng học để hiển thị trên các công cụ tìm kiếm')
+                            ->maxLength(255)
+                            ->columnSpanFull(),
                         Forms\Components\RichEditor::make('description')
                             ->label('Mô tả')
                             ->placeholder('Nhập mô tả chi tiết về phòng học')

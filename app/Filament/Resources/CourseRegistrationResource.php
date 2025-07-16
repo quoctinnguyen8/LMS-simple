@@ -64,29 +64,64 @@ class CourseRegistrationResource extends Resource
                         Forms\Components\TextInput::make('student_name')
                             ->label('Họ và tên học viên')
                             ->required()
-                            ->maxLength(100),
+                            ->maxLength(100)
+                            ->columnSpan([
+                                'default' => 2,
+                                'sm' => 2,
+                                'md' => 1,
+                                'lg' => 1,
+                                'xl' => 1,
+                            ]),
                         Forms\Components\TextInput::make('student_phone')
                             ->label('Số điện thoại')
                             ->rules(['regex:/^0[0-9]{9}$/'])
                             ->required()
                             ->placeholder('Bắt đầu bằng 0, 10 chữ số')
-                            ->maxLength(10),
+                            ->maxLength(10)
+                            ->columnSpan([
+                                'default' => 2,
+                                'sm' => 2,
+                                'md' => 1,
+                                'lg' => 1,
+                                'xl' => 1,
+                            ]),
                         Forms\Components\TextInput::make('student_email')
                             ->label('Email học viên')
                             ->nullable()
                             ->email()
-                            ->maxLength(200),
+                            ->maxLength(200)
+                            ->columnSpan([
+                                'default' => 2,
+                                'sm' => 2,
+                                'md' => 1,
+                                'lg' => 1,
+                                'xl' => 1,
+                            ]),
                         Forms\Components\TextInput::make('student_address')
                             ->label('Địa chỉ')
                             ->maxLength(255)
-                            ->default(null),
+                            ->default(null)
+                            ->columnSpan([
+                                'default' => 2,
+                                'sm' => 2,
+                                'md' => 1,
+                                'lg' => 1,
+                                'xl' => 1,
+                            ]),
                         Forms\Components\DatePicker::make('student_birth_date')
                             ->label('Ngày sinh')
                             ->displayFormat('d/m/Y')
                             ->native(false)
                             ->placeholder('dd/MM/yyyy')
                             ->minDate(now()->subYears(100))
-                            ->maxDate(now()),
+                            ->maxDate(now())
+                            ->columnSpan([
+                                'default' => 2,
+                                'sm' => 2,
+                                'md' => 1,
+                                'lg' => 1,
+                                'xl' => 1,
+                            ]),
                         Forms\Components\Select::make('student_gender')
                             ->label('Giới tính')
                             ->native(false)
@@ -94,6 +129,13 @@ class CourseRegistrationResource extends Resource
                                 'male' => 'Nam',
                                 'female' => 'Nữ',
                                 'other' => 'Khác',
+                            ])
+                            ->columnSpan([
+                                'default' => 2,
+                                'sm' => 2,
+                                'md' => 1,
+                                'lg' => 1,
+                                'xl' => 1,
                             ]),
                     ])
                     ->columns(2)

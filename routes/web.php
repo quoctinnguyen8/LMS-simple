@@ -13,3 +13,4 @@ Route::post('/courses/registration/', [CourseController::class, 'course_registra
 Route::get('/rooms', [RoomController::class, 'index'])->name('rooms.index');
 Route::get('/rooms/{id}', [RoomController::class, 'show'])->name('rooms.show');
 Route::post('/rooms/bookings', [RoomController::class, 'roomBookings'])->name('rooms.bookings');
+Route::get('/contacts', [HomeController::class, 'contacts'])->name('contacts');

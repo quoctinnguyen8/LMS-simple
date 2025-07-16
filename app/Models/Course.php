@@ -62,7 +62,8 @@ class Course extends Model
 		'start_date',
 		'status',
 		'max_students',
-		'allow_overflow'
+		'allow_overflow',
+		'seo_description'
 	];
 
 	public function creator()
