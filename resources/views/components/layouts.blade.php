@@ -5,18 +5,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>{{ $attributes['title'] ? $attributes['title']. ' - ' .  App\Helpers\SettingHelper::get('center_name', 'Trung tâm đào tạo') : App\Helpers\SettingHelper::get('center_name', 'Trung tâm đào tạo') }}</title>
-    <link rel="icon" href="{{ asset('storage/' . App\Helpers\SettingHelper::get('logo')) }}"
-        type="image/x-icon">
-    <meta name="description" content="{{ $attributes['description'] ?? App\Helpers\SettingHelper::get('seo_description', '') }}">
-    <meta property="og:title"
-        content="{{ App\Helpers\SettingHelper::get('center_name', 'Trung tâm đào tạo')}} {{$attributes['title'] ? ' - '.$attributes['title'] : '' }}">
-    <meta property="og:description"
-        content="{{ $attributes['description'] ?? App\Helpers\SettingHelper::get('seo_description', '') }}">
-    <meta property="og:image"
-        content="{{ $attributes['image'] ?? asset('storage/' . App\Helpers\SettingHelper::get('logo', '')) }}">
-    <link rel="stylesheet" href="{{ asset('css/app.css') }}">
+    <title>{{ $attributes['title'] ? $attributes['title']. ' - ' : '' }}{{ App\Helpers\SettingHelper::get('center_name', 'Trung tâm đào tạo') }}</title>
 
+    {{-- SEO Meta Tags --}}
+    <x-seo 
+        ogTitle="{{ $attributes['ogTitle'] ?? App\Helpers\SettingHelper::get('seo_title', 'Chưa cập nhật') }}"
+        ogDescription="{{ $attributes['ogDescription'] ?? App\Helpers\SettingHelper::get('seo_description', 'Chưa cập nhật') }}"
+        ogImage="{{ $attributes['ogImage'] ?? App\Helpers\SettingHelper::get('seo_image') }}"
+    />
+    <link rel="icon" href="{{asset('storage/' . App\Helpers\SettingHelper::get('logo')) }}" type="image/png">
+    <link rel="stylesheet" href="{{ asset('css/app.css') }}">
     {{-- Custom CSS từ settings --}}
     @if (App\Helpers\SettingHelper::get('custom_css'))
         <style>
@@ -32,7 +30,8 @@
                 <a href="{{ url('/') }}">
                     <img src="{{ asset('storage/' . App\Helpers\SettingHelper::get('logo')) }}"
                         alt="{{ App\Helpers\SettingHelper::get('center_name', 'Trung tâm đào tạo') }}"
-                        class="logo-image">
+                        class="logo-image"
+                        style="max-height: 100px;">
                 </a>
             </div>
             <input type="checkbox" id="menu-toggle" class="hidden">
@@ -57,7 +56,8 @@
                         <a href="{{ url('/') }}">
                             <img src="{{ asset('storage/' . App\Helpers\SettingHelper::get('logo')) }}"
                                 alt="{{ App\Helpers\SettingHelper::get('center_name', 'Trung tâm đào tạo') }}"
-                                class="logo-image">
+                                class="logo-image"
+                                style="max-height: 100px;">
                         </a>
                     </div>
                     <label for="menu-toggle" class="close-button">

@@ -22,6 +22,10 @@ class EditCourse extends EditRecord
         // Xử lý logic đặc biệt khi update nếu cần
         // Ví dụ: log thay đổi, validation custom, etc.
         
+         // Tự động gán seo_image từ featured_image nếu có
+        if (isset($data['featured_image']) && $data['featured_image']) {
+            $data['seo_image'] = $data['featured_image'];
+        }
         return $data;
     }
 }

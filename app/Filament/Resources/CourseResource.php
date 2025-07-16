@@ -20,7 +20,7 @@ class CourseResource extends Resource
     protected static ?string $model = Course::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-book-open';
-    
+
     protected static ?int $navigationSort = 2;
 
     protected static ?string $navigationGroup = 'Khóa học';
@@ -37,7 +37,7 @@ class CourseResource extends Resource
     {
         return 'Thông tin khóa học';
     }
-    
+
 
     public static function form(Form $form): Form
     {
@@ -61,7 +61,7 @@ class CourseResource extends Resource
                             ->label('Tên khóa học')
                             ->maxLength(255)
                             ->live(onBlur: true)
-                            ->afterStateUpdated(fn (string $operation, $state, Forms\Set $set) => $operation === 'create' ? $set('slug', \Illuminate\Support\Str::slug($state)) : null)
+                            ->afterStateUpdated(fn(string $operation, $state, Forms\Set $set) => $operation === 'create' ? $set('slug', \Illuminate\Support\Str::slug($state)) : null)
                             ->columnSpan([
                                 'default' => 4,
                                 'sm' => 4,
@@ -110,8 +110,8 @@ class CourseResource extends Resource
                             ->label('Xuất bản khóa học')
                             ->default(false)
                             ->inline(false)
-                            ->formatStateUsing(fn ($state) => $state === 'published')
-                            ->dehydrateStateUsing(fn ($state) => $state ? 'published' : 'draft')
+                            ->formatStateUsing(fn($state) => $state === 'published')
+                            ->dehydrateStateUsing(fn($state) => $state ? 'published' : 'draft')
                             ->columnSpan([
                                 'default' => 4,
                                 'sm' => 4,
@@ -127,7 +127,7 @@ class CourseResource extends Resource
                             ->prefix('₫')
                             ->mask(RawJs::make('$money($input)'))
                             ->stripCharacters([',', '.'])
-                            ->dehydrateStateUsing(fn ($state) => (int) str_replace([','], '', $state))
+                            ->dehydrateStateUsing(fn($state) => (int) str_replace([','], '', $state))
                             ->columnSpan([
                                 'default' => 4,
                                 'sm' => 4,
@@ -135,7 +135,7 @@ class CourseResource extends Resource
                                 'lg' => 2,
                                 'xl' => 2,
                             ]),
-                    Forms\Components\DatePicker::make('start_date')
+                        Forms\Components\DatePicker::make('start_date')
                             ->label('Ngày bắt đầu')
                             ->displayFormat('d/m/Y')
                             ->native(false)
@@ -164,7 +164,7 @@ class CourseResource extends Resource
                         Forms\Components\Toggle::make('allow_overflow')
                             ->label('Cho phép nhận thêm học viên khi đã đủ số lượng tối đa')
                             ->helperText('Hệ thống vẫn cho phép đăng ký từ trang chủ nhưng không vượt quá 100% so với số lượng tối đa. '
-                                    . 'Thao tác của quản trị viên không bị ảnh hưởng và vẫn có thể đăng ký khóa học thay cho học viên')
+                                . 'Thao tác của quản trị viên không bị ảnh hưởng và vẫn có thể đăng ký khóa học thay cho học viên')
                             ->default(true)
                             ->inline(false)
                             ->columnSpan([
@@ -191,11 +191,6 @@ class CourseResource extends Resource
                 Forms\Components\Section::make('Nội dung khóa học')
                     ->description('Mô tả và nội dung chi tiết của khóa học')
                     ->schema([
-                         Forms\Components\Textarea::make('seo_description')
-                            ->label('Mô tả SEO')
-                            ->helperText('Mô tả ngắn gọn về phòng học để hiển thị trên các công cụ tìm kiếm')
-                            ->maxLength(255)
-                            ->columnSpanFull(),
                         Forms\Components\Textarea::make('description')
                             ->label('Mô tả ngắn về khóa học')
                             ->maxLength(1000)
@@ -224,6 +219,18 @@ class CourseResource extends Resource
                             ->fileAttachmentsDirectory('course-attachments')
                             ->fileAttachmentsVisibility('public'),
                     ]),
+                Forms\Components\Section::make('SEO')
+                    ->description('Tối ưu hóa SEO cho khóa học')
+                    ->schema([
+                        Forms\Components\TextInput::make('seo_title')
+                            ->label('Tiêu đề SEO')
+                            ->helperText('Tiêu đề hiển thị trên kết quả tìm kiếm')
+                            ->columnSpanFull(),
+                        Forms\Components\Textarea::make('seo_description')
+                            ->label('Mô tả SEO')
+                            ->helperText('Mô tả ngắn gọn hiển thị trên kết quả tìm kiếm')
+                            ->columnSpanFull(),
+                    ]),
             ]);
     }
 
@@ -235,9 +242,9 @@ class CourseResource extends Resource
                 Tables\Columns\TextColumn::make('title')
                     ->label('Tên khóa học')
                     ->searchable()
-                    ->description(function ($record){
+                    ->description(function ($record) {
                         $maxStudents = $record->max_students;
-                        if (empty($maxStudents)){
+                        if (empty($maxStudents)) {
                             return $record->course_registrations_count . ' học viên đã đăng ký';
                         }
                         if ($record->allow_overflow) {
@@ -250,8 +257,8 @@ class CourseResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('price')
                     ->label('Giá')
-                    ->formatStateUsing(fn ($state) => $state ? number_format($state) . ' ₫' : '-')
-                    ->color(fn ($record) => $record->is_price_visible ? null : 'gray')
+                    ->formatStateUsing(fn($state) => $state ? number_format($state) . ' ₫' : '-')
+                    ->color(fn($record) => $record->is_price_visible ? null : 'gray')
                     ->tooltip(function ($record) {
                         return $record->is_price_visible ? null : 'Giá khóa học này không hiển thị cho người dùng';
                     })
@@ -276,17 +283,17 @@ class CourseResource extends Resource
                     ->label('Trạng thái')
                     ->tooltip(function ($record) {
                         if ($record->status === 'draft' || $record->status === 'archived') {
-                            return 'Trạng thái này sẽ không hiển thị khóa học cho người dùng'; ;
+                            return 'Trạng thái này sẽ không hiển thị khóa học cho người dùng';;
                         }
                     })
-                    ->formatStateUsing(fn (string $state): string => match ($state) {
+                    ->formatStateUsing(fn(string $state): string => match ($state) {
                         'draft' => 'Nháp',
                         'published' => 'Hiển thị',
                         'archived' => 'Lưu trữ',
                         default => $state,
                     })
                     ->badge()
-                    ->color(fn (string $state): string => match ($state) {
+                    ->color(fn(string $state): string => match ($state) {
                         'draft' => 'gray',
                         'published' => 'success',
                         'archived' => 'warning',
@@ -309,7 +316,7 @@ class CourseResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->defaultSort('start_date', 'desc')
-            ->modifyQueryUsing(fn (Builder $query) => $query->withCount('course_registrations'))
+            ->modifyQueryUsing(fn(Builder $query) => $query->withCount('course_registrations'))
             ->filters([
                 Tables\Filters\SelectFilter::make('category_id')
                     ->label('Danh mục')
@@ -317,7 +324,7 @@ class CourseResource extends Resource
                     ->relationship('category', 'name')
                     ->searchable()
                     ->preload(),
-            
+
                 Tables\Filters\SelectFilter::make('status')
                     ->label('Trạng thái')
                     ->multiple()
@@ -340,19 +347,19 @@ class CourseResource extends Resource
                     Tables\Actions\Action::make('viewStudents')
                         ->label('Danh sách học viên')
                         ->icon('heroicon-o-users')
-                        ->modalHeading(fn ($record) => 'Danh sách học viên - ' . $record->title)
+                        ->modalHeading(fn($record) => 'Danh sách học viên - ' . $record->title)
                         ->modalWidth('7xl')
                         ->modalSubmitAction(false)
                         ->modalCancelAction(false)
                         ->modalContent(function ($record) {
                             $registrations = $record->course_registrations()->with('creator')->get();
-                            
+
                             if ($registrations->isEmpty()) {
                                 return view('filament.components.empty-state', [
                                     'message' => 'Chưa có học viên nào đăng ký khóa học này.'
                                 ]);
                             }
-                            
+
                             return view('filament.components.students-list', [
                                 'registrations' => $registrations,
                                 'course' => $record
@@ -364,10 +371,10 @@ class CourseResource extends Resource
                     Tables\Actions\Action::make('publish')
                         ->label('Xuất bản ngay')
                         ->icon('heroicon-o-rocket-launch')
-                        ->visible(fn ($record) => $record->status === 'draft')
+                        ->visible(fn($record) => $record->status === 'draft')
                         ->action(function ($record) {
                             $record->update(['status' => 'published']);
-                            
+
                             \Filament\Notifications\Notification::make()
                                 ->title('Đã xuất bản khóa học')
                                 ->body('Khóa học "' . $record->title . '" đã được xuất bản thành công.')
@@ -375,19 +382,19 @@ class CourseResource extends Resource
                                 ->send();
                         }),
                     Tables\Actions\Action::make('archive')
-                        ->label(fn ($record) => $record->status === 'archived' ? 'Bỏ lưu trữ' : 'Lưu trữ')
-                        ->icon(fn ($record) => $record->status === 'archived' ? 'heroicon-o-archive-box-arrow-down' : 'heroicon-o-archive-box')
-                        ->color(fn ($record) => $record->status === 'archived' ? 'success' : 'warning')
+                        ->label(fn($record) => $record->status === 'archived' ? 'Bỏ lưu trữ' : 'Lưu trữ')
+                        ->icon(fn($record) => $record->status === 'archived' ? 'heroicon-o-archive-box-arrow-down' : 'heroicon-o-archive-box')
+                        ->color(fn($record) => $record->status === 'archived' ? 'success' : 'warning')
                         ->requiresConfirmation()
-                        ->modalHeading(fn ($record) => $record->status === 'archived' ? 'Bỏ lưu trữ khóa học' : 'Lưu trữ khóa học')
-                        ->modalDescription(fn ($record) => $record->status === 'archived' 
+                        ->modalHeading(fn($record) => $record->status === 'archived' ? 'Bỏ lưu trữ khóa học' : 'Lưu trữ khóa học')
+                        ->modalDescription(fn($record) => $record->status === 'archived'
                             ? 'Bạn có muốn bỏ lưu trữ khóa học "' . $record->title . '"? Khóa học sẽ chuyển về trạng thái nháp.'
                             : 'Bạn có muốn lưu trữ khóa học "' . $record->title . '"? Khóa học sẽ không hiển thị cho người dùng.')
-                        ->modalSubmitActionLabel(fn ($record) => $record->status === 'archived' ? 'Bỏ lưu trữ' : 'Lưu trữ')
+                        ->modalSubmitActionLabel(fn($record) => $record->status === 'archived' ? 'Bỏ lưu trữ' : 'Lưu trữ')
                         ->action(function ($record) {
                             $newStatus = $record->status === 'archived' ? 'draft' : 'archived';
                             $record->update(['status' => $newStatus]);
-                            
+
                             \Filament\Notifications\Notification::make()
                                 ->title($newStatus === 'archived' ? 'Đã lưu trữ khóa học' : 'Đã bỏ lưu trữ khóa học')
                                 ->body('Khóa học "' . $record->title . '" đã được ' . ($newStatus === 'archived' ? 'lưu trữ' : 'bỏ lưu trữ') . ' thành công.')
@@ -406,11 +413,11 @@ class CourseResource extends Resource
                         ->modalHeading('Xóa khóa học')
                         ->modalDescription(function ($record) {
                             $studentsCount = $record->course_registrations_count;
-                            
+
                             if ($studentsCount > 0) {
                                 return 'Không thể xóa khóa học này vì đã có ' . $studentsCount . ' học viên đăng ký.';
                             }
-                            
+
                             return 'Bạn có chắc chắn muốn xóa khóa học "' . $record->title . '"? Hành động này không thể hoàn tác.';
                         })
                         ->modalSubmitActionLabel('Xóa')
@@ -431,11 +438,11 @@ class CourseResource extends Resource
                             $record->delete();
                         }),
                 ])
-                ->icon('heroicon-o-ellipsis-vertical')
-                ->color('gray')
-                ->tooltip('Thao tác')
-                ->extraAttributes(['class' => 'border'])
-                ->iconButton()
+                    ->icon('heroicon-o-ellipsis-vertical')
+                    ->color('gray')
+                    ->tooltip('Thao tác')
+                    ->extraAttributes(['class' => 'border'])
+                    ->iconButton()
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
@@ -452,7 +459,7 @@ class CourseResource extends Resource
                             $records->each(function ($record) {
                                 $record->update(['status' => 'archived']);
                             });
-                            
+
                             \Filament\Notifications\Notification::make()
                                 ->title('Đã lưu trữ khóa học')
                                 ->body("Đã lưu trữ {$count} khóa học thành công.")
@@ -472,7 +479,7 @@ class CourseResource extends Resource
                             $records->each(function ($record) {
                                 $record->update(['status' => 'draft']);
                             });
-                            
+
                             \Filament\Notifications\Notification::make()
                                 ->title('Đã bỏ lưu trữ khóa học')
                                 ->body("Đã bỏ lưu trữ {$count} khóa học thành công. Các khóa học đã chuyển về trạng thái nháp.")
@@ -488,19 +495,19 @@ class CourseResource extends Resource
                             $deletableRecords = $records->filter(function ($record) {
                                 return $record->course_registrations_count == 0;
                             });
-                            
+
                             $protectedRecords = $records->filter(function ($record) {
                                 return $record->course_registrations_count > 0;
                             });
-                            
+
                             $deletedCount = $deletableRecords->count();
                             $protectedCount = $protectedRecords->count();
-                            
+
                             // Xóa các khóa học có thể xóa
                             $deletableRecords->each(function ($record) {
                                 $record->delete();
                             });
-                            
+
                             // Thông báo kết quả
                             if ($deletedCount > 0 && $protectedCount > 0) {
                                 \Filament\Notifications\Notification::make()

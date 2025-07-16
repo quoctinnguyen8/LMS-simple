@@ -1,6 +1,7 @@
 <x-layouts title="Phòng Học - {{ $room->name }}"
-    description="{{ $room->seo_description }}"
-    image="{{ asset('storage/' . $room->image) }}">
+    ogTitle="{{ $room->seo_title }}"
+    ogDescription="{{ $room->seo_description }}"
+    ogImage="{{$room->seo_image}}">
     <section class="room-detail">
         <div class="room-header">
             <div class="room-info">

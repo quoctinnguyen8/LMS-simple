@@ -44,7 +44,9 @@ class Room extends Model
 		'status',
 		'price',
 		'image',
-		'seo_description'
+		'seo_description',
+		'seo_title',
+		'seo_image'
 	];
 
 	public function room_booking_groups()

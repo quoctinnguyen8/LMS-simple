@@ -1,6 +1,7 @@
 <x-layouts title="Khóa Học - {{ $course->title }}"
-    description="{{ $course->seo_description }}"
-    image="{{ asset('storage/' . $course->featured_image) }}">
+    ogTitle="{{ $course->seo_title }}"
+    ogDescription="{{ $course->seo_description }}"
+    ogImage="{{$course->seo_image }}">
     <section class="course-detail">
         <div class="course-header">
             <div class="course-info">

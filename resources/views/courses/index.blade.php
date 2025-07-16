@@ -1,4 +1,4 @@
-<x-layouts title="Khóa học" description="Danh sách các khóa học tại trung tâm đào tạo">
+<x-layouts title="Khóa học">
     <section class="courses">
         <h1>Danh sách khóa học</h1>
         <div class="course-list">

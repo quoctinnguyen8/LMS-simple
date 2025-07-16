@@ -1,4 +1,4 @@
-<x-layouts title="Liên hệ" description="Thông tin liên hệ với trung tâm đào tạo">
+<x-layouts title="Liên hệ">
     <div class="course-detail">
         <h1>Liên hệ với chúng tôi</h1>
 

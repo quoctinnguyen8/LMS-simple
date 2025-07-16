@@ -19,9 +19,9 @@ class RoomResource extends Resource
     protected static ?string $model = Room::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-building-office';
-    
+
     protected static ?int $navigationSort = 2;
-    
+
     protected static ?string $navigationGroup = 'Thuê phòng học';
 
     public static function getModelLabel(): string
@@ -72,7 +72,7 @@ class RoomResource extends Resource
                             ->default(null)
                             ->mask(RawJs::make('$money($input)'))
                             ->stripCharacters([',', '.'])
-                            ->dehydrateStateUsing(fn ($state) => (int) str_replace([','], '', $state)),
+                            ->dehydrateStateUsing(fn($state) => (int) str_replace([','], '', $state)),
                         Forms\Components\TextInput::make('location')
                             ->label('Vị trí')
                             ->maxLength(255)
@@ -92,16 +92,11 @@ class RoomResource extends Resource
                     ->description('Thiết bị có sẵn và mô tả chi tiết')
                     ->schema([
                         Forms\Components\Select::make('equipments')
-                            ->relationship('equipment', 'name', fn ($query) => $query->where('is_free', true))
+                            ->relationship('equipment', 'name', fn($query) => $query->where('is_free', true))
                             ->multiple()
                             ->preload()
                             ->optionsLimit(10)
                             ->label('Thiết bị có sẵn'),
-                        Forms\Components\Textarea::make('seo_description')
-                            ->label('Mô tả SEO')
-                            ->helperText('Mô tả ngắn gọn về phòng học để hiển thị trên các công cụ tìm kiếm')
-                            ->maxLength(255)
-                            ->columnSpanFull(),
                         Forms\Components\RichEditor::make('description')
                             ->label('Mô tả')
                             ->placeholder('Nhập mô tả chi tiết về phòng học')
@@ -124,6 +119,18 @@ class RoomResource extends Resource
                             ->fileAttachmentsDisk('public')
                             ->fileAttachmentsDirectory('room-attachments')
                             ->fileAttachmentsVisibility('public')
+                            ->columnSpanFull(),
+                    ]),
+                Forms\Components\Section::make('SEO')
+                    ->description('Thông tin SEO để tối ưu hóa tìm kiếm')
+                    ->schema([
+                        Forms\Components\TextInput::make('seo_title')
+                            ->label('Tiêu đề SEO')
+                            ->helperText('Tiêu đề hiển thị trên kết quả tìm kiếm')
+                            ->columnSpanFull(),
+                        Forms\Components\Textarea::make('seo_description')
+                            ->label('Mô tả SEO')
+                            ->helperText('Mô tả ngắn gọn hiển thị trên kết quả tìm kiếm')
                             ->columnSpanFull(),
                     ]),
             ]);
@@ -156,7 +163,7 @@ class RoomResource extends Resource
                     ->searchable(),
                 Tables\Columns\TextColumn::make('status')
                     ->label('Trạng thái')
-                    ->formatStateUsing(fn (string $state): string => match ($state) {
+                    ->formatStateUsing(fn(string $state): string => match ($state) {
                         'available' => 'Có sẵn',
                         'unavailable' => 'Không có sẵn',
                         'maintenance' => 'Bảo trì',

@@ -63,7 +63,9 @@ class Course extends Model
 		'status',
 		'max_students',
 		'allow_overflow',
-		'seo_description'
+		'seo_description',
+		'seo_title',
+		'seo_image'
 	];
 
 	public function creator()

@@ -16,4 +16,12 @@ class EditRoom extends EditRecord
             // Đã loại bỏ nút xóa theo yêu cầu
         ];
     }
+    protected function mutateFormDataBeforeSave(array $data): array
+    {
+        // Tự động gán seo_image từ image nếu có
+        if (isset($data['image']) && $data['image']) {
+            $data['seo_image'] = $data['image'];
+        }
+        return $data;
+    }
 }

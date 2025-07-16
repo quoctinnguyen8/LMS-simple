@@ -1,4 +1,4 @@
-<x-layouts title="Phòng Học" description="Danh sách các phòng học tại trung tâm đào tạo">
+<x-layouts title="Phòng Học">
     <section class="rooms">
         <h1>Phòng Học</h1>
         <div class="room-list">

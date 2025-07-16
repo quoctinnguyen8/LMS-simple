@@ -48,6 +48,8 @@ class SystemSettings extends Page
                 'room_rental_unit' => $settings['room_rental_unit'] ?? 'buổi',
                 'room_unit_to_hour' => $settings['room_unit_to_hour'] ?? '1',
                 'seo_description' => $settings['seo_description'] ?? '',
+                'seo_title' => $settings['seo_title'] ?? '',
+                'seo_image' => $settings['seo_image'] ?? '',
             ]);
         } catch (\Exception $e) {
             // Fallback nếu có lỗi
@@ -67,6 +69,8 @@ class SystemSettings extends Page
                 'room_rental_unit' => 'buổi',
                 'room_unit_to_hour' => '1',
                 'seo_description' => '',
+                'seo_title' => '',
+                'seo_image' => '',
             ]);
         }
     }
@@ -115,10 +119,6 @@ class SystemSettings extends Page
                                 '4:3',
                                 '1:1',
                             ]),
-                        Textarea::make('seo_description')
-                            ->label('Nội dung SEO')
-                            ->helperText('Mô tả ngắn gọn về trung tâm để hiển thị trên các công cụ tìm kiếm')
-                            ->columnSpanFull(),
                         RichEditor::make('description')
                             ->label('Giới thiệu trung tâm')
                             ->toolbarButtons([
@@ -139,6 +139,19 @@ class SystemSettings extends Page
                             ])
                             ->helperText('Nội dung sẽ hiển thị trên trang chủ')
                             ->columnSpanFull(),
+                    ]),
+
+                Section::make('SEO')
+                    ->description('Cài đặt SEO cho trang web')
+                    ->schema([
+                        TextInput::make('seo_title')
+                            ->label('Tiêu đề SEO')
+                            ->placeholder('Tiêu đề SEO cho trang web')
+                            ->helperText('Tiêu đề sẽ hiển thị trên kết quả tìm kiếm'),
+                        Textarea::make('seo_description')
+                            ->label('Mô tả SEO')
+                            ->placeholder('Mô tả SEO cho trang web')
+                            ->helperText('Mô tả sẽ hiển thị trên kết quả tìm kiếm'),
                     ]),
 
                 Section::make('Cài đặt đơn vị tính tiền')
@@ -258,7 +271,9 @@ console.log(\'Hello World\');')
     public function save(): void
     {
         $data = $this->form->getState();
-
+        if(isset($data['logo']) && $data['logo']) {
+            $data['seo_image'] = $data['logo'];
+        }
         foreach ($data as $key => $value) {
             SettingHelper::set($key, $value);
         }

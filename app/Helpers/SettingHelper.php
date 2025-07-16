@@ -96,6 +96,8 @@ class SettingHelper
                 'room_rental_unit' => self::get('room_rental_unit', 'buổi'),
                 'room_unit_to_hour' => self::get('room_unit_to_hour', '1'),
                 'seo_description' => self::get('seo_description', ''),
+                'seo_title' => self::get('seo_title', ''),
+                'seo_image' => self::get('seo_image', ''),
             ];
         } catch (\Exception $e) {
             Log::error("Error getting system info: " . $e->getMessage());
@@ -115,6 +117,8 @@ class SettingHelper
                 'room_rental_unit' => 'buổi',
                 'room_unit_to_hour' => '1',
                 'seo_description' => '',
+                'seo_title' => '',
+                'seo_image' => '',
             ];
         }
     }
