@@ -1,7 +1,7 @@
-# reCAPTCHA Integration Guide
+# Hướng dẫn tích hợp reCAPTCHA v2
 
 ## Tổng quan
-Hệ thống reCAPTCHA v2 (checkbox) đã được tích hợp vào LMS với khả năng tái sử dụng cao. Bạn có thể dễ dàng thêm reCAPTCHA vào bất kỳ form nào trong Filament.
+reCAPTCHA v2 đã được tích hợp vào hệ thống LMS để bảo vệ form đăng ký khóa học và đặt phòng khỏi spam và bot. Hệ thống hỗ trợ cả Filament admin và frontend views.
 
 ## Cấu hình
 

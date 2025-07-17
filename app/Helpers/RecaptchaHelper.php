@@ -54,11 +54,15 @@ class RecaptchaHelper
     }
 
     /**
-     * Thêm reCAPTCHA vào schema form nếu được bật
+     * Thêm reCAPTCHA vào schema form nếu được bật (chỉ dành cho Filament admin)
+     * Chỉ sử dụng khi cần thiết trong admin panel
      */
-    public static function addToSchema(array $schema): array
+    public static function addToSchemaIfNeeded(array $schema, string $context = ''): array
     {
-        if (self::isEnabled()) {
+        // Chỉ thêm reCAPTCHA trong các context cụ thể nếu cần
+        $allowedContexts = ['admin-form']; // Có thể mở rộng nếu cần
+        
+        if (self::isEnabled() && in_array($context, $allowedContexts)) {
             $schema[] = self::component();
         }
         

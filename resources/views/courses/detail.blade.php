@@ -23,8 +23,8 @@
             </div>
         </div>
         <div class="course-content">
-            <h2>Nội dung khóa học</h2>
-            <p id="course-content">{{ $course->content }}</p>
+            <h2 class="title">Nội dung khóa học</h2>
+            {!! $course->content !!}
         </div>
         <form class="course-enroll" action="{{ route('courses.registration') }}" method="POST">
             @csrf
@@ -59,7 +59,18 @@
                 <label for="enroll-address">Địa chỉ</label>
                 <textarea id="enroll-address" name="address" rows="3" placeholder="Địa chỉ" ></textarea>
             </div>
+            
+            <!-- reCAPTCHA cho form đăng ký khóa học -->
+            <x-recaptcha form-type="course-registration" />
+            
             <button type="submit" class="btn-submit">Đăng ký</button>
         </form>
     </section>
+    
+    <x-slot:scripts>
+        <!-- reCAPTCHA Script chỉ cho trang đăng ký khóa học -->
+        @if(config('services.recaptcha.enabled', false))
+            <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+        @endif
+    </x-slot:scripts>
 </x-layouts>

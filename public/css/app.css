@@ -372,7 +372,7 @@ main {
     box-shadow: var(--shadow);
 }
 
-.course-content h2,
+.course-content h2.title,
 .room-description h2 {
     color: var(--dark);
     font-size: 1.5rem;
@@ -381,7 +381,7 @@ main {
     padding-bottom: 12px;
 }
 
-.course-content h2::after,
+.course-content h2.title::after,
 .room-description h2::after {
     content: '';
     position: absolute;
@@ -881,4 +881,26 @@ select {
 
 .slide:not(.active) {
     animation: fadeOut 1s cubic-bezier(0.33, 0, 0, 1);
+}
+
+/* reCAPTCHA Styles */
+.recaptcha-wrapper {
+    margin: 1rem 0;
+}
+
+.recaptcha-wrapper .alert {
+    margin-top: 0.5rem;
+    padding: 0.75rem;
+    border-radius: 4px;
+    color: var(--error);
+    background-color: rgba(239, 71, 111, 0.1);
+    border: 1px solid rgba(239, 71, 111, 0.3);
+    font-size: 0.875rem;
+}
+
+@media (max-width: 768px) {
+    .recaptcha-wrapper .g-recaptcha {
+        transform: scale(0.9);
+        transform-origin: 0 0;
+    }
 }
