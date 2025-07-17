@@ -5,15 +5,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>{{ $attributes['title'] ? $attributes['title']. ' - ' : '' }}{{ App\Helpers\SettingHelper::get('center_name', 'Trung tâm đào tạo') }}</title>
+    <title>
+        {{ $attributes['title'] ? $attributes['title'] . ' - ' : '' }}{{ App\Helpers\SettingHelper::get('center_name', 'Trung tâm đào tạo') }}
+    </title>
 
     {{-- SEO Meta Tags --}}
-    <x-seo 
-        ogTitle="{{ $attributes['ogTitle'] ?? App\Helpers\SettingHelper::get('seo_title', 'Chưa cập nhật') }}"
+    <x-seo ogTitle="{{ $attributes['ogTitle'] ?? App\Helpers\SettingHelper::get('seo_title', 'Chưa cập nhật') }}"
         ogDescription="{{ $attributes['ogDescription'] ?? App\Helpers\SettingHelper::get('seo_description', 'Chưa cập nhật') }}"
-        ogImage="{{ $attributes['ogImage'] ?? asset('storage/' .App\Helpers\SettingHelper::get('seo_image')) }}"
-    />
-    <link rel="icon" href="{{asset('storage/' . App\Helpers\SettingHelper::get('logo')) }}" type="image/png">
+        ogImage="{{ $attributes['ogImage'] ?? asset('storage/' . App\Helpers\SettingHelper::get('seo_image')) }}" />
+    <link rel="icon" href="{{ asset('storage/' . App\Helpers\SettingHelper::get('logo')) }}" type="image/png">
     <link rel="stylesheet" href="{{ asset('css/app.css') }}">
     {{-- Custom CSS từ settings --}}
     @if (App\Helpers\SettingHelper::get('custom_css'))
@@ -30,8 +30,7 @@
                 <a href="{{ url('/') }}">
                     <img src="{{ asset('storage/' . App\Helpers\SettingHelper::get('logo')) }}"
                         alt="{{ App\Helpers\SettingHelper::get('center_name', 'Trung tâm đào tạo') }}"
-                        class="logo-image"
-                        style="max-height: 100px;">
+                        class="logo-image" style="max-height: 100px;">
                 </a>
             </div>
             <input type="checkbox" id="menu-toggle" class="hidden">
@@ -47,8 +46,18 @@
                         class="{{ request()->is('courses*') ? 'active' : '' }}">Khóa học</a></li>
                 <li><a href="{{ route('rooms.index') }}" class="{{ request()->is('rooms*') ? 'active' : '' }}">Phòng
                         học</a></li>
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle {{ request()->is('news*') ? 'active' : '' }}">Tin tức</a>
+                    <ul class="dropdown-menu">
+                        @foreach (App\Models\NewsCategory::all() as $newsCategory)
+                            <li><a href="{{ route('news.category', $newsCategory->slug) }}"
+                                    class="news-category">{{ $newsCategory->name }}</a></li>
+                        @endforeach
+                    </ul>
+                </li>
                 <li><a href="{{ route('contacts') }}" class="{{ request()->is('contacts') ? 'active' : '' }}">Liên
                         hệ</a></li>
+
             </ul>
             <div class="sidebar">
                 <div class="sidebar-header">
@@ -56,8 +65,7 @@
                         <a href="{{ url('/') }}">
                             <img src="{{ asset('storage/' . App\Helpers\SettingHelper::get('logo')) }}"
                                 alt="{{ App\Helpers\SettingHelper::get('center_name', 'Trung tâm đào tạo') }}"
-                                class="logo-image"
-                                style="max-height: 100px;">
+                                class="logo-image" style="max-height: 100px;">
                         </a>
                     </div>
                     <label for="menu-toggle" class="close-button">
@@ -74,6 +82,16 @@
                             class="{{ request()->is('courses*') ? 'active' : '' }}">Khóa học</a></li>
                     <li><a href="{{ route('rooms.index') }}"
                             class="{{ request()->is('rooms*') ? 'active' : '' }}">Phòng học</a></li>
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle {{ request()->is('news*') ? 'active' : '' }}">Tin
+                            tức</a>
+                        <ul class="dropdown-menu">
+                            @foreach (App\Models\NewsCategory::all() as $newsCategory)
+                                <li><a href="{{ route('news.category', $newsCategory->slug) }}"
+                                        class="news-category">{{ $newsCategory->name }}</a></li>
+                            @endforeach
+                        </ul>
+                    </li>
                     <li><a href="{{ route('contacts') }}" class="{{ request()->is('contacts') ? 'active' : '' }}">Liên
                             hệ</a></li>
                 </ul>

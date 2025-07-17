@@ -10,14 +10,14 @@
                     <div class="card-info">
                         @php
                             $statusConfig = match ($room->status) {
-                                'available' => ['style' => 'background-color: green; color: white;', 'text' => 'Trống'],
+                                'available' => ['style' => 'background-color: green; color: white;', 'text' => 'Có sẵn'],
                                 'maintenance' => [
                                     'style' => 'background-color: orange; color: white;',
                                     'text' => 'Bảo trì',
                                 ],
                                 default => [
                                     'style' => 'background-color: red; color: white;',
-                                    'text' => 'Đang sử dụng',
+                                    'text' => 'Không có sẵn',
                                 ],
                             };
                         @endphp

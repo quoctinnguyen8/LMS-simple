@@ -1,7 +1,10 @@
 <x-layouts title="Khóa Học - {{ $course->title }}" ogTitle="{{ $course->seo_title }}"
     ogDescription="{{ $course->seo_description }}" ogImage="{{ $course->seo_image }}">
     <section class="course-detail">
-        <div class="course-header"> 
+        <div class="course-header">
+            <div class="course-image">
+                <img id="course-image" src="{{ Storage::url($course->featured_image) }}" alt="{{ $course->title }}">
+            </div>
             <div class="course-info">
                 <h1 id="course-title">{{ $course->title }}</h1>
                 <p id="course-duration"><strong>Ngày bắt đầu:</strong> {{ $course->start_date->format('d/m/Y') }}</p>
@@ -10,9 +13,9 @@
                 <p id="course-student-max"><strong>Số lượng học viên tối đa:</strong> {{ $course->max_students }}
                     người</p>
                 @if ($course->is_price_visible)
-                    <p id="course-price"><strong>Giá:</strong> Liên hệ để biết thêm chi tiết</p>
-                @else
                     <p id="course-price"><strong>Giá:</strong> {{ number_format($course->price, 0, ',', '.') }} VNĐ</p>
+                @else
+                    <p id="course-price"><strong>Giá:</strong> Liên hệ để biết thêm chi tiết</p>
                 @endif
                 <p id="course-status"><strong>Trạng thái:</strong>
                     @php
@@ -25,9 +28,7 @@
                     {{ $statusText }}
                 </p>
             </div>
-            <div class="course-image">
-                <img id="course-image" src="{{ Storage::url($course->featured_image) }}" alt="{{ $course->title }}">
-            </div>
+
         </div>
         <div class="course-content">
             <h2>Nội dung khóa học</h2>
@@ -53,9 +54,9 @@
                     <label for="enroll-gender">Giới tính</label>
                     <select id="enroll-gender" name="gender" required>
                         <option value="">Chọn giới tính</option>
-                        <option value="male">Nam</option>
-                        <option value="female">Nữ</option>
-                        <option value="other">Khác</option>
+                        <option value="male" {{ old('gender') == 'male' ? 'selected' : '' }}>Nam</option>
+                        <option value="female" {{ old('gender') == 'female' ? 'selected' : '' }}>Nữ</option>
+                        <option value="other" {{ old('gender') == 'other' ? 'selected' : '' }}>Khác</option>
                     </select>
                 </div>
                 <div class="form-group half">
@@ -64,7 +65,7 @@
             </div>
             <div class="form-group">
                 <label for="enroll-address">Địa chỉ</label>
-                <textarea id="enroll-address" name="address" rows="3" placeholder="Địa chỉ"></textarea>
+                <textarea id="enroll-address" name="address" rows="3" placeholder="Địa chỉ">{{ old('address') }}</textarea>
             </div>
             <button type="submit" class="btn-submit">Đăng ký</button>
         </form>

@@ -19,12 +19,10 @@ class CourseController extends Controller
             ->get();
         return view('courses.index', ['courses' => $courses]);
     }
-    public function show($id)
+    public function show($slug)
     {
-        $course = Course::findOrFail($id);
-        if ($course->status === 'draft') {
-            return redirect()->route('courses.index')->with('error', 'Khóa học không tồn tại hoặc đã bị xóa.');
-        }
+        $course = Course::where('slug', $slug)
+            ->firstOrFail();
         return view('courses.detail')->with('course', $course);
     }
 
@@ -54,6 +52,6 @@ class CourseController extends Controller
         $registration->student_gender = $validatedData['gender'];
         $registration->created_by = Auth::id() ?? null;
         $registration->save();
-        return redirect()->route('courses.show', ['id' => $course_id])->with('success', 'Đăng ký khóa học thành công.');
+        return redirect()->route('courses.show', ['slug' => $course->slug])->with('success', 'Đăng ký khóa học thành công.');
     }
 }
