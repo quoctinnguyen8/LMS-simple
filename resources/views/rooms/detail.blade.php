@@ -1,7 +1,5 @@
-<x-layouts title="Phòng Học - {{ $room->name }}"
-    ogTitle="{{ $room->seo_title }}"
-    ogDescription="{{ $room->seo_description }}"
-    ogImage="{{$room->seo_image}}">
+<x-layouts title="Phòng Học - {{ $room->name }}" ogTitle="{{ $room->seo_title }}"
+    ogDescription="{{ $room->seo_description }}" ogImage="{{ $room->seo_image }}">
     <section class="room-detail">
         <div class="room-header">
             <div class="room-info">
@@ -17,9 +15,9 @@
                     @endphp
                     {{ $statusText }}
                 </p>
-                <p id="room-description"><strong>Mô tả:</strong> {{ $room->description }}</p>
                 <p id="room-location"><strong>Vị trí:</strong> {{ $room->location }}</p>
-                <p id="room-price"><strong>Giá thuê:</strong> {{ number_format($room->price, 0, ',', '.') }} VNĐ/{{ App\Helpers\SettingHelper::get('room_rental_unit') }}</p>
+                <p id="room-price"><strong>Giá thuê:</strong> {{ number_format($room->price, 0, ',', '.') }}
+                    VNĐ/{{ App\Helpers\SettingHelper::get('room_rental_unit') }}</p>
                 <p id="room-equipment"><strong>Trang thiết bị có sẵn:</strong>
                     @foreach ($room->equipment as $equipment)
                         {{ $equipment->name }}{{ !$loop->last ? ', ' : '' }}
@@ -32,6 +30,10 @@
             <div class="room-image">
                 <img id="room-image" src="{{ Storage::url($room->image) }}" alt="{{ $room->name }}">
             </div>
+        </div>
+        <div class="room-description">
+            <h2>Mô tả</h2>
+            <div>{!! $room->description !!}</div>
         </div>
         <div class="booking-container">
             <div class="booking-calendar">

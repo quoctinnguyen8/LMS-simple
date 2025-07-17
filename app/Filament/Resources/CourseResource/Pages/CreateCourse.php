@@ -17,10 +17,8 @@ class CreateCourse extends CreateRecord
         if (!isset($data['created_by']) || !$data['created_by']) {
             $data['created_by'] = Auth::id();
         }
-        // Tự động gán seo_image từ featured_image nếu có
-        if (isset($data['featured_image']) && $data['featured_image']) {
-            $data['seo_image'] = $data['featured_image'];
-        }
+        $imgFullUrl = asset('storage/' . $data['featured_image']);
+        $data['seo_image'] = empty($data['seo_image']) ? $imgFullUrl : trim($data['seo_image']);
         return $data;
     }
     

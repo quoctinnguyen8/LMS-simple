@@ -61,7 +61,10 @@ class CourseResource extends Resource
                             ->label('Tên khóa học')
                             ->maxLength(255)
                             ->live(onBlur: true)
-                            ->afterStateUpdated(fn(string $operation, $state, Forms\Set $set) => $operation === 'create' ? $set('slug', \Illuminate\Support\Str::slug($state)) : null)
+                            ->afterStateUpdated(function ($state, Forms\Set $set) {
+                                $set('slug', \Illuminate\Support\Str::slug($state));
+                                $set('seo_title', $state);
+                            })
                             ->columnSpan([
                                 'default' => 4,
                                 'sm' => 4,
@@ -219,18 +222,26 @@ class CourseResource extends Resource
                             ->fileAttachmentsDirectory('course-attachments')
                             ->fileAttachmentsVisibility('public'),
                     ]),
-                Forms\Components\Section::make('SEO')
-                    ->description('Tối ưu hóa SEO cho khóa học')
+                Forms\Components\Section::make('SEO & Meta Data')
                     ->schema([
+                        Forms\Components\TextInput::make('seo_image')
+                            ->label('Ảnh SEO')
+                            ->maxLength(500)
+                            ->helperText('Ảnh được sử dụng khi chia sẻ trên mạng xã hội, để trống sẽ dùng ảnh bìa.'),
+
                         Forms\Components\TextInput::make('seo_title')
                             ->label('Tiêu đề SEO')
-                            ->helperText('Tiêu đề hiển thị trên kết quả tìm kiếm')
-                            ->columnSpanFull(),
+                            ->maxLength(500)
+                            ->helperText('Tiêu đề tối ưu cho công cụ tìm kiếm'),
+
                         Forms\Components\Textarea::make('seo_description')
                             ->label('Mô tả SEO')
-                            ->helperText('Mô tả ngắn gọn hiển thị trên kết quả tìm kiếm')
-                            ->columnSpanFull(),
-                    ]),
+                            ->maxLength(2000)
+                            ->rows(3)
+                            ->helperText('Mô tả ngắn gọn cho công cụ tìm kiếm'),
+                    ])
+                    ->columns(1)
+                    ->collapsible(),
             ]);
     }
 

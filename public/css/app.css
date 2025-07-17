@@ -322,7 +322,6 @@ main {
     color: var(--text);
     font-size: 0.95rem;
     line-height: 1.5;
-    margin-bottom: 16px;
     flex: 1;
 }
 

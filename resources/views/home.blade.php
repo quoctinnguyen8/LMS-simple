@@ -1,4 +1,4 @@
-<x-layouts title="Trang Chủ">
+<x-layouts>
     @if ($slides->count())
         <section class="slider">
             <div class="slider-container">
@@ -46,7 +46,12 @@
                         </span>
                         <h2>{{ $course->title }}</h2>
                         <p>{{ $course->description }}</p>
-                        <p><strong>Giá:</strong> {{ number_format($course->price, 0, ',', '.') }} VNĐ</p>
+                        @if ($course->is_price_visible)
+                            <p id="course-price"><strong>Giá:</strong> Liên hệ để biết thêm chi tiết</p>
+                        @else
+                            <p id="course-price"><strong>Giá:</strong> {{ number_format($course->price, 0, ',', '.') }}
+                                VNĐ</p>
+                        @endif
                         <a href="{{ route('courses.show', $course->id) }}" class="btn">Xem Chi Tiết</a>
                     </div>
                 </div>
@@ -77,7 +82,8 @@
                             {{ $statusConfig['text'] }}
                         </span>
                         <h2>{{ $room->name }}</h2>
-                        <p>{{ $room->description }}</p>
+                        <p><strong>Vị trí:</strong> {{ $room->location }}</p>
+                        <p><strong>Sức chứa:</strong> {{ $room->capacity }} người</p>
                         <p><strong>Giá thuê:</strong> {{ number_format($room->price, 0, ',', '.') }}
                             VNĐ/{{ App\Helpers\SettingHelper::get('room_rental_unit') }}</p>
                         <a href="{{ route('rooms.show', $room->id) }}" class="btn">Xem Chi Tiết</a>

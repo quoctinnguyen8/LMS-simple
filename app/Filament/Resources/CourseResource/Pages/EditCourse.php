@@ -16,16 +16,15 @@ class EditCourse extends EditRecord
     //         Actions\DeleteAction::make(),
     //     ];
     // }
-    
+
     protected function mutateFormDataBeforeSave(array $data): array
     {
         // Xử lý logic đặc biệt khi update nếu cần
         // Ví dụ: log thay đổi, validation custom, etc.
-        
-         // Tự động gán seo_image từ featured_image nếu có
-        if (isset($data['featured_image']) && $data['featured_image']) {
-            $data['seo_image'] = $data['featured_image'];
-        }
+
+        // Tự động gán seo_image từ featured_image nếu có
+        $imgFullUrl = asset('storage/' . $data['featured_image']);
+        $data['seo_image'] = empty($data['seo_image']) ? $imgFullUrl : trim($data['seo_image']);
         return $data;
     }
 }

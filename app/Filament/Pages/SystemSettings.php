@@ -85,6 +85,10 @@ class SystemSettings extends Page
                         TextInput::make('center_name')
                             ->label('Tên trung tâm')
                             ->required()
+                            ->live(onBlur: true)
+                            ->afterStateUpdated(function ($state, Forms\Set $set) {
+                                $set('seo_title', $state);
+                            })
                             ->maxLength(255),
 
                         TextInput::make('phone')
@@ -141,18 +145,26 @@ class SystemSettings extends Page
                             ->columnSpanFull(),
                     ]),
 
-                Section::make('SEO')
-                    ->description('Cài đặt SEO cho trang web')
+                Section::make('SEO & Meta Data')
                     ->schema([
+                        TextInput::make('seo_image')
+                            ->label('Ảnh SEO')
+                            ->maxLength(500)
+                            ->helperText('Ảnh được sử dụng khi chia sẻ trên mạng xã hội, để trống sẽ dùng ảnh bìa.'),
+
                         TextInput::make('seo_title')
                             ->label('Tiêu đề SEO')
-                            ->placeholder('Tiêu đề SEO cho trang web')
-                            ->helperText('Tiêu đề sẽ hiển thị trên kết quả tìm kiếm'),
+                            ->maxLength(500)
+                            ->helperText('Tiêu đề tối ưu cho công cụ tìm kiếm'),
+
                         Textarea::make('seo_description')
                             ->label('Mô tả SEO')
-                            ->placeholder('Mô tả SEO cho trang web')
-                            ->helperText('Mô tả sẽ hiển thị trên kết quả tìm kiếm'),
-                    ]),
+                            ->maxLength(2000)
+                            ->rows(3)
+                            ->helperText('Mô tả ngắn gọn cho công cụ tìm kiếm'),
+                    ])
+                    ->columns(1)
+                    ->collapsible(),
 
                 Section::make('Cài đặt đơn vị tính tiền')
                     ->description('Cấu hình đơn vị tính tiền cho khóa học và thuê phòng')
@@ -271,9 +283,8 @@ console.log(\'Hello World\');')
     public function save(): void
     {
         $data = $this->form->getState();
-        if(isset($data['logo']) && $data['logo']) {
-            $data['seo_image'] = $data['logo'];
-        }
+        $imgFullUrl = asset('storage/' . $data['logo']);
+        $data['seo_image'] = empty($data['seo_image']) ? $imgFullUrl : trim($data['seo_image']);
         foreach ($data as $key => $value) {
             SettingHelper::set($key, $value);
         }

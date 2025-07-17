@@ -10,5 +10,5 @@
     <meta property="og:description" content="{{ $ogDescription }}">
 @endif
 @if ($ogImage)
-    <meta property="og:image" content="{{ Storage::url($ogImage) }}">
+    <meta property="og:image" content="{{ $ogImage }}">
 @endif

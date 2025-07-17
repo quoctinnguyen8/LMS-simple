@@ -58,7 +58,11 @@ class RoomResource extends Resource
                             ->label('Tên phòng học')
                             ->required()
                             ->maxLength(100)
-                            ->columnSpanFull(),
+                            ->columnSpanFull()
+                            ->live(onBlur: true)
+                            ->afterStateUpdated(function ($state, Forms\Set $set) {
+                                $set('seo_title', $state);
+                            }),
                         Forms\Components\TextInput::make('capacity')
                             ->label('Sức chứa tối đa (người)')
                             ->required()
@@ -121,18 +125,26 @@ class RoomResource extends Resource
                             ->fileAttachmentsVisibility('public')
                             ->columnSpanFull(),
                     ]),
-                Forms\Components\Section::make('SEO')
-                    ->description('Thông tin SEO để tối ưu hóa tìm kiếm')
+                Forms\Components\Section::make('SEO & Meta Data')
                     ->schema([
+                        Forms\Components\TextInput::make('seo_image')
+                            ->label('Ảnh SEO')
+                            ->maxLength(500)
+                            ->helperText('Ảnh được sử dụng khi chia sẻ trên mạng xã hội, để trống sẽ dùng ảnh bìa.'),
+
                         Forms\Components\TextInput::make('seo_title')
                             ->label('Tiêu đề SEO')
-                            ->helperText('Tiêu đề hiển thị trên kết quả tìm kiếm')
-                            ->columnSpanFull(),
+                            ->maxLength(500)
+                            ->helperText('Tiêu đề tối ưu cho công cụ tìm kiếm'),
+
                         Forms\Components\Textarea::make('seo_description')
                             ->label('Mô tả SEO')
-                            ->helperText('Mô tả ngắn gọn hiển thị trên kết quả tìm kiếm')
-                            ->columnSpanFull(),
-                    ]),
+                            ->maxLength(2000)
+                            ->rows(3)
+                            ->helperText('Mô tả ngắn gọn cho công cụ tìm kiếm'),
+                    ])
+                    ->columns(1)
+                    ->collapsible(),
             ]);
     }
 

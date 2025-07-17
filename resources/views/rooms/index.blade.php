@@ -25,7 +25,8 @@
                             {{ $statusConfig['text'] }}
                         </span>
                         <h2>{{ $room->name }}</h2>
-                        <p>{{ $room->description }}</p>
+                        <p><strong>Vị trí:</strong> {{ $room->location }}</p>
+                        <p><strong>Sức chứa:</strong> {{ $room->capacity }} người</p>
                         <p><strong>Giá thuê:</strong> {{ number_format($room->price, 0, ',', '.') }}
                             VNĐ/{{ App\Helpers\SettingHelper::get('room_rental_unit') }}</p>
                         <a href="{{ route('rooms.show', $room->id) }}" class="btn">Xem Chi Tiết</a>

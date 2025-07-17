@@ -12,13 +12,11 @@ class CreateRoom extends CreateRecord
 
     protected function mutateFormDataBeforeCreate(array $data): array
     {
-        // Tự động gán seo_image từ image nếu có
-        if (isset($data['image']) && $data['image']) {
-            $data['seo_image'] = $data['image'];
-        }
+        $imgFullUrl = asset('storage/' . $data['image']);
+        $data['seo_image'] = empty($data['seo_image']) ? $imgFullUrl : trim($data['seo_image']);
         return $data;
     }
-    
+
     protected function getRedirectUrl(): string
     {
         return $this->getResource()::getUrl('index');

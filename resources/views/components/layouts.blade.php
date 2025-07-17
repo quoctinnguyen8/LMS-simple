@@ -11,7 +11,7 @@
     <x-seo 
         ogTitle="{{ $attributes['ogTitle'] ?? App\Helpers\SettingHelper::get('seo_title', 'Chưa cập nhật') }}"
         ogDescription="{{ $attributes['ogDescription'] ?? App\Helpers\SettingHelper::get('seo_description', 'Chưa cập nhật') }}"
-        ogImage="{{ $attributes['ogImage'] ?? App\Helpers\SettingHelper::get('seo_image') }}"
+        ogImage="{{ $attributes['ogImage'] ?? asset('storage/' .App\Helpers\SettingHelper::get('seo_image')) }}"
     />
     <link rel="icon" href="{{asset('storage/' . App\Helpers\SettingHelper::get('logo')) }}" type="image/png">
     <link rel="stylesheet" href="{{ asset('css/app.css') }}">

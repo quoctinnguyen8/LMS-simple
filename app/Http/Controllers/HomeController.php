@@ -13,6 +13,7 @@ class HomeController extends Controller
     {
         $rooms = Room::all();
         $courses = Course::where('status','!=', 'draft')
+            ->where('end_registration_date', '>=', now())
             ->orderBy('created_at', 'desc')
             ->get();
         $slides = Slider::where('is_active', 1)->orderBy('position', 'asc')->get();
