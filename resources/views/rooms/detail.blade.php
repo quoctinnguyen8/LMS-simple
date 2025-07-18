@@ -134,12 +134,20 @@
                     </div>
                 </div>
 
-                <button type="submit" class="btn-submit">Đặt phòng</button>
+                <!-- reCAPTCHA cho form đặt phòng -->
+                <x-recaptcha form-type="room-booking" />
+
+                <button type="submit" class="btn-submit">Đặt phòng</button>                
                 <p class="notify notify-error" id="room-error">Vui lòng điền đầy đủ thông tin bắt buộc.</p>
             </form>
         </div>
     </section>
     <x-slot:scripts>
+        <!-- reCAPTCHA Script chỉ cho trang đặt phòng -->
+        @if(config('services.recaptcha.enabled', false))
+            <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+        @endif
+        
         <script>
             function toggleRecurrence(type) {
                 const recurrenceDays = document.getElementById('recurrence-days');

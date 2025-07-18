@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use App\Rules\RecaptchaRule;
 
 class RoomRequest extends FormRequest
 {
@@ -39,11 +40,16 @@ class RoomRequest extends FormRequest
         if ($room) {
             $rules['participants_count'] = 'required|integer|min:1|max:' . $room->capacity;
         }
+        // Chỉ thêm reCAPTCHA validation cho form đặt phòng từ frontend
+        if (
+            config('services.recaptcha.enabled', false) &&
+            request()->is('rooms/*/bookings') || request()->routeIs('rooms.bookings')
+        ) {
+            $rules['g-recaptcha-response'] = ['required', new RecaptchaRule()];
+        }
         return $rules;
     }
-    /**
-     * Get custom messages for the validation rules.
-     */
+
     public function atributes(): array
     {
         return [
@@ -59,6 +65,7 @@ class RoomRequest extends FormRequest
             'name' => 'Tên khách hàng',
             'email' => 'Email khách hàng',
             'phone' => 'Số điện thoại khách hàng',
+            'g-recaptcha-response' => 'reCAPTCHA',
         ];
     }
 }

@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use App\Rules\RecaptchaRule;
 
 class CourseRequest extends FormRequest
 {
@@ -21,7 +22,7 @@ class CourseRequest extends FormRequest
      */
     public function rules(): array
     {
-        return [
+        $rules = [
             'course_id' => 'required|exists:courses,id',
             'name' => 'required|string|max:255',
             'email' => 'required|email|max:255',
@@ -29,6 +30,29 @@ class CourseRequest extends FormRequest
             'dob' => 'required|date',
             'address' => 'nullable|string|max:255',
             'gender' => 'required|in:male,female,other',
+        ];
+
+        // Chỉ thêm reCAPTCHA validation cho form đăng ký khóa học từ frontend
+        if (
+            config('services.recaptcha.enabled', false) &&
+            (request()->is('courses/*/registration') || request()->routeIs('courses.registration'))
+        ) {
+            $rules['g-recaptcha-response'] = ['required', new RecaptchaRule()];
+        }
+
+        return $rules;
+    }
+    public function atributes(): array
+    {
+        return [
+            'course_id' => 'Khóa học',
+            'name' => 'Họ và tên',
+            'email' => 'Email',
+            'phone' => 'Số điện thoại',
+            'dob' => 'Ngày sinh',
+            'address' => 'Địa chỉ',
+            'gender' => 'Giới tính',
+            'g-recaptcha-response' => 'reCAPTCHA',
         ];
     }
 }

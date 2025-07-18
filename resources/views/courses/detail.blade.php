@@ -67,7 +67,18 @@
                     <textarea id="enroll-address" name="address" rows="2" placeholder="Địa chỉ">{{ old('address') }}</textarea>
                 </div>
             </div>
+            
+            <!-- reCAPTCHA cho form đăng ký khóa học -->
+            <x-recaptcha form-type="course-registration" />
+            
             <button type="submit" class="btn-submit">Đăng ký</button>
         </form>
     </section>
+    
+    <x-slot:scripts>
+        <!-- reCAPTCHA Script chỉ cho trang đăng ký khóa học -->
+        @if(config('services.recaptcha.enabled', false))
+            <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+        @endif
+    </x-slot:scripts>
 </x-layouts>
