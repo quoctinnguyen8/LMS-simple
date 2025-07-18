@@ -4,6 +4,7 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\RoomResource\Pages;
 use App\Filament\Resources\RoomResource\RelationManagers;
+use App\Helpers\SettingHelper;
 use App\Models\Room;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -69,10 +70,20 @@ class RoomResource extends Resource
                             ->integer(),
                         Forms\Components\TextInput::make('price')
                             ->label('Giá thuê')
+                            ->helperText(function(Forms\Get $get) {
+                                $unit = SettingHelper::getRoomRentalUnit();
+                                $hUnit = SettingHelper::getRoomUnitToHour();
+                                $msg =  "Đơn vị tính: " . SettingHelper::getRoomRentalUnit();
+                                if ($unit != 'giờ') {
+                                    $msg .= " (1 $unit =  $hUnit giờ)";
+                                }
+                                return $msg;
+                            })
                             ->required()
                             ->integer()
                             ->prefix('₫')
                             ->numeric()
+                            ->minValue(1000)
                             ->default(null)
                             ->mask(RawJs::make('$money($input)'))
                             ->stripCharacters([',', '.'])
@@ -96,10 +107,10 @@ class RoomResource extends Resource
                     ->description('Thiết bị có sẵn và mô tả chi tiết')
                     ->schema([
                         Forms\Components\Select::make('equipments')
-                            ->relationship('equipment', 'name', fn($query) => $query->where('is_free', true))
+                            ->relationship('equipment', 'name')
                             ->multiple()
                             ->preload()
-                            ->optionsLimit(10)
+                            ->optionsLimit(15)
                             ->label('Thiết bị có sẵn'),
                         Forms\Components\RichEditor::make('description')
                             ->label('Mô tả')

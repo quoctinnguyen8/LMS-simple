@@ -12,6 +12,7 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Support\Facades\Auth;
 
 class UserResource extends Resource
 {
@@ -36,32 +37,10 @@ class UserResource extends Resource
         return 'Quản lý người dùng';
     }
 
-    public static function form(Form $form): Form
-    {
-        return $form
-            ->schema([
-                Forms\Components\Section::make('Thông tin người dùng')
-                    ->description('Nhập thông tin cơ bản của người dùng')
-                    ->schema([
-                        Forms\Components\TextInput::make('name')
-                            ->label('Tên người dùng')
-                            ->required()
-                            ->maxLength(255),
-                        Forms\Components\TextInput::make('email')
-                            ->label('Email người dùng')
-                            ->email()
-                            ->required()
-                            ->maxLength(255),
-                        Forms\Components\TextInput::make('password')
-                            ->label('Mật khẩu')
-                            ->password()
-                            ->required()
-                            ->maxLength(255),
-                    ])
-                    ->columns(2)
-                    ->collapsible(),
-            ]);
-    }
+    // public static function form(Form $form): Form
+    // {
+    //     return $form;
+    // }
 
     public static function table(Table $table): Table
     {
@@ -98,7 +77,61 @@ class UserResource extends Resource
                 //
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
+                // nhóm hành động
+                Tables\Actions\ActionGroup::make([
+                    Tables\Actions\EditAction::make()
+                        ->label('Sửa')
+                        ->form([
+                            Forms\Components\TextInput::make('name')
+                                ->label('Tên người dùng')
+                                ->minLength(3)
+                                ->required()
+                                ->maxLength(255),
+                            Forms\Components\TextInput::make('email')
+                                ->label('Email người dùng')
+                                ->email()
+                                ->disabled(fn (User $record) => $record->role != 'admin') // Không cho phép sửa email nếu không phải là quản trị viên
+                                ->required()
+                                ->maxLength(255),
+                            // vai trò
+                            Forms\Components\Select::make('role')
+                                ->label('Vai trò')
+                                ->options([
+                                    'admin' => 'Quản trị viên',
+                                    'subadmin' => 'Quản trị viên phụ',
+                                    'user' => 'Người dùng',
+                                ])
+                                ->hidden(fn (Forms\Get $get) => Auth::user()?->role !== 'admin') // Chỉ hiển thị cho quản trị viên
+                                ->helperText('Quản trị viên có toàn quyền quản lý hệ thống, quản trị viên phụ có quyền hạn hạn chế hơn.')
+                        ])
+                        ->modalWidth('md')
+                        ->icon('heroicon-o-pencil'),
+                        Tables\Actions\Action::make('reset_password')
+                        ->label('Đặt lại mật khẩu')
+                        ->action(function (User $record) {
+                            // TODO: Logic đặt lại mật khẩu
+                            
+                        })
+                        ->icon('heroicon-o-key')
+                        ->requiresConfirmation()
+                        ->modalHeading('Đặt lại mật khẩu')
+                        ->modalDescription('Hệ thống sẽ gửi một email chứa mật khẩu mới đến tài khoản mail của người dùng. Bạn có chắc chắn muốn tiếp tục?')
+                        ->disabled(fn (User $record) => $record->role != 'admin'), // Không cho phép đặt lại mật khẩu nếu không phải là quản trị viên
+                        
+                    Tables\Actions\DeleteAction::make()
+                        ->label('Xóa')
+                        ->requiresConfirmation()
+                        ->modalHeading('Xác nhận xóa người dùng')
+                        ->modalDescription('Bạn có chắc chắn muốn xóa người dùng này? Hành động này không thể hoàn tác.')
+                        ->color('danger')
+                        ->icon('heroicon-o-trash')
+                        ->disabled(fn (User $record) => $record->id === Auth::id() || $record->role != 'admin') // Không cho phép xóa chính mình
+                        ,
+                ])
+                ->icon('heroicon-o-ellipsis-horizontal')
+                ->iconButton()
+                ->tooltip('Hành động')
+                ->extraAttributes(['class' => 'border']),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
@@ -118,8 +151,6 @@ class UserResource extends Resource
     {
         return [
             'index' => Pages\ListUsers::route('/'),
-            'create' => Pages\CreateUser::route('/create'),
-            'edit' => Pages\EditUser::route('/{record}/edit'),
         ];
     }
 }

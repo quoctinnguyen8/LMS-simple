@@ -102,12 +102,24 @@ class RoomBookingResource extends Resource
                         Forms\Components\TimePicker::make('start_time')
                             ->label('Giờ bắt đầu')
                             ->required()
-                            ->native(false)
                             ->format('H:i')
                             ->displayFormat('H:i')
                             ->minutesStep(5)
                             ->seconds(false) // Ẩn giây
                             ->default('08:00') // Giá trị mặc định
+                            ->live(onBlur: true)
+                            ->afterStateUpdated(function ($state, Forms\Set $set) {
+                                if ($state) {
+                                    try {
+                                        // Parse giờ bắt đầu và cộng thêm 1 giờ
+                                        $startTime = \Carbon\Carbon::parse($state);
+                                        $endTime = $startTime->copy()->addHour();
+                                        $set('end_time', $endTime->format('H:i'));
+                                    } catch (\Exception $e) {
+                                        // Nếu có lỗi thì không làm gì
+                                    }
+                                }
+                            })
                             ->columnSpan([
                                 'default' => 2,
                                 'sm' => 2,
@@ -131,12 +143,11 @@ class RoomBookingResource extends Resource
                         Forms\Components\TimePicker::make('end_time')
                             ->label('Giờ kết thúc')
                             ->required()
-                            ->native(false)
                             ->format('H:i')
                             ->displayFormat('H:i')
                             ->minutesStep(5)
                             ->seconds(false)
-                            ->default('09:00')
+                            ->default('09:00') // Mặc định 1 giờ sau start_time
                             ->after('start_time')
                             ->columnSpan([
                                 'default' => 2,
@@ -335,6 +346,7 @@ class RoomBookingResource extends Resource
                 SelectFilter::make('status')
                     ->label('Trạng thái')
                     ->multiple()
+                    ->default(['pending', 'approved'])
                     ->options([
                         'pending' => 'Chờ duyệt',
                         'approved' => 'Đã duyệt',
@@ -367,7 +379,7 @@ class RoomBookingResource extends Resource
                 // Bộ lọc chỉ hiển thị các đặt phòng chưa kết thúc
                 // mặc định chỉ hiển thị các đặt phòng chưa kết thúc
                 Tables\Filters\SelectFilter::make('booking_status')
-                    ->label('Thời gian đặt phòng')
+                    ->label('Thời gian thuê')
                     ->native(false)
                     ->default('ongoing')
                     ->placeholder('Chưa kết thúc')
@@ -410,7 +422,9 @@ class RoomBookingResource extends Resource
             ->actions([
                 // group actions
                 Tables\Actions\ActionGroup::make([
+
                     Tables\Actions\ViewAction::make(),
+
                     //thêm cái nút chỗ action tên là xem ngày đặt phòng, nhấn vào nó hiện modal, show hết data của details
                     Tables\Actions\Action::make('view_details')
                         ->label('Xem ngày đặt phòng')
@@ -425,6 +439,7 @@ class RoomBookingResource extends Resource
                                 'details' => $record->room_booking_details()->orderBy('booking_date')->get(),
                             ]);
                         }),
+
                     // thêm chức năng duyệt, từ chối, hủy đặt phòng
                     Tables\Actions\Action::make('approve')
                         ->label('Duyệt yêu cầu đặt phòng')
@@ -449,6 +464,7 @@ class RoomBookingResource extends Resource
                         })
                         ->requiresConfirmation()
                         ->disabled(fn(RoomBooking $record) => $record->status != 'pending'),
+
                     Tables\Actions\Action::make('reject')
                         ->label('Từ chối yêu cầu đặt phòng')
                         ->icon('heroicon-o-x-mark')
@@ -476,10 +492,12 @@ class RoomBookingResource extends Resource
                         })
                         ->requiresConfirmation()
                         ->disabled(fn(RoomBooking $record) => $record->status != 'approved'),
+
                     // chỉ cho phép chỉnh sửa nếu status là 'pending' hoặc 'approved'
                     Tables\Actions\EditAction::make()
                         ->disabled(fn(RoomBooking $record) => $record->status === 'rejected' || $record->status === 'cancelled_by_admin' || $record->status === 'cancelled_by_customer'),
                     // chỉ xóa các yêu cầu bị từ chối
+
                     Tables\Actions\DeleteAction::make()
                         ->label(function (RoomBooking $record) {
                             $record->status === 'rejected' ? 'Xóa yêu cầu' : 'Hãy từ chối yêu cầu này trước';
@@ -509,7 +527,151 @@ class RoomBookingResource extends Resource
             ])
             ->bulkActions([
                 BulkActionGroup::make([
-                    DeleteBulkAction::make(),
+                    // Bulk action duyệt hàng loạt
+                    Tables\Actions\BulkAction::make('bulk_approve')
+                        ->label('Duyệt hàng loạt')
+                        ->icon('heroicon-o-check')
+                        ->requiresConfirmation()
+                        ->modalHeading('Duyệt các yêu cầu đặt phòng')
+                        ->modalDescription('Chỉ duyệt các yêu cầu có trạng thái "Chờ duyệt" và không bị trùng lịch. Các yêu cầu khác sẽ được bỏ qua. Bạn có chắc chắn muốn tiếp tục?')
+                        ->action(function ($records) {
+                            $roomBookingService = new RoomBookingService();
+                            $approvedCount = 0;
+                            $duplicateCount = 0;
+                            
+                            foreach ($records as $record) {
+                                // Chỉ duyệt những record có status = 'pending' và không bị trùng lịch
+                                if ($record->status == 'pending' && !$record->is_duplicate) {
+                                    $record->update([
+                                        'status' => 'approved', 
+                                        'approved_by' => Auth::id()
+                                    ]);
+                                    // Update tất cả các chi tiết liên quan
+                                    $record->room_booking_details()->update([
+                                        'status' => 'approved', 
+                                        'approved_by' => Auth::id()
+                                    ]);
+                                    $approvedCount++;
+                                    
+                                    // Cập nhật trạng thái is_duplicate cho các booking khác
+                                    $roomBookingService->updateDuplicateStatus($record->room_id);
+                                } elseif ($record->is_duplicate) {
+                                    $duplicateCount++;
+                                }
+                            }
+                            
+                            \Filament\Notifications\Notification::make()
+                                ->title('Hoàn thành duyệt hàng loạt')
+                                ->body("Đã duyệt {$approvedCount} yêu cầu." . 
+                                      ($duplicateCount > 0 ? " {$duplicateCount} yêu cầu bị trùng lịch không thể duyệt." : ""))
+                                ->success()
+                                ->send();
+                        })
+                        ->deselectRecordsAfterCompletion(),
+
+                    // Bulk action từ chối hàng loạt
+                    Tables\Actions\BulkAction::make('bulk_reject')
+                        ->label('Từ chối hàng loạt')
+                        ->icon('heroicon-o-x-mark')
+                        ->requiresConfirmation()
+                        ->modalHeading('Từ chối các yêu cầu đặt phòng')
+                        ->modalDescription('Chỉ từ chối các yêu cầu có trạng thái "Chờ duyệt". Các yêu cầu đã được duyệt, từ chối hoặc hủy sẽ được bỏ qua. Bạn có chắc chắn muốn tiếp tục?')
+                        ->action(function ($records) {
+                            $rejectedCount = 0;
+                            
+                            foreach ($records as $record) {
+                                // Chỉ từ chối những record có status = 'pending'
+                                if ($record->status == 'pending') {
+                                    $record->update([
+                                        'status' => 'rejected', 
+                                        'rejected_by' => Auth::id()
+                                    ]);
+                                    // Update tất cả các chi tiết liên quan
+                                    $record->room_booking_details()->update([
+                                        'status' => 'rejected', 
+                                        'rejected_by' => Auth::id()
+                                    ]);
+                                    $rejectedCount++;
+                                }
+                            }
+                            
+                            \Filament\Notifications\Notification::make()
+                                ->title('Hoàn thành từ chối hàng loạt')
+                                ->body("Đã từ chối {$rejectedCount} yêu cầu.")
+                                ->success()
+                                ->send();
+                        })
+                        ->deselectRecordsAfterCompletion(),
+
+                    // Bulk action hủy hàng loạt
+                    Tables\Actions\BulkAction::make('bulk_cancel')
+                        ->label('Hủy hàng loạt')
+                        ->icon('heroicon-o-x-circle')
+                        ->requiresConfirmation()
+                        ->modalHeading('Hủy các yêu cầu đặt phòng')
+                        ->modalDescription('Chỉ hủy các yêu cầu có trạng thái "Đã duyệt" và chỉ hủy các ngày đặt phòng trong tương lai. Các yêu cầu khác sẽ được bỏ qua. Bạn có chắc chắn muốn tiếp tục?')
+                        ->action(function ($records) {
+                            $roomBookingService = new RoomBookingService();
+                            $cancelledCount = 0;
+                            
+                            foreach ($records as $record) {
+                                // Chỉ hủy những record có status = 'approved'
+                                if ($record->status == 'approved') {
+                                    $record->update([
+                                        'status' => 'cancelled_by_admin', 
+                                        'cancelled_by' => Auth::id()
+                                    ]);
+                                    // Update các chi tiết có ngày > hôm nay
+                                    $record->room_booking_details()
+                                        ->where('booking_date', '>', now()->format('Y-m-d'))
+                                        ->update([
+                                            'status' => 'cancelled', 
+                                            'cancelled_by' => Auth::id()
+                                        ]);
+                                    $cancelledCount++;
+                                    
+                                    // Cập nhật trạng thái is_duplicate cho các booking khác
+                                    $roomBookingService->updateDuplicateStatus($record->room_id);
+                                }
+                            }
+                            
+                            \Filament\Notifications\Notification::make()
+                                ->title('Hoàn thành hủy hàng loạt')
+                                ->body("Đã hủy {$cancelledCount} yêu cầu.")
+                                ->success()
+                                ->send();
+                        })
+                        ->deselectRecordsAfterCompletion(),
+
+                    // Bulk action xóa hàng loạt (chỉ các yêu cầu bị từ chối)
+                    Tables\Actions\BulkAction::make('bulk_delete')
+                        ->label('Xóa hàng loạt')
+                        ->icon('heroicon-o-trash')
+                        ->color('danger')
+                        ->requiresConfirmation()
+                        ->modalHeading('Xóa các yêu cầu đặt phòng')
+                        ->modalDescription('Chỉ xóa các yêu cầu có trạng thái "Từ chối". Các yêu cầu đang chờ duyệt, đã duyệt hoặc đã hủy sẽ được bỏ qua và không thể xóa. Bạn có chắc chắn muốn tiếp tục?')
+                        ->action(function ($records) {
+                            $deletedCount = 0;
+                            
+                            foreach ($records as $record) {
+                                // Chỉ xóa những record có status = 'rejected'
+                                if ($record->status == 'rejected') {
+                                    // Xóa các chi tiết liên quan trước
+                                    $record->room_booking_details()->delete();
+                                    // Xóa record chính
+                                    $record->delete();
+                                    $deletedCount++;
+                                }
+                            }
+                            
+                            \Filament\Notifications\Notification::make()
+                                ->title('Hoàn thành xóa hàng loạt')
+                                ->body("Đã xóa {$deletedCount} yêu cầu bị từ chối.")
+                                ->success()
+                                ->send();
+                        })
+                        ->deselectRecordsAfterCompletion(),
                 ]),
             ])
             ->defaultSort('created_at', 'desc')

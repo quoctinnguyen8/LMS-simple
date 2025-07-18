@@ -64,6 +64,7 @@ class NewsCategoryResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
+            ->description('Chỉ có thể xóa các danh mục không có tin tức liên kết.')
             ->columns([
                 Tables\Columns\TextColumn::make('name')
                     ->label('Tên danh mục')
@@ -103,30 +104,43 @@ class NewsCategoryResource extends Resource
                     ->label('Sửa'),
                 Tables\Actions\DeleteAction::make()
                     ->label('Xóa')
-                    // cảnh báo xóa các tin tức liên quan
                     ->requiresConfirmation()
                     ->modalHeading('Xác nhận xóa danh mục')
                     ->modalDescription(function (NewsCategory $record) {
                         $newsCount = $record->news()->count();
                         if ($newsCount > 0) {
-                            return "Bạn có chắc chắn muốn xóa danh mục '{$record->name}'? Có {$newsCount} tin tức trong danh mục này cũng sẽ bị xóa.";
+                            return "Không thể xóa danh mục '{$record->name}' vì nó có {$newsCount} tin tức liên kết. Vui lòng xóa các tin tức này trước.";
                         }
                         return "Bạn có chắc chắn muốn xóa danh mục '{$record->name}'?";
                     })
-                    ->action(function (NewsCategory $record) {
-                        $record->news()->delete(); // Xóa các tin tức liên quan
-                        $record->delete(); // Xóa danh mục
-                        Notification::make()
-                            ->title('Danh mục đã được xóa')
-                            ->success()
-                            ->send();
-                    })
+                    ->disabled(fn (NewsCategory $record) => $record->news()->count() > 0)
                     ->color('danger'),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make()
-                        ->label('Xóa các mục đã chọn'),
+                        ->label('Xóa các mục đã chọn')
+                        ->requiresConfirmation()
+                        ->modalHeading('Xác nhận xóa các danh mục')
+                        ->modalDescription('Bạn có chắc chắn muốn xóa các danh mục đã chọn?'
+                                        . ' Các danh mục này sẽ không thể phục hồi sau khi xóa.'
+                                        . ' Lưu ý: Chỉ có thể xóa các danh mục không có tin tức liên kết.')
+                        ->action(function (array $records) {
+                            foreach ($records as $record) {
+                                if ($record->news()->count() > 0) {
+                                    Notification::make()
+                                        ->title("Không thể xóa danh mục '{$record->name}' vì nó có tin tức liên kết.")
+                                        ->danger()
+                                        ->send();
+                                    continue;
+                                }
+                                $record->delete();
+                            }
+                            Notification::make()
+                                ->title("Đã xóa " . count($records) . " danh mục")
+                                ->success()
+                                ->send();
+                        }),
                 ]),
             ])
             ->emptyStateActions([

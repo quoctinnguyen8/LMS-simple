@@ -13,6 +13,7 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Support\Facades\Auth;
 
 class EquipmentResource extends Resource
 {
@@ -42,27 +43,27 @@ class EquipmentResource extends Resource
         return $form
             ->schema([
                 Forms\Components\Section::make('Thông tin thiết bị')
-                    ->description('Thiết bị được đánh dấu là miễn phí mới có thể được chọn khi tạo phòng học, giá thuê cũng sẽ bị xóa khi lưu.')
+                    //->description('Thiết bị được đánh dấu là miễn phí mới có thể được chọn khi tạo phòng học, giá thuê cũng sẽ bị xóa khi lưu.')
                     ->schema([
                         Forms\Components\TextInput::make('name')
                             ->label('Tên thiết bị')
                             ->required()
                             ->maxLength(100)
                             ->columnSpan(2),
-                        Forms\Components\TextInput::make('price')
-                            ->label('Giá thuê thiết bị')
-                            ->integer()
-                            ->nullable()
-                            ->prefix('₫')
-                            ->mask(RawJs::make('$money($input)'))
-                            ->stripCharacters([',', '.'])
-                            ->dehydrateStateUsing(fn ($state) => (int) str_replace([','], '', $state))
-                            ->columnSpan(2),
-                        Forms\Components\Toggle::make('is_free')
-                            ->label('Miễn phí')
-                            ->default(false)
-                            ->inline(false)
-                            ->columnSpan(2)                        
+                        // Forms\Components\TextInput::make('price')
+                        //     ->label('Giá thuê thiết bị')
+                        //     ->integer()
+                        //     ->nullable()
+                        //     ->prefix('₫')
+                        //     ->mask(RawJs::make('$money($input)'))
+                        //     ->stripCharacters([',', '.'])
+                        //     ->dehydrateStateUsing(fn ($state) => (int) str_replace([','], '', $state))
+                        //     ->columnSpan(2),
+                        // Forms\Components\Toggle::make('is_free')
+                        //     ->label('Miễn phí')
+                        //     ->default(false)
+                        //     ->inline(false)
+                        //     ->columnSpan(2)                        
                     ])
                     ->columns(4),
             ]);
@@ -80,15 +81,16 @@ class EquipmentResource extends Resource
                     ->label('Người tạo')
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('price')
-                    ->label('Giá thuê')
-                    ->formatStateUsing(function ($state, $record) {
-                        if ($record->is_free) {
-                            return 'Miễn phí';
-                        }
-                        return $state ? number_format($state) . ' ₫' : '-';
-                    })
-                    ->sortable(),
+                // TODO: LOGIC LIÊN QUAN ĐẾN GIÁ THUÊ Sẽ ĐƯỢC BỔ SUNG SAU
+                // Tables\Columns\TextColumn::make('price')
+                //     ->label('Giá thuê')
+                //     ->formatStateUsing(function ($state, $record) {
+                //         if ($record->is_free) {
+                //             return 'Miễn phí';
+                //         }
+                //         return $state ? number_format($state) . ' ₫' : '-';
+                //     })
+                //     ->sortable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->label('Ngày tạo')
                     ->dateTime('d/m/Y H:i')
@@ -101,22 +103,51 @@ class EquipmentResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
+                // TODO: LOGIC LIÊN QUAN ĐẾN GIÁ THUÊ Sẽ ĐƯỢC BỔ SUNG SAU
                 // lọc theo giá miễn phí
-                Tables\Filters\SelectFilter::make('is_free')
-                    ->label('Giá thuê')
-                    ->options([
-                        true => 'Miễn phí',
-                        false => 'Có giá thuê',
-                    ])
-                    ->multiple()
+                // Tables\Filters\SelectFilter::make('is_free')
+                //     ->label('Giá thuê')
+                //     ->options([
+                //         true => 'Miễn phí',
+                //         false => 'Có giá thuê',
+                //     ])
+                //     ->multiple()
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
+                Tables\Actions\EditAction::make()
+                    ->label('Sửa')
+                    ->form([
+                        Forms\Components\TextInput::make('name')
+                            ->label('Tên thiết bị')
+                            ->required()
+                            ->maxLength(100),
+                    ])
+                    ->modalWidth('md'),
+
+                Tables\Actions\DeleteAction::make()
+                    ->label('Xóa'),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+                    Tables\Actions\DeleteBulkAction::make()
+                        ->label('Xóa các mục đã chọn'),
                 ]),
+            ])
+            ->emptyStateActions([
+                Tables\Actions\CreateAction::make()
+                    ->label('Thêm thiết bị đầu tiên')
+                    ->form([
+                        Forms\Components\TextInput::make('name')
+                            ->label('Tên thiết bị')
+                            ->required()
+                            ->maxLength(100),
+                        Forms\Components\TextInput::make('created_by')
+                            ->label('Người tạo')
+                            ->default(Auth::id())
+                            ->hidden(),
+                    ])
+                    ->modalWidth('md')
+                    ->createAnother(false),
             ]);
     }
 
@@ -127,12 +158,11 @@ class EquipmentResource extends Resource
         ];
     }
 
+
     public static function getPages(): array
     {
         return [
             'index' => Pages\ListEquipment::route('/'),
-            'create' => Pages\CreateEquipment::route('/create'),
-            'edit' => Pages\EditEquipment::route('/{record}/edit'),
         ];
     }
 }

@@ -142,7 +142,7 @@ class NewsResource extends Resource
                             
                         Forms\Components\Toggle::make('is_featured')
                             ->label('Tin tức nổi bật')
-                            ->helperText('Tin tức nổi bật sẽ được hiển thị ưu tiên'),
+                            ->helperText('Tin tức nổi bật sẽ được ưu tiên hiển thị hơn các tin khác'),
                             
                         Forms\Components\TextInput::make('view_count')
                             ->label('Lượt xem')
