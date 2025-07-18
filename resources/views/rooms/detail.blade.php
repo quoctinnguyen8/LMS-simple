@@ -35,31 +35,11 @@
             <h2>Mô tả</h2>
             <div>{!! $room->description !!}</div>
         </div>
-        <div class="booking-container">
-            <div class="booking-calendar">
-                <!-- Calendar will be added here in future -->
-                <div class="calendar-placeholder">
-                    <h2>Lịch đặt phòng</h2>
-                    @if ($bookingDetails->isEmpty())
-                        <p>Chưa có lịch đặt phòng nào.</p>
-                    @else
-                        <ul class="booking-list">
-                            @foreach ($bookingDetails as $booking)
-                                <li class="booking-item">
-                                    <strong>{{ $booking->booking_date->format('d/m/Y') }}</strong>
-                                    <span class="booking-time">({{ $booking->start_time->format('H:i') }} -
-                                        {{ $booking->end_time->format('H:i') }})</span>
-                                </li>
-                            @endforeach
-                        </ul>
-                    @endif
-                </div>
-            </div>
-
+        <div class="b-form">
             <form class="booking-form" action="{{ route('rooms.bookings') }}" method="POST">
                 @csrf
+                <h2>Thông tin đặt phòng</h2>
                 <input type="hidden" name="room_id" value="{{ $room->id }}">
-                <h2>Đặt phòng</h2>
                 <div class="form-row">
                     <div class="form-group half">
                         <x-app-input name="name" label="Họ và tên" required />
@@ -137,17 +117,18 @@
                 <!-- reCAPTCHA cho form đặt phòng -->
                 <x-recaptcha form-type="room-booking" />
 
-                <button type="submit" class="btn-submit">Đặt phòng</button>                
+                <button type="submit" class="btn-submit">Đặt phòng</button>
                 <p class="notify notify-error" id="room-error">Vui lòng điền đầy đủ thông tin bắt buộc.</p>
             </form>
         </div>
+
     </section>
     <x-slot:scripts>
         <!-- reCAPTCHA Script chỉ cho trang đặt phòng -->
-        @if(config('services.recaptcha.enabled', false))
+        @if (config('services.recaptcha.enabled', false))
             <script src="https://www.google.com/recaptcha/api.js" async defer></script>
         @endif
-        
+
         <script>
             function toggleRecurrence(type) {
                 const recurrenceDays = document.getElementById('recurrence-days');
