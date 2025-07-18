@@ -47,7 +47,7 @@
             @endforeach
 
         </div>
-        @if ($courses->count() > 6)
+        @if ($courses->count() > 3)
             <div class="view-more">
                 <a href="{{ route('courses.index') }}" class="btn">Xem thêm</a>
             </div>
@@ -73,7 +73,7 @@
                 </div>
             @endforeach
         </div>
-        @if ($rooms->count() > 6)
+        @if ($rooms->count() > 3)
             <div class="view-more">
                 <a href="{{ route('rooms.index') }}" class="btn">Xem thêm</a>
             </div>
