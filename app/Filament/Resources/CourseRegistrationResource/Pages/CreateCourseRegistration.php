@@ -6,6 +6,7 @@ use App\Filament\Resources\CourseRegistrationResource;
 use Filament\Actions;
 use Filament\Resources\Pages\CreateRecord;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 class CreateCourseRegistration extends CreateRecord
 {
@@ -18,15 +19,31 @@ class CreateCourseRegistration extends CreateRecord
             $data['created_by'] = Auth::id();
         }
 
-        // Lưu giá thực tế của khóa học tại thời điểm đăng ký
-        // if (isset($data['course_id'])) {
-        //     $course = \App\Models\Course::find($data['course_id']);
-        //     if ($course) {
-        //         $data['actual_price'] = $course->price;
-        //     }
-        // }
-
         return $data;
+    }
+    protected function afterCreate(): void
+    {
+        $record = $this->record;
+        
+        Log::info('Course registration created', [
+            'registration_id' => $record->id,
+            'course_id' => $record->course_id,
+            'course_title' => $record->course->title ?? 'Unknown',
+            'student_name' => $record->student_name,
+            'student_phone' => $record->student_phone,
+            'student_email' => $record->student_email,
+            'student_address' => $record->student_address,
+            'student_birth_date' => $record->student_birth_date,
+            'student_gender' => $record->student_gender,
+            'status' => $record->status,
+            'payment_status' => $record->payment_status,
+            'actual_price' => $record->actual_price,
+            'registration_date' => $record->registration_date,
+            'created_by_user_id' => Auth::id(),
+            'created_by_user_name' => Auth::user()->name ?? 'Unknown',
+            'ip_address' => request()->ip(),
+            'user_agent' => request()->userAgent(),
+        ]);
     }
     
     protected function getRedirectUrl(): string

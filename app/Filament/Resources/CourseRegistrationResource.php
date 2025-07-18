@@ -13,6 +13,8 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Auth;
 
 class CourseRegistrationResource extends Resource
 {
@@ -176,7 +178,6 @@ class CourseRegistrationResource extends Resource
                             ->mask(RawJs::make('$money($input)'))
                             ->stripCharacters([',', '.'])
                             ->dehydrateStateUsing(fn($state) => (int) str_replace([','], '', $state))
-                            ->disabled(fn($context) => $context === 'create') // Chỉ disable khi tạo mới
                             ->dehydrated(fn($context) => $context !== 'create'), // Chỉ lưu khi edit
                     ])
                     ->columns(2)
@@ -191,6 +192,7 @@ class CourseRegistrationResource extends Resource
             ->columns([
                 Tables\Columns\TextColumn::make('student_name')
                     ->label('Tên học viên')
+                    ->description(fn(CourseRegistration $record) => $record->student_phone)
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('course.title')
@@ -274,11 +276,290 @@ class CourseRegistrationResource extends Resource
 
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
+                Tables\Actions\ActionGroup::make([
+                    Tables\Actions\ViewAction::make(),
+                    
+                    Tables\Actions\EditAction::make(),
+
+                    // Action xác nhận đăng ký
+                    Tables\Actions\Action::make('confirm')
+                        ->label('Xác nhận đăng ký')
+                        ->icon('heroicon-o-check-circle')
+                        ->requiresConfirmation()
+                        ->modalHeading('Xác nhận đăng ký khóa học')
+                        ->modalDescription('Bạn có chắc chắn muốn xác nhận đăng ký này?')
+                        ->action(function (CourseRegistration $record) {
+                            $oldStatus = $record->status;
+                            $record->update(['status' => 'confirmed']);
+                            
+                            Log::info('Course registration confirmed', [
+                                'registration_id' => $record->id,
+                                'course_id' => $record->course_id,
+                                'course_title' => $record->course->title ?? 'Unknown',
+                                'student_name' => $record->student_name,
+                                'student_phone' => $record->student_phone,
+                                'student_email' => $record->student_email,
+                                'old_status' => $oldStatus,
+                                'new_status' => 'confirmed',
+                                'confirmed_by_user_id' => Auth::id(),
+                                'confirmed_by_user_name' => Auth::user()->name ?? 'Unknown',
+                                'ip_address' => request()->ip(),
+                                'user_agent' => request()->userAgent(),
+                            ]);
+                        })
+                        ->visible(fn(CourseRegistration $record) => $record->status === 'pending'),
+
+                    // Action hủy đăng ký
+                    Tables\Actions\Action::make('cancel')
+                        ->label('Hủy đăng ký')
+                        ->icon('heroicon-o-x-circle')
+                        ->requiresConfirmation()
+                        ->modalHeading('Hủy đăng ký khóa học')
+                        ->modalDescription('Bạn có chắc chắn muốn hủy đăng ký này? Thao tác này không thể hoàn tác.')
+                        ->action(function (CourseRegistration $record) {
+                            $oldStatus = $record->status;
+                            $record->update(['status' => 'canceled']);
+                            
+                            Log::info('Course registration cancelled', [
+                                'registration_id' => $record->id,
+                                'course_id' => $record->course_id,
+                                'course_title' => $record->course->title ?? 'Unknown',
+                                'student_name' => $record->student_name,
+                                'student_phone' => $record->student_phone,
+                                'student_email' => $record->student_email,
+                                'old_status' => $oldStatus,
+                                'new_status' => 'canceled',
+                                'cancelled_by_user_id' => Auth::id(),
+                                'cancelled_by_user_name' => Auth::user()->name ?? 'Unknown',
+                                'ip_address' => request()->ip(),
+                                'user_agent' => request()->userAgent(),
+                            ]);
+                        })
+                        ->disabled(fn(CourseRegistration $record) => in_array($record->status, ['pending', 'confirmed'])),
+
+                    // Action đánh dấu hoàn thành
+                    Tables\Actions\Action::make('complete')
+                        ->label('Đánh dấu hoàn thành')
+                        ->icon('heroicon-o-academic-cap')
+                        ->color('success')
+                        ->requiresConfirmation()
+                        ->modalHeading('Hoàn thành khóa học')
+                        ->modalDescription('Đánh dấu học viên đã hoàn thành khóa học này?')
+                        ->action(function (CourseRegistration $record) {
+                            $oldStatus = $record->status;
+                            $record->update(['status' => 'completed']);
+                            
+                            Log::info('Course registration completed', [
+                                'registration_id' => $record->id,
+                                'course_id' => $record->course_id,
+                                'course_title' => $record->course->title ?? 'Unknown',
+                                'student_name' => $record->student_name,
+                                'student_phone' => $record->student_phone,
+                                'student_email' => $record->student_email,
+                                'old_status' => $oldStatus,
+                                'new_status' => 'completed',
+                                'completed_by_user_id' => Auth::id(),
+                                'completed_by_user_name' => Auth::user()->name ?? 'Unknown',
+                                'ip_address' => request()->ip(),
+                                'user_agent' => request()->userAgent(),
+                            ]);
+                        })
+                        ->disabled(fn(CourseRegistration $record) => $record->status === 'confirmed'),
+
+                    // Action cập nhật thanh toán
+                    Tables\Actions\Action::make('update_payment')
+                        ->label('Cập nhật thanh toán')
+                        ->icon('heroicon-o-currency-dollar')
+                        ->form([
+                            Forms\Components\Select::make('payment_status')
+                                ->label('Trạng thái thanh toán')
+                                ->options([
+                                    'paid' => 'Đã thanh toán',
+                                    'unpaid' => 'Chưa thanh toán',
+                                    'refunded' => 'Đã hoàn tiền'
+                                ])
+                                ->required()
+                                ->native(false),
+                            Forms\Components\TextInput::make('actual_price')
+                                ->label('Số tiền thực thu')
+                                ->integer()
+                                ->prefix('₫')
+                                ->mask(RawJs::make('$money($input)'))
+                                ->stripCharacters([',', '.'])
+                                ->dehydrateStateUsing(fn($state) => (int) str_replace([','], '', $state))
+                        ])
+                        ->fillForm(fn(CourseRegistration $record): array => [
+                            'payment_status' => $record->payment_status,
+                            'actual_price' => $record->actual_price,
+                        ])
+                        ->action(function (CourseRegistration $record, array $data) {
+                            $oldPaymentStatus = $record->payment_status;
+                            $oldActualPrice = $record->actual_price;
+                            
+                            $record->update([
+                                'payment_status' => $data['payment_status'],
+                                'actual_price' => $data['actual_price']
+                            ]);
+                            
+                            Log::info('Course registration payment updated', [
+                                'registration_id' => $record->id,
+                                'course_id' => $record->course_id,
+                                'course_title' => $record->course->title ?? 'Unknown',
+                                'student_name' => $record->student_name,
+                                'student_phone' => $record->student_phone,
+                                'old_payment_status' => $oldPaymentStatus,
+                                'new_payment_status' => $data['payment_status'],
+                                'old_actual_price' => $oldActualPrice,
+                                'new_actual_price' => $data['actual_price'],
+                                'updated_by_user_id' => Auth::id(),
+                                'updated_by_user_name' => Auth::user()->name ?? 'Unknown',
+                                'ip_address' => request()->ip(),
+                                'user_agent' => request()->userAgent(),
+                            ]);
+                        })
+                        ->modalWidth('md'),
+
+                    Tables\Actions\DeleteAction::make()
+                        ->before(function (CourseRegistration $record) {
+                            // Log trước khi xóa để giữ thông tin
+                            Log::info('Course registration deleted', [
+                                'registration_id' => $record->id,
+                                'course_id' => $record->course_id,
+                                'course_title' => $record->course->title ?? 'Unknown',
+                                'student_name' => $record->student_name,
+                                'student_phone' => $record->student_phone,
+                                'student_email' => $record->student_email,
+                                'student_address' => $record->student_address,
+                                'status' => $record->status,
+                                'payment_status' => $record->payment_status,
+                                'actual_price' => $record->actual_price,
+                                'registration_date' => $record->registration_date,
+                                'deleted_by_user_id' => Auth::id(),
+                                'deleted_by_user_name' => Auth::user()->name ?? 'Unknown',
+                                'ip_address' => request()->ip(),
+                                'user_agent' => request()->userAgent(),
+                            ]);
+                        })
+                        ->disabled(fn(CourseRegistration $record) => Auth::user()->role !== 'admin')
+                ])
+                ->icon('heroicon-o-ellipsis-vertical')
+                ->color('gray')
+                ->tooltip('Thao tác')
+                ->iconButton()
+                ->extraAttributes(['class' => 'border']),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+                    // Bulk xác nhận đăng ký
+                    Tables\Actions\BulkAction::make('bulk_confirm')
+                        ->label('Xác nhận hàng loạt')
+                        ->icon('heroicon-o-check-circle')
+                        ->color('success')
+                        ->requiresConfirmation()
+                        ->modalHeading('Xác nhận đăng ký hàng loạt')
+                        ->modalDescription('Chỉ xác nhận các đăng ký có trạng thái "Đang chờ". Các đăng ký khác sẽ được bỏ qua.')
+                        ->action(function ($records) {
+                            $confirmedCount = 0;
+                            $confirmedRegistrations = [];
+                            
+                            foreach ($records as $record) {
+                                if ($record->status === 'pending') {
+                                    $record->update(['status' => 'confirmed']);
+                                    $confirmedCount++;
+                                    $confirmedRegistrations[] = [
+                                        'registration_id' => $record->id,
+                                        'student_name' => $record->student_name,
+                                        'course_title' => $record->course->title ?? 'Unknown',
+                                    ];
+                                }
+                            }
+                            
+                            Log::info('Bulk confirm course registrations completed', [
+                                'confirmed_count' => $confirmedCount,
+                                'total_selected' => count($records),
+                                'confirmed_registrations' => $confirmedRegistrations,
+                                'confirmed_by_user_id' => Auth::id(),
+                                'confirmed_by_user_name' => Auth::user()->name ?? 'Unknown',
+                                'ip_address' => request()->ip(),
+                                'user_agent' => request()->userAgent(),
+                            ]);
+                            
+                            \Filament\Notifications\Notification::make()
+                                ->title('Hoàn thành xác nhận hàng loạt')
+                                ->body("Đã xác nhận {$confirmedCount} đăng ký.")
+                                ->success()
+                                ->send();
+                        })
+                        ->modalWidth('md')
+                        ->deselectRecordsAfterCompletion(),
+
+                    // Bulk hủy đăng ký
+                    Tables\Actions\BulkAction::make('bulk_cancel')
+                        ->label('Hủy hàng loạt')
+                        ->icon('heroicon-o-x-circle')
+                        ->color('danger')
+                        ->requiresConfirmation()
+                        ->modalHeading('Hủy đăng ký hàng loạt')
+                        ->modalDescription('Chỉ hủy các đăng ký có trạng thái "Đang chờ" hoặc "Đã xác nhận". Các đăng ký khác sẽ được bỏ qua.')
+                        ->action(function ($records) {
+                            $cancelledCount = 0;
+                            $cancelledRegistrations = [];
+                            
+                            foreach ($records as $record) {
+                                if (in_array($record->status, ['pending', 'confirmed'])) {
+                                    $record->update(['status' => 'canceled']);
+                                    $cancelledCount++;
+                                    $cancelledRegistrations[] = [
+                                        'registration_id' => $record->id,
+                                        'student_name' => $record->student_name,
+                                        'course_title' => $record->course->title ?? 'Unknown',
+                                    ];
+                                }
+                            }
+                            
+                            Log::info('Bulk cancel course registrations completed', [
+                                'cancelled_count' => $cancelledCount,
+                                'total_selected' => count($records),
+                                'cancelled_registrations' => $cancelledRegistrations,
+                                'cancelled_by_user_id' => Auth::id(),
+                                'cancelled_by_user_name' => Auth::user()->name ?? 'Unknown',
+                                'ip_address' => request()->ip(),
+                                'user_agent' => request()->userAgent(),
+                            ]);
+                            
+                            \Filament\Notifications\Notification::make()
+                                ->title('Hoàn thành hủy hàng loạt')
+                                ->body("Đã hủy {$cancelledCount} đăng ký.")
+                                ->success()
+                                ->send();
+                        })
+                        ->deselectRecordsAfterCompletion(),
+
+                    Tables\Actions\DeleteBulkAction::make()
+                        ->before(function ($records) {
+                            $deletedRegistrations = [];
+                            foreach ($records as $record) {
+                                $deletedRegistrations[] = [
+                                    'registration_id' => $record->id,
+                                    'student_name' => $record->student_name,
+                                    'student_phone' => $record->student_phone,
+                                    'student_email' => $record->student_email,
+                                    'course_title' => $record->course->title ?? 'Unknown',
+                                    'status' => $record->status,
+                                    'payment_status' => $record->payment_status,
+                                    'actual_price' => $record->actual_price,
+                                ];
+                            }
+                            
+                            Log::info('Bulk delete course registrations', [
+                                'deleted_count' => count($records),
+                                'deleted_registrations' => $deletedRegistrations,
+                                'deleted_by_user_id' => Auth::id(),
+                                'deleted_by_user_name' => Auth::user()->name ?? 'Unknown',
+                                'ip_address' => request()->ip(),
+                                'user_agent' => request()->userAgent(),
+                            ]);
+                        }),
                 ]),
             ]);
     }
