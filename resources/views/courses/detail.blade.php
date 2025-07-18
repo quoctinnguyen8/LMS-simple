@@ -40,18 +40,21 @@
             <input type="hidden" name="course_id" value="{{ $course->id }}">
             <div class="form-row">
                 <div class="form-group half">
-                    <x-app-input name="name" label="Họ và tên" required />
+                    <x-app-input name="name" label="Họ và tên" placeholder="Nhập họ và tên" required />
                 </div>
                 <div class="form-group half">
-                    <x-app-input name="email" type="email" label="Email" required />
+                    <x-app-input name="email" type="email" label="Email" placeholder="Nhập email" required />
                 </div>
                 <div class="form-group half">
-                    <x-app-input name="phone" type="tel" label="Số điện thoại" required />
+                    <x-app-input name="phone" type="tel" label="Số điện thoại" placeholder="Nhập số điện thoại" required />
+                </div>
+                <div class="form-group half">
+                    <x-app-input name="dob" type="date" label="Ngày sinh" required />
                 </div>
             </div>
             <div class="form-row">
                 <div class="form-group half">
-                    <label for="enroll-gender">Giới tính</label>
+                    <label for="enroll-gender">Giới tính <span style="color: red;">*</span></label>
                     <select id="enroll-gender" name="gender" required>
                         <option value="">Chọn giới tính</option>
                         <option value="male" {{ old('gender') == 'male' ? 'selected' : '' }}>Nam</option>
@@ -60,12 +63,9 @@
                     </select>
                 </div>
                 <div class="form-group half">
-                    <x-app-input name="dob" type="date" label="Ngày sinh" required />
+                    <label for="enroll-address">Địa chỉ</label>
+                    <textarea id="enroll-address" name="address" rows="2" placeholder="Địa chỉ">{{ old('address') }}</textarea>
                 </div>
-            </div>
-            <div class="form-group">
-                <label for="enroll-address">Địa chỉ</label>
-                <textarea id="enroll-address" name="address" rows="3" placeholder="Địa chỉ">{{ old('address') }}</textarea>
             </div>
             <button type="submit" class="btn-submit">Đăng ký</button>
         </form>

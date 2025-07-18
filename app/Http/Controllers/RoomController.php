@@ -55,7 +55,7 @@ class RoomController extends Controller
         $data = $roomBookingService->prepareBookingData($data);
         $booking = RoomBooking::create($data);
 
-        $roomBookingService->createBookingDetails($booking, $data);
+        $roomBookingService->createBookingDetails($booking, $data, true, false);
         return redirect()->route('rooms.show', ['id' => $validated['room_id']])
             ->with('success', 'Đặt phòng thành công!');
     }

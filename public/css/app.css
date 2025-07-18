@@ -252,11 +252,11 @@ nav {
      z-index: 1001;
 }
 
-#menu-toggle:checked ~ .sidebar {
+#menu-toggle:checked~.sidebar {
      right: 0;
 }
 
-#menu-toggle:checked ~ .overlay {
+#menu-toggle:checked~.overlay {
      opacity: 1;
      visibility: visible;
 }
@@ -738,29 +738,65 @@ h2 {
     ALERTS & NOTIFICATIONS
     ========================================================================== */
 
-.alert,
-.notify {
+.alert {
      padding: 0.75rem;
      margin-top: 0.5rem;
      border-radius: var(--border-radius);
      font-size: 0.9rem;
 }
 
-.alert-danger,
+.alert-danger {
+     background-color: #f8d7da;
+     color: #721c24;
+     border: 1px solid #f5c6cb;
+}
+
+.notify {
+     position: fixed;
+     top: 20px;
+     right: -400px;
+     width: 350px;
+     padding: 1rem 1.5rem;
+     border-radius: var(--border-radius);
+     font-size: 0.9rem;
+     box-shadow: var(--shadow-hover);
+     z-index: 1003;
+     opacity: 0;
+     transform: translateX(100%);
+     transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.notify.show {
+     right: 20px;
+     opacity: 1;
+     transform: translateX(0);
+}
+
+.notify.hide {
+     right: -400px;
+     opacity: 0;
+     transform: translateX(100%);
+}
+
 .notify-error {
      background-color: #f8d7da;
      color: #721c24;
      border: 1px solid #f5c6cb;
+     border-left: 4px solid #dc3545;
 }
 
 .notify-success {
      background-color: #d4edda;
      color: #155724;
      border: 1px solid #c3e6cb;
+     border-left: 4px solid #28a745;
 }
 
-.notify {
-     display: none;
+.notify-warning {
+     background-color: #fff3cd;
+     color: #856404;
+     border: 1px solid #ffeeba;
+     border-left: 4px solid #ffc107;
 }
 
 /* ==========================================================================
@@ -832,6 +868,7 @@ footer {
           opacity: 0;
           transform: translateY(20px);
      }
+
      to {
           opacity: 1;
           transform: translateY(0);
@@ -839,7 +876,9 @@ footer {
 }
 
 @keyframes spin {
-     to { transform: rotate(360deg); }
+     to {
+          transform: rotate(360deg);
+     }
 }
 
 .fade-in {
@@ -860,16 +899,45 @@ footer {
     UTILITY CLASSES
     ========================================================================== */
 
-.text-center { text-align: center; }
-.text-left { text-align: left; }
-.text-right { text-align: right; }
-.hidden { display: none; }
-.mb-1 { margin-bottom: 1rem; }
-.mb-2 { margin-bottom: 2rem; }
-.mt-1 { margin-top: 1rem; }
-.mt-2 { margin-top: 2rem; }
-.p-1 { padding: 1rem; }
-.p-2 { padding: 2rem; }
+.text-center {
+     text-align: center;
+}
+
+.text-left {
+     text-align: left;
+}
+
+.text-right {
+     text-align: right;
+}
+
+.hidden {
+     display: none;
+}
+
+.mb-1 {
+     margin-bottom: 1rem;
+}
+
+.mb-2 {
+     margin-bottom: 2rem;
+}
+
+.mt-1 {
+     margin-top: 1rem;
+}
+
+.mt-2 {
+     margin-top: 2rem;
+}
+
+.p-1 {
+     padding: 1rem;
+}
+
+.p-2 {
+     padding: 2rem;
+}
 
 /* ==========================================================================
     RESPONSIVE DESIGN
@@ -879,93 +947,94 @@ footer {
      .desktop-menu {
           display: flex;
      }
-     
+
      .menu-button {
           display: none;
      }
-     
+
      .course-list,
      .room-list,
      .news-list {
           grid-template-columns: repeat(2, 1fr);
      }
-     
+
      .form-row {
           grid-template-columns: repeat(2, 1fr);
      }
-     
+
      .course-header,
      .room-header,
      .news-header {
           grid-template-columns: 1fr 1fr;
      }
-     
+
      .booking-container {
           grid-template-columns: 1fr 1fr;
      }
-     
+
      .checkbox-group {
           grid-template-columns: repeat(3, 1fr);
      }
-     
+
      .slider {
           height: 500px;
      }
-     
+
      .slide-content h2 {
           font-size: 2.5rem;
      }
-     
+
      .footer-content {
           grid-template-columns: repeat(2, 1fr);
      }
 }
 
 @media (min-width: 1024px) {
+
      .course-list,
      .room-list,
      .news-list {
           grid-template-columns: repeat(3, 1fr);
      }
-     
+
      .course-header,
      .room-header {
           grid-template-columns: 2fr 1fr;
      }
-     
+
      .booking-container {
           grid-template-columns: 1fr 2fr;
      }
-     
+
      .checkbox-group {
           grid-template-columns: repeat(4, 1fr);
      }
-     
+
      .slider {
           height: 600px;
      }
-     
+
      .slide-content h2 {
           font-size: 3rem;
      }
-     
+
      .footer-content {
           grid-template-columns: repeat(4, 1fr);
      }
-     
+
      nav {
           padding: 1rem 4rem;
      }
-     
+
      main {
           padding: 2rem 4rem;
      }
-     
+
      .course-info h1,
      .room-info h1 {
           font-size: 3rem;
      }
-     
+
      .course-image img,
      .room-image img {
           height: 400px;
@@ -973,11 +1042,12 @@ footer {
 }
 
 @media (min-width: 1200px) {
+
      .course-list,
      .room-list {
           grid-template-columns: repeat(4, 1fr);
      }
-     
+
      .news-list {
           grid-template-columns: repeat(3, 1fr);
      }
@@ -988,6 +1058,7 @@ footer {
     ========================================================================== */
 
 @media print {
+
      .slider,
      .menu-button,
      .sidebar,
@@ -996,12 +1067,12 @@ footer {
      .social-media {
           display: none;
      }
-     
+
      body {
           font-size: 12pt;
           color: black;
      }
-     
+
      .course-card,
      .room-card,
      .news-card {

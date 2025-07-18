@@ -36,7 +36,7 @@ class CourseController extends Controller
                 ->where('status', 'confirmed')
                 ->count();
             if ($existingRegistrations >= $course->max_students) {
-                return redirect()->back()->with('error', 'Khóa học đã đủ số lượng học viên đăng ký.');
+                return redirect()->back()->with('warning', 'Khóa học đã đủ số lượng học viên. Vui lòng chọn khóa học khác hoặc liên hệ với chúng tôi để biết thêm thông tin.');
             }
         }
         $registration = new CourseRegistration();

@@ -10,7 +10,12 @@
     $_isrequired = isset($attributes['required']) ? 'required' : '';
     $_title = $attributes['title'] ?? '';
 @endphp
-<label for="{{ $_id }}">{{ $_label }}</label>
+<label for="{{ $_id }}">
+    {{ $_label }}
+    @if($_isrequired)
+        <span style="color: red;">*</span>
+    @endif
+</label>
 <input type="{{ $_type }}" name="{{ $_name }}" id="{{ $_id }}" placeholder="{{ $_placeholder }}"
     value="{{ $_value }}" {{ $_isrequired }} title="{{ $_title }}" />
 

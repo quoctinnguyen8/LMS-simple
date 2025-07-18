@@ -100,6 +100,7 @@
         </nav>
     </header>
     <main>
+        @include('includes._notify')
         {{ $slot }}
     </main>
     <footer>

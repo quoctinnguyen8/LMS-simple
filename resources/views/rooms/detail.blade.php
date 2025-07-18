@@ -67,17 +67,17 @@
                     <div class="form-group half">
                         <x-app-input name="email" type="email" label="Email" required />
                     </div>
-                    <div class="form-group half">
-                        <x-app-input name="phone" type="tel" label="Số điện thoại" required />
-                    </div>
                 </div>
                 <div class="form-row">
                     <div class="form-group half">
-                        <x-app-input name="reason" label="Lý do đặt phòng" required />
+                        <x-app-input name="phone" type="tel" label="Số điện thoại" required />
                     </div>
                     <div class="form-group half">
                         <x-app-input name="participants_count" type="number" label="Số người tham gia" required />
                     </div>
+                </div>
+                <div class="form-group half">
+                    <x-app-input name="reason" label="Lý do đặt phòng" required />
                 </div>
                 <div class="form-group">
                     <label for="notes">Ghi chú</label>

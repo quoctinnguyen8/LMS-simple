@@ -29,7 +29,7 @@ class RoomBookingService
         return $data;
     }
 
-    public function createBookingDetails($record, $data, $isCreateAction = true): void
+    public function createBookingDetails($record, $data, $isCreateAction = true, $isNotification = true): void
     {
         $totalDays = 0;
         $hasConflicts = false;
@@ -121,14 +121,16 @@ class RoomBookingService
         }
 
         // Thông báo cho booking thường
-        $actionName = $isCreateAction ? 'Tạo' : 'Cập nhật';
-        \Filament\Notifications\Notification::make()
-            ->title($actionName . ' đặt phòng thành công')
-            ->body('Đã ' . strtolower($actionName) . ' đặt phòng cho ' . $totalDays . ' ngày' .
-                ($hasConflicts ? ' (có xung đột lịch)' : ''))
-            ->success()
-            ->when($hasConflicts, fn($notification) => $notification->warning()->icon('heroicon-o-exclamation-triangle'))
-            ->send();
+        if ($isNotification) {
+            $actionName = $isCreateAction ? 'Tạo' : 'Cập nhật';
+            \Filament\Notifications\Notification::make()
+                ->title($actionName . ' đặt phòng thành công')
+                ->body('Đã ' . strtolower($actionName) . ' đặt phòng cho ' . $totalDays . ' ngày' .
+                    ($hasConflicts ? ' (có xung đột lịch)' : ''))
+                ->success()
+                ->when($hasConflicts, fn($notification) => $notification->warning()->icon('heroicon-o-exclamation-triangle'))
+                ->send();
+        }
     }
     //hàm check xung đột lịch
     public function checkConflict($roomId, $startTime, $endTime, $bookingDate, $bookingId): bool
@@ -179,7 +181,7 @@ class RoomBookingService
             foreach ($bookingDetails as $detail) {
                 $conflict = $this->checkConflict($booking->room_id, $detail->start_time, $detail->end_time, $detail->booking_date, $booking->id);
                 $detail->update(['is_duplicate' => $conflict]);
-                if ($conflict) 
+                if ($conflict)
                     $hasConflict = true;
             }
             // Cập nhật trạng thái is_duplicate cho booking chính
