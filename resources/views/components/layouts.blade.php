@@ -44,13 +44,22 @@
                 </label>
                 <ul class="desktop-menu">
                     <li><a href="/" class="{{ request()->is('/') ? 'active' : '' }}">Trang chủ</a></li>
-                    <li><a href="{{ route('courses.index') }}"
-                            class="{{ request()->is('courses*') ? 'active' : '' }}">Khóa học</a></li>
+                    <li class="dropdown">
+                        <a href="{{ route('courses.index') }}"
+                            class="dropdown-toggle {{ request()->is('courses*') ? 'active' : '' }}">Khóa học</a>
+                        <ul class="dropdown-menu">
+                            @foreach (App\Models\Category::all() as $Category)
+                                <li><a href="{{ route('courses.category', $Category->slug) }}"
+                                        class="course-category">{{ $Category->name }}</a></li>
+                            @endforeach
+                        </ul>
+                    </li>
                     <li><a href="{{ route('rooms.index') }}"
                             class="{{ request()->is('rooms*') ? 'active' : '' }}">Phòng
                             học</a></li>
                     <li class="dropdown">
-                        <a href="#" class="dropdown-toggle {{ request()->is('news*') ? 'active' : '' }}">Tin
+                        <a href="{{ route('news.index') }}"
+                            class="dropdown-toggle {{ request()->is('news*') ? 'active' : '' }}">Tin
                             tức</a>
                         <ul class="dropdown-menu">
                             @foreach (App\Models\NewsCategory::all() as $newsCategory)
@@ -82,12 +91,21 @@
                     </div>
                     <ul class="sidebar-menu">
                         <li><a href="/" class="{{ request()->is('/') ? 'active' : '' }}">Trang chủ</a></li>
-                        <li><a href="{{ route('courses.index') }}"
-                                class="{{ request()->is('courses*') ? 'active' : '' }}">Khóa học</a></li>
+                        <li class="dropdown">
+                            <a href="{{ route('courses.index') }}"
+                                class="dropdown-toggle {{ request()->is('courses*') ? 'active' : '' }}">Khóa học</a>
+                            <ul class="dropdown-menu">
+                                @foreach (App\Models\Category::all() as $Category)
+                                    <li><a href="{{ route('courses.category', $Category->slug) }}"
+                                            class="course-category">{{ $Category->name }}</a></li>
+                                @endforeach
+                            </ul>
+                        </li>
                         <li><a href="{{ route('rooms.index') }}"
                                 class="{{ request()->is('rooms*') ? 'active' : '' }}">Phòng học</a></li>
                         <li class="dropdown">
-                            <a href="#" class="dropdown-toggle {{ request()->is('news*') ? 'active' : '' }}">Tin
+                            <a href="{{ route('news.index') }} "
+                                class="dropdown-toggle {{ request()->is('news*') ? 'active' : '' }}">Tin
                                 tức</a>
                             <ul class="dropdown-menu">
                                 @foreach (App\Models\NewsCategory::all() as $newsCategory)

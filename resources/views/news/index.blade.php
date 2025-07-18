@@ -1,7 +1,11 @@
 <x-layouts title="Tin Tức">
     <section class="news-section">
-        <h1>{{ $newsCategory->name }}</h1>
-        <p class="newscategory-description">{{ $newsCategory->description }}</p>
+        @if (isset($newsCategory))
+            <h1>{{ $newsCategory->name }}</h1>
+            <p class="newscategory-description">{{ $newsCategory->description }}</p>
+        @else
+            <h1>Tin Tức Mới Nhất</h1>
+        @endif
         <div class="news-list" id="news-list">
             @foreach ($news as $item)
                 @if ($item->is_published)

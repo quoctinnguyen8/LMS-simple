@@ -32,22 +32,6 @@
                         <img src="{{ Storage::url($course->featured_image) }}" alt="{{ $course->title }}">
                     </div>
                     <div class="card-info">
-                        @php
-                            $statusConfig = match ($course->status) {
-                                'draft' => [
-                                    'style' => 'background-color: gray; color: white;',
-                                    'text' => 'Chưa mở',
-                                ],
-                                'published' => [
-                                    'style' => 'background-color: green; color: white;',
-                                    'text' => 'Đang mở',
-                                ],
-                                default => ['style' => 'background-color: red; color: white;', 'text' => 'Đóng'],
-                            };
-                        @endphp
-                        <span class="badge" style="{{ $statusConfig['style'] }}">
-                            {{ $statusConfig['text'] }}
-                        </span>
                         <h2>{{ $course->title }}</h2>
                         <p>{{ $course->description }}</p>
                         @if ($course->is_price_visible)
@@ -61,7 +45,14 @@
                     </div>
                 </div>
             @endforeach
+
         </div>
+        @if ($courses->count() > 6)
+            <div class="view-more">
+                <a href="{{ route('courses.index') }}" class="btn">Xem thêm</a>
+            </div>
+        @endif
+
         @if ($rooms->isNotEmpty())
             <h1>Phòng học nổi bật</h1>
         @endif
@@ -72,25 +63,6 @@
                         <img src="{{ Storage::url($room->image) }}" alt="{{ $room->name }}">
                     </div>
                     <div class="card-info">
-                        @php
-                            $statusConfig = match ($room->status) {
-                                'available' => [
-                                    'style' => 'background-color: green; color: white;',
-                                    'text' => 'Có sẵn',
-                                ],
-                                'maintenance' => [
-                                    'style' => 'background-color: orange; color: white;',
-                                    'text' => 'Bảo trì',
-                                ],
-                                default => [
-                                    'style' => 'background-color: red; color: white;',
-                                    'text' => 'Không có sẵn',
-                                ],
-                            };
-                        @endphp
-                        <span class="badge" style="{{ $statusConfig['style'] }}">
-                            {{ $statusConfig['text'] }}
-                        </span>
                         <h2>{{ $room->name }}</h2>
                         <p><strong>Vị trí:</strong> {{ $room->location }}</p>
                         <p><strong>Sức chứa:</strong> {{ $room->capacity }} người</p>
@@ -101,8 +73,13 @@
                 </div>
             @endforeach
         </div>
+        @if ($rooms->count() > 6)
+            <div class="view-more">
+                <a href="{{ route('rooms.index') }}" class="btn">Xem thêm</a>
+            </div>
+        @endif
     </section>
-    <slot:script>
+    <x-slot:scripts>
         <script>
             document.addEventListener('DOMContentLoaded', () => {
                 const slides = document.querySelectorAll('.slide');
@@ -154,5 +131,5 @@
                 showSlide(currentSlide);
             });
         </script>
-    </slot:script>
+    </x-slot:scripts>
 </x-layouts>

@@ -66,14 +66,15 @@
                 <div class="form-group">
                     <label for="room-type">Loại đặt phòng</label>
                     <select id="room-type" onchange="toggleRecurrence(this.value)" name="room_type">
-                        <option value="none" {{ old('room_type') == 'none' ? 'selected' : '' }}>Đặt 1 ngày</option>
-                        <option value="weekly" {{ old('room_type') == 'weekly' ? 'selected' : '' }}>Đặt hàng tuần
+                        <option value="none" {{ old('room_type') == 'none' ? 'selected' : '' }}>Đặt theo ngày
+                        </option>
+                        <option value="weekly" {{ old('room_type') == 'weekly' ? 'selected' : '' }}>Đặt theo tuần
                         </option>
                     </select>
                 </div>
 
                 <div id="recurrence-days" class="form-group {{ old('room_type') != 'weekly' ? 'hidden' : '' }}">
-                    <label>Chọn ngày trong tuần</label>
+                    <label>Chọn ngày trong tuần <span style="color: red;">*</span></label>
                     <div class="checkbox-group">
                         @php
                             $daysOfWeek = [
@@ -94,6 +95,9 @@
                             </label>
                         @endforeach
                     </div>
+                    @error('repeat_days')
+                        <span class="alert alert-danger">{{ $message }}</span>
+                    @enderror
                 </div>
 
                 <div class="form-row">

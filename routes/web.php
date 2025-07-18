@@ -8,6 +8,7 @@ use App\Http\Controllers\RoomController;
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/courses', [CourseController::class, 'index'])->name('courses.index');
 Route::get('/courses/{slug}', [CourseController::class, 'show'])->name('courses.show');
+Route::get('/courses/category/{slug}', [CourseController::class, 'category'])->name('courses.category');
 Route::post('/courses/registration/', [CourseController::class, 'course_registration'])->name('courses.registration');
 Route::get('/rooms', [RoomController::class, 'index'])->name('rooms.index');
 Route::get('/rooms/{id}', [RoomController::class, 'show'])->name('rooms.show');

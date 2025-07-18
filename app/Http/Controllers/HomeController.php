@@ -11,12 +11,14 @@ class HomeController extends Controller
 {
     public function index()
     {
-        $rooms = Room::take(6)
+        $rooms = Room::where('status', 'available')
+            ->take(3)
+            ->orderBy('created_at', 'desc')
             ->get();
         $courses = Course::where('status','!=', 'draft')
-            ->where('end_registration_date', '>=', now())
+            ->where('start_date', '>=', now()->subDays(14))
             ->orderBy('created_at', 'desc')
-            ->take(6)
+            ->take(3)
             ->get();
         $slides = Slider::where('is_active', 1)->orderBy('position', 'asc')->get();
         return view('home', compact('rooms', 'courses', 'slides'));

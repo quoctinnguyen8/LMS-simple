@@ -1,6 +1,11 @@
 <x-layouts title="Khóa học">
     <section class="courses">
-        <h1>Danh sách khóa học</h1>
+        @if (isset($category))
+            <h1>{{ $category->name }}</h1>
+            <p class="category-description">{{ $category->description }}</p>
+        @else
+            <h1>Danh sách Khóa học</h1>
+        @endif
         <div class="course-list">
             @foreach ($courses as $course)
                 <div class="course-card">
@@ -8,19 +13,6 @@
                         <img src="{{ Storage::url($course->featured_image) }}" alt="{{ $course->title }}">
                     </div>
                     <div class="card-info">
-                        @php
-                            $statusConfig = match ($course->status) {
-                                'draft' => ['style' => 'background-color: gray; color: white;', 'text' => 'Chưa mở'],
-                                'published' => [
-                                    'style' => 'background-color: green; color: white;',
-                                    'text' => 'Đang mở',
-                                ],
-                                default => ['style' => 'background-color: red; color: white;', 'text' => 'Đóng'],
-                            };
-                        @endphp
-                        <span class="badge" style="{{ $statusConfig['style'] }}">
-                            {{ $statusConfig['text'] }}
-                        </span>
                         <h2>{{ $course->title }}</h2>
                         <p>{{ $course->description }}</p>
                         @if ($course->is_price_visible)
