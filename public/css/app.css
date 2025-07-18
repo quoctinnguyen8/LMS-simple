@@ -576,7 +576,7 @@ h2 {
 
 .booking-form {
      background: var(--white);
-     padding: 2rem;
+     padding: 1rem;
      border-radius: var(--border-radius);
      box-shadow: var(--shadow);
 }
@@ -588,7 +588,7 @@ h2 {
 .course-enroll,
 .booking-form {
      background: var(--white);
-     padding: 2rem;
+     padding: 1rem;
      border-radius: var(--border-radius);
      box-shadow: var(--shadow);
      margin-top: 2rem;
