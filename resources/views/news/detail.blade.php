@@ -1,8 +1,5 @@
 <x-layouts title="Tin Tức - {{ $news_item->title }}" ogTitle="{{ $news_item->seo_title }}"
     ogDescription="{{ $news_item->seo_description }}" ogImage="{{ $news_item->seo_image }}">
-    <style>
-       
-    </style>
     <section class="news-detail">
         <div class="news-header">
             <div class="news-info">

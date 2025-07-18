@@ -73,11 +73,9 @@
 
             <!-- Mô tả về trung tâm -->
             @if (App\Helpers\SettingHelper::get('description'))
-                <div class="course-content">
-                    <h2>Giới thiệu về trung tâm</h2>
-                    <div class="description-content">
-                        {!! App\Helpers\SettingHelper::get('description') !!}
-                    </div>
+                <h2>Giới thiệu về trung tâm</h2>
+                <div class="description-content">
+                    {!! App\Helpers\SettingHelper::get('description') !!}
                 </div>
             @endif
         </div>

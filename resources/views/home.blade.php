@@ -21,9 +21,10 @@
             </div>
         </section>
     @endif
-
     <section class="courses">
-        <h1>Khóa Học</h1>
+        @if ($courses->isNotEmpty())
+            <h1>Khóa học nổi bật</h1>
+        @endif
         <div class="course-list">
             @foreach ($courses as $course)
                 <div class="course-card">
@@ -33,7 +34,10 @@
                     <div class="card-info">
                         @php
                             $statusConfig = match ($course->status) {
-                                'draft' => ['style' => 'background-color: gray; color: white;', 'text' => 'Chưa mở'],
+                                'draft' => [
+                                    'style' => 'background-color: gray; color: white;',
+                                    'text' => 'Chưa mở',
+                                ],
                                 'published' => [
                                     'style' => 'background-color: green; color: white;',
                                     'text' => 'Đang mở',
@@ -47,7 +51,8 @@
                         <h2>{{ $course->title }}</h2>
                         <p>{{ $course->description }}</p>
                         @if ($course->is_price_visible)
-                            <p id="course-price"><strong>Giá:</strong> {{ number_format($course->price, 0, ',', '.') }}
+                            <p id="course-price"><strong>Giá:</strong>
+                                {{ number_format($course->price, 0, ',', '.') }}
                                 VNĐ</p>
                         @else
                             <p id="course-price"><strong>Giá:</strong> Liên hệ để biết thêm chi tiết</p>
@@ -57,7 +62,9 @@
                 </div>
             @endforeach
         </div>
-        <h1>Phòng Học</h1>
+        @if ($rooms->isNotEmpty())
+            <h1>Phòng học nổi bật</h1>
+        @endif
         <div class="room-list">
             @foreach ($rooms as $room)
                 <div class="room-card">
@@ -67,7 +74,10 @@
                     <div class="card-info">
                         @php
                             $statusConfig = match ($room->status) {
-                                'available' => ['style' => 'background-color: green; color: white;', 'text' => 'Có sẵn'],
+                                'available' => [
+                                    'style' => 'background-color: green; color: white;',
+                                    'text' => 'Có sẵn',
+                                ],
                                 'maintenance' => [
                                     'style' => 'background-color: orange; color: white;',
                                     'text' => 'Bảo trì',

@@ -47,11 +47,7 @@ body {
 .container {
      display: grid;
      grid-template-areas:
-          "header"
-          "hero"
-          "courses"
-          "testimonials"
-          "footer";
+          "header";
      min-height: 100vh;
 }
 
@@ -270,7 +266,6 @@ nav {
      height: 400px;
      overflow: hidden;
      border-radius: var(--border-radius);
-     margin: 2rem;
 }
 
 .slider-container {
@@ -296,25 +291,27 @@ nav {
      height: 100%;
      object-fit: cover;
 }
-
 .slide-content {
      position: absolute;
      bottom: 0;
      left: 0;
      right: 0;
      background: linear-gradient(transparent, rgba(0, 0, 0, 0.7));
-     color: white;
+     color: var(--white);
      padding: 2rem;
 }
 
 .slide-content h2 {
+     color: var(--white);
      font-size: 2rem;
      margin-bottom: 0.5rem;
+     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
 }
 
 .slide-content p {
      font-size: 1.1rem;
      opacity: 0.9;
+     text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
 }
 
 .slider-prev,
@@ -393,7 +390,7 @@ h1 {
 }
 
 h2 {
-     font-size: 2rem;
+     font-size: 1.5rem;
      color: var(--text-primary);
      margin-bottom: 1.5rem;
 }
@@ -407,6 +404,7 @@ h2 {
 .news-list {
      display: grid;
      grid-template-columns: 1fr;
+     margin-bottom: 2rem;
      gap: 2rem;
 }
 
@@ -454,19 +452,37 @@ h2 {
 
 .card-info h2 {
      font-size: 1.5rem;
-     margin-bottom: 1rem;
+     margin-bottom: 0.5rem;
      color: var(--text-primary);
 }
 
 .card-info p {
      color: var(--text-secondary);
-     margin-bottom: 1rem;
+     margin-bottom: 0.5rem;
 }
 
-.card-info .meta {
+.news-info .meta {
      font-size: 0.9rem;
      color: var(--text-secondary);
      margin-bottom: 1rem;
+}
+.news-section h1 {
+     font-size: 2.5rem;
+     color: var(--primary-color);
+     margin-bottom: 1rem;
+     text-align: center;
+}
+.news-section .newscategory-description {
+     font-size: 1rem;
+     color: var(--text-secondary);
+     margin-bottom: 2rem;
+     text-align: center;
+}
+.news-section p{
+     font-size: 1rem;
+     color: var(--text-secondary);
+     margin-bottom: 1rem;
+     text-align: center;
 }
 
 /* ==========================================================================
@@ -944,13 +960,8 @@ footer {
 
 /* Mobile First - Extra Small devices (320px and up) */
 @media (min-width: 320px) {
-     .container {
-          padding: 0 1rem;
-     }
-
      .slider {
           height: 250px;
-          margin: 1rem;
      }
 
      .slide-content h2 {
@@ -1000,7 +1011,6 @@ footer {
 @media (min-width: 480px) {
      .slider {
           height: 300px;
-          margin: 1.5rem;
      }
 
      .slide-content h2 {
@@ -1066,7 +1076,6 @@ footer {
 
      .slider {
           height: 400px;
-          margin: 2rem;
      }
 
      .slide-content h2 {
@@ -1141,69 +1150,6 @@ footer {
      .room-image img,
      .news-image img {
           height: 350px;
-     }
-}
-
-/* Extra large devices (1200px and up) - Large desktops */
-@media (min-width: 1200px) {
-
-     .course-list,
-     .room-list {
-          grid-template-columns: repeat(4, 1fr);
-     }
-
-     .news-list {
-          grid-template-columns: repeat(3, 1fr);
-     }
-
-     .slider {
-          height: 600px;
-     }
-
-     .slide-content h2 {
-          font-size: 3rem;
-     }
-
-     .footer-content {
-          grid-template-columns: repeat(4, 1fr);
-     }
-
-     nav {
-          padding: 1rem 4rem;
-     }
-
-     main {
-          padding: 2rem 4rem;
-     }
-
-     .course-info h1,
-     .room-info h1,
-     .news-info h1 {
-          font-size: 3rem;
-     }
-
-     .course-image img,
-     .room-image img,
-     .news-image img {
-          height: 400px;
-     }
-}
-
-/* Ultra wide screens (1400px and up) */
-@media (min-width: 1400px) {
-
-     .course-list,
-     .room-list {
-          grid-template-columns: repeat(5, 1fr);
-     }
-
-     .news-list {
-          grid-template-columns: repeat(4, 1fr);
-     }
-
-     .container {
-          max-width: 1400px;
-          margin: 0 auto;
      }
 }
 

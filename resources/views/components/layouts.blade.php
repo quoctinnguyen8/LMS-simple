@@ -24,64 +24,31 @@
 </head>
 
 <body>
-    <header>
-        <nav>
-            <div class="logo">
-                <a href="{{ url('/') }}">
-                    <img src="{{ asset('storage/' . App\Helpers\SettingHelper::get('logo')) }}"
-                        alt="{{ App\Helpers\SettingHelper::get('center_name', 'Trung tâm đào tạo') }}"
-                        class="logo-image" style="max-height: 100px;">
-                </a>
-            </div>
-            <input type="checkbox" id="menu-toggle" class="hidden">
-            <label for="menu-toggle" class="menu-button">
-                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7">
-                    </path>
-                </svg>
-            </label>
-            <ul class="desktop-menu">
-                <li><a href="/" class="{{ request()->is('/') ? 'active' : '' }}">Trang chủ</a></li>
-                <li><a href="{{ route('courses.index') }}"
-                        class="{{ request()->is('courses*') ? 'active' : '' }}">Khóa học</a></li>
-                <li><a href="{{ route('rooms.index') }}" class="{{ request()->is('rooms*') ? 'active' : '' }}">Phòng
-                        học</a></li>
-                <li class="dropdown">
-                    <a href="#" class="dropdown-toggle {{ request()->is('news*') ? 'active' : '' }}">Tin tức</a>
-                    <ul class="dropdown-menu">
-                        @foreach (App\Models\NewsCategory::all() as $newsCategory)
-                            <li><a href="{{ route('news.category', $newsCategory->slug) }}"
-                                    class="news-category">{{ $newsCategory->name }}</a></li>
-                        @endforeach
-                    </ul>
-                </li>
-                <li><a href="{{ route('contacts') }}" class="{{ request()->is('contacts') ? 'active' : '' }}">Liên
-                        hệ</a></li>
-
-            </ul>
-            <div class="sidebar">
-                <div class="sidebar-header">
-                    <div class="logo">
-                        <a href="{{ url('/') }}">
-                            <img src="{{ asset('storage/' . App\Helpers\SettingHelper::get('logo')) }}"
-                                alt="{{ App\Helpers\SettingHelper::get('center_name', 'Trung tâm đào tạo') }}"
-                                class="logo-image" style="max-height: 100px;">
-                        </a>
-                    </div>
-                    <label for="menu-toggle" class="close-button">
-                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"
-                            xmlns="http://www.w3.org/2000/svg">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M6 18L18 6M6 6l12 12"></path>
-                        </svg>
-                    </label>
+    <div class="container">
+        <header>
+            <nav>
+                <div class="logo">
+                    <a href="{{ url('/') }}">
+                        <img src="{{ asset('storage/' . App\Helpers\SettingHelper::get('logo')) }}"
+                            alt="{{ App\Helpers\SettingHelper::get('center_name', 'Trung tâm đào tạo') }}"
+                            class="logo-image" style="max-height: 100px;">
+                    </a>
                 </div>
-                <ul class="sidebar-menu">
+                <input type="checkbox" id="menu-toggle" class="hidden">
+                <label for="menu-toggle" class="menu-button">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M4 6h16M4 12h16m-7 6h7">
+                        </path>
+                    </svg>
+                </label>
+                <ul class="desktop-menu">
                     <li><a href="/" class="{{ request()->is('/') ? 'active' : '' }}">Trang chủ</a></li>
                     <li><a href="{{ route('courses.index') }}"
                             class="{{ request()->is('courses*') ? 'active' : '' }}">Khóa học</a></li>
                     <li><a href="{{ route('rooms.index') }}"
-                            class="{{ request()->is('rooms*') ? 'active' : '' }}">Phòng học</a></li>
+                            class="{{ request()->is('rooms*') ? 'active' : '' }}">Phòng
+                            học</a></li>
                     <li class="dropdown">
                         <a href="#" class="dropdown-toggle {{ request()->is('news*') ? 'active' : '' }}">Tin
                             tức</a>
@@ -94,42 +61,82 @@
                     </li>
                     <li><a href="{{ route('contacts') }}" class="{{ request()->is('contacts') ? 'active' : '' }}">Liên
                             hệ</a></li>
+
                 </ul>
+                <div class="sidebar">
+                    <div class="sidebar-header">
+                        <div class="logo">
+                            <a href="{{ url('/') }}">
+                                <img src="{{ asset('storage/' . App\Helpers\SettingHelper::get('logo')) }}"
+                                    alt="{{ App\Helpers\SettingHelper::get('center_name', 'Trung tâm đào tạo') }}"
+                                    class="logo-image" style="max-height: 100px;">
+                            </a>
+                        </div>
+                        <label for="menu-toggle" class="close-button">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                                xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M6 18L18 6M6 6l12 12"></path>
+                            </svg>
+                        </label>
+                    </div>
+                    <ul class="sidebar-menu">
+                        <li><a href="/" class="{{ request()->is('/') ? 'active' : '' }}">Trang chủ</a></li>
+                        <li><a href="{{ route('courses.index') }}"
+                                class="{{ request()->is('courses*') ? 'active' : '' }}">Khóa học</a></li>
+                        <li><a href="{{ route('rooms.index') }}"
+                                class="{{ request()->is('rooms*') ? 'active' : '' }}">Phòng học</a></li>
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle {{ request()->is('news*') ? 'active' : '' }}">Tin
+                                tức</a>
+                            <ul class="dropdown-menu">
+                                @foreach (App\Models\NewsCategory::all() as $newsCategory)
+                                    <li><a href="{{ route('news.category', $newsCategory->slug) }}"
+                                            class="news-category">{{ $newsCategory->name }}</a></li>
+                                @endforeach
+                            </ul>
+                        </li>
+                        <li><a href="{{ route('contacts') }}"
+                                class="{{ request()->is('contacts') ? 'active' : '' }}">Liên
+                                hệ</a></li>
+                    </ul>
+                </div>
+                <label for="menu-toggle" class="overlay"></label>
+            </nav>
+        </header>
+        <main>
+            @include('includes._notify')
+            {{ $slot }}
+        </main>
+        <footer>
+            <div class="footer-content">
+                <p>&copy; {{ date('Y') }}
+                    {{ App\Helpers\SettingHelper::get('center_name', 'Trung tâm đào tạo') }}.
+                    All rights reserved.</p>
+                <p>Địa chỉ: {{ App\Helpers\SettingHelper::get('address', 'Chưa cập nhật') }}</p>
+                <p>Điện thoại: {{ App\Helpers\SettingHelper::get('phone', 'Chưa cập nhật') }}</p>
+                <p>Email: {{ App\Helpers\SettingHelper::get('email', 'Chưa cập nhật') }}</p>
             </div>
-            <label for="menu-toggle" class="overlay"></label>
-        </nav>
-    </header>
-    <main>
-        @include('includes._notify')
-        {{ $slot }}
-    </main>
-    <footer>
-        <div class="footer-content">
-            <p>&copy; {{ date('Y') }} {{ App\Helpers\SettingHelper::get('center_name', 'Trung tâm đào tạo') }}.
-                All rights reserved.</p>
-            <p>Địa chỉ: {{ App\Helpers\SettingHelper::get('address', 'Chưa cập nhật') }}</p>
-            <p>Điện thoại: {{ App\Helpers\SettingHelper::get('phone', 'Chưa cập nhật') }}</p>
-            <p>Email: {{ App\Helpers\SettingHelper::get('email', 'Chưa cập nhật') }}</p>
-        </div>
-        <div class="footer-links">
-            <a href="{{ route('contacts') }}">Liên hệ</a>
-            <a href="{{ route('courses.index') }}">Khóa học</a>
-            <a href="{{ route('rooms.index') }}">Phòng học</a>
-            <a href="{{ route('home') }}">Trang chủ</a>
-        </div>
-        <div class="social-media">
-            @if (App\Helpers\SettingHelper::get('facebook'))
-                <a href="{{ App\Helpers\SettingHelper::get('facebook') }}" target="_blank" class="social-link">
-                    <i class="fab fa-facebook"></i> Facebook
-                </a>
-            @endif
-            @if (App\Helpers\SettingHelper::get('zalo'))
-                <a href="{{ App\Helpers\SettingHelper::get('zalo') }}" target="_blank" class="social-link">
-                    <img src="{{ asset('images/zalo-icon.png') }}" alt="Zalo" width="16"> Zalo
-                </a>
-            @endif
-        </div>
-    </footer>
+            <div class="footer-links">
+                <a href="{{ route('contacts') }}">Liên hệ</a>
+                <a href="{{ route('courses.index') }}">Khóa học</a>
+                <a href="{{ route('rooms.index') }}">Phòng học</a>
+                <a href="{{ route('home') }}">Trang chủ</a>
+            </div>
+            <div class="social-media">
+                @if (App\Helpers\SettingHelper::get('facebook'))
+                    <a href="{{ App\Helpers\SettingHelper::get('facebook') }}" target="_blank" class="social-link">
+                        <i class="fab fa-facebook"></i> Facebook
+                    </a>
+                @endif
+                @if (App\Helpers\SettingHelper::get('zalo'))
+                    <a href="{{ App\Helpers\SettingHelper::get('zalo') }}" target="_blank" class="social-link">
+                        <img src="{{ asset('images/zalo-icon.png') }}" alt="Zalo" width="16"> Zalo
+                    </a>
+                @endif
+            </div>
+        </footer>
+    </div>
     {{ $scripts ?? '' }}
     @if (App\Helpers\SettingHelper::get('custom_js'))
         <script>
