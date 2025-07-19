@@ -28,6 +28,7 @@ class AdminPanelProvider extends PanelProvider
             ->default()
             ->id('admin')
             ->path('admin')
+            ->homeUrl('/')
             ->brandName(SettingHelper::getSystemInfo()['center_name'] ?? 'Learning Center')
             ->login(\App\Filament\Pages\Auth\Login::class)
             ->colors([
