@@ -32,9 +32,9 @@ class RoomRequest extends FormRequest
             'notes' => 'nullable|string|max:500',
             'repeat_days' => 'array',
             'repeat_days.*' => 'string|in:monday,tuesday,wednesday,thursday,friday,saturday,sunday',
-            'name' => 'required|string|max:100',
-            'email' => 'required|email|max:100',
-            'phone' => 'required|string|max:15',
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|max:255|regex:/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/',
+            'phone' => 'required|string|regex:/^0[0-9]{9}$/',
         ];
         if ($this->input('room_type') === 'weekly') {
             $rules['repeat_days'] .= '|required';
@@ -115,10 +115,12 @@ class RoomRequest extends FormRequest
             'name.max' => 'Tên khách hàng không được vượt quá :max ký tự.',
             'email.required' => 'Email khách hàng là bắt buộc.',
             'email.email' => 'Email khách hàng không hợp lệ.',
+            'email.regex' => 'Email khách hàng không hợp lệ. Vui lòng nhập đúng định dạng.',
             'email.max' => 'Email khách hàng không được vượt quá :max ký tự.',
             'phone.required' => 'Số điện thoại khách hàng là bắt buộc.',
             'phone.string' => 'Số điện thoại khách hàng phải là chuỗi ký tự và không được chứa ký tự đặc biệt.',
             'phone.max' => 'Số điện thoại khách hàng không được vượt quá :max ký tự.',
+            'phone.regex' => 'Số điện thoại khách hàng không hợp lệ. Vui lòng nhập đúng định dạng.',
             'g-recaptcha-response.required' => 'Vui lòng xác minh bạn không phải là robot.',
             'g-recaptcha-response.recaptcha' => 'Xác minh reCAPTCHA không thành công. Vui lòng thử lại.',
         ];

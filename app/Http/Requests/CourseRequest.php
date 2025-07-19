@@ -24,8 +24,8 @@ class CourseRequest extends FormRequest
     {
         $rules = [
             'course_id' => 'required|exists:courses,id',
-            'name' => 'required|string|min:2|max:255',
-            'email' => 'required|email|max:255',
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|max:255|regex:/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/',
             'phone' => 'required|string|regex:/^0[0-9]{9}$/|unique:course_registrations,student_phone,NULL,id,course_id,' . $this->course_id,
             'dob' => 'required|date|before:today|after:1900-01-01',
             'address' => 'nullable|string|min:10|max:500',
@@ -72,6 +72,7 @@ class CourseRequest extends FormRequest
             'email.required' => 'Email là bắt buộc.',
             'email.email' => 'Email không hợp lệ.',
             'email.max' => 'Email không được vượt quá :max ký tự.',
+            'email.regex' => 'Email không hợp lệ. Vui lòng nhập đúng định dạng.',
             'phone.required' => 'Số điện thoại là bắt buộc.',
             'phone.string' => 'Số điện thoại phải là chuỗi ký tự.',
             'phone.regex' => 'Số điện thoại không hợp lệ. Vui lòng nhập đúng định dạng.',
