@@ -5,6 +5,7 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\UserResource\Pages;
 use App\Filament\Resources\UserResource\RelationManagers;
 use App\Mail\AccountDeletionNotification;
+use App\Mail\EmailChangeNotification;
 use App\Mail\PasswordResetNotification;
 use App\Mail\UserSuspensionNotification;
 use App\Models\User;
@@ -112,7 +113,7 @@ class UserResource extends Resource
                     ]),
             ])
             ->actions([
-                // nhóm hành động
+                // nhóm các hành động vào dropdown
                 Tables\Actions\ActionGroup::make([
                     Tables\Actions\EditAction::make()
                         ->label('Sửa')
@@ -125,7 +126,7 @@ class UserResource extends Resource
                             Forms\Components\TextInput::make('email')
                                 ->label('Email người dùng')
                                 ->email()
-                                ->disabled(fn (User $record) => $record->role != 'admin') // Không cho phép sửa email nếu không phải là quản trị viên
+                                ->disabled(fn (User $record) => Auth::user()?->role != 'admin') // Không cho phép sửa email nếu không phải là quản trị viên
                                 ->required()
                                 ->maxLength(255),
                             // vai trò
@@ -141,6 +142,51 @@ class UserResource extends Resource
                         ])
                         ->modalWidth('md')
                         ->icon('heroicon-o-pencil')
+                        ->mutateRecordDataUsing(function (array $data, User $record): array {
+                            // Lưu email cũ vào session hoặc cache để sử dụng sau
+                            session(['edit_user_' . $record->id . '_old_email' => $record->email]);
+                            return $data;
+                        })
+                        ->after(function (User $record, array $data) {
+                            // Lấy email cũ từ session
+                            $oldEmail = session('edit_user_' . $record->id . '_old_email');
+                            
+                            // Xóa session sau khi sử dụng
+                            session()->forget('edit_user_' . $record->id . '_old_email');
+                            
+                            // Kiểm tra xem email có thay đổi không
+                            if ($oldEmail && $oldEmail !== $data['email']) {
+                                try {
+                                    // Gửi email thông báo đến email cũ
+                                    Mail::to($oldEmail)->send(new EmailChangeNotification(
+                                        $record, 
+                                        $oldEmail, 
+                                        $data['email'], 
+                                        Auth::user()
+                                    ));
+                                    
+                                    Notification::make()
+                                        ->title('Cập nhật thông tin thành công!')
+                                        ->body("Đã gửi email thông báo thay đổi địa chỉ email đến: {$oldEmail}")
+                                        ->success()
+                                        ->send();
+                                        
+                                } catch (\Exception $e) {
+                                    Notification::make()
+                                        ->title('Cập nhật thành công nhưng có lỗi gửi email')
+                                        ->body('Không thể gửi email thông báo thay đổi địa chỉ email.')
+                                        ->warning()
+                                        ->send();
+                                }
+                            } else {
+                                Notification::make()
+                                    ->title('Cập nhật thông tin thành công!')
+                                    ->body('Thông tin người dùng đã được cập nhật.')
+                                    ->success()
+                                    ->send();
+                            }
+                        })
+                        ->successNotification(null)
                         // Chỉ cho phép quản trị viên sửa
                         ->disabled(fn (User $record) => Auth::user()->role != 'admin'),
 
