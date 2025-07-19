@@ -4,15 +4,18 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\UserResource\Pages;
 use App\Filament\Resources\UserResource\RelationManagers;
+use App\Mail\PasswordResetNotification;
 use App\Models\User;
 use Filament\Forms;
 use Filament\Forms\Form;
+use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
 
 class UserResource extends Resource
 {
@@ -109,15 +112,42 @@ class UserResource extends Resource
                         Tables\Actions\Action::make('reset_password')
                         ->label('Đặt lại mật khẩu')
                         ->action(function (User $record) {
-                            // TODO: Logic đặt lại mật khẩu
-                            
+                            try {
+                                // Logic đặt lại mật khẩu
+                                // Tạo mã hash md5 và lấy 10 ký tự đầu tiên
+                                $hashedPassword = md5(time() . $record->id . $record->email);
+                                $newPassword = substr($hashedPassword, 0, 10);
+                                // Viết hoa 5 ký tự đầu tiên
+                                $newPassword = strtoupper(substr($newPassword, 0, 5)) . substr($newPassword, 5);
+
+                                // Cập nhật mật khẩu người dùng
+                                $record->update(['password' => bcrypt($newPassword)]);
+                                
+                                // Gửi email thông báo
+                                Mail::to($record->email)->send(new PasswordResetNotification($record, $newPassword));
+                                
+                                // Thông báo thành công
+                                Notification::make()
+                                    ->title('Đặt lại mật khẩu thành công!')
+                                    ->body("Mật khẩu mới đã được gửi đến email: {$record->email}")
+                                    ->success()
+                                    ->send();
+                                    
+                            } catch (\Exception $e) {
+                                // Thông báo lỗi
+                                Notification::make()
+                                    ->title('Có lỗi xảy ra!')
+                                    ->body('Không thể gửi email thông báo. Vui lòng kiểm tra cấu hình email.')
+                                    ->danger()
+                                    ->send();
+                            }
                         })
                         ->icon('heroicon-o-key')
                         ->requiresConfirmation()
                         ->modalHeading('Đặt lại mật khẩu')
                         ->modalDescription('Hệ thống sẽ gửi một email chứa mật khẩu mới đến tài khoản mail của người dùng. Bạn có chắc chắn muốn tiếp tục?')
-                        ->disabled(fn (User $record) => $record->role != 'admin'), // Không cho phép đặt lại mật khẩu nếu không phải là quản trị viên
-                        
+                        ->disabled(fn (User $record) => Auth::user()->role != 'admin'), // Không cho phép đặt lại mật khẩu nếu không phải là quản trị viên
+
                     Tables\Actions\DeleteAction::make()
                         ->label('Xóa')
                         ->requiresConfirmation()
