@@ -4,7 +4,9 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\UserResource\Pages;
 use App\Filament\Resources\UserResource\RelationManagers;
+use App\Mail\AccountDeletionNotification;
 use App\Mail\PasswordResetNotification;
+use App\Mail\UserSuspensionNotification;
 use App\Models\User;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -75,9 +77,39 @@ class UserResource extends Resource
                         default => 'Không xác định',
                     })
                     ->sortable(),
+                Tables\Columns\TextColumn::make('status')
+                    ->label('Trạng thái')
+                    ->formatStateUsing(fn ($state) => match ($state) {
+                        'active' => 'Hoạt động',
+                        'suspended' => 'Đình chỉ',
+                        'inactive' => 'Không hoạt động',
+                        default => 'Không xác định',
+                    })
+                    ->color(fn ($state) => match ($state) {
+                        'active' => 'success',
+                        'suspended' => 'danger',
+                        'inactive' => 'warning',
+                        default => 'gray',
+                    })
+                    ->badge()
+                    ->sortable(),
             ])
             ->filters([
-                //
+                Tables\Filters\SelectFilter::make('status')
+                    ->label('Trạng thái')
+                    ->options([
+                        'active' => 'Hoạt động',
+                        'suspended' => 'Đình chỉ',
+                        'inactive' => 'Không hoạt động',
+                    ])
+                    ->default('active'),
+                Tables\Filters\SelectFilter::make('role')
+                    ->label('Vai trò')
+                    ->options([
+                        'admin' => 'Quản trị viên',
+                        'subadmin' => 'Quản trị viên phụ',
+                        'user' => 'Người dùng',
+                    ]),
             ])
             ->actions([
                 // nhóm hành động
@@ -108,7 +140,10 @@ class UserResource extends Resource
                                 ->helperText('Quản trị viên có toàn quyền quản lý hệ thống, quản trị viên phụ có quyền hạn hạn chế hơn.')
                         ])
                         ->modalWidth('md')
-                        ->icon('heroicon-o-pencil'),
+                        ->icon('heroicon-o-pencil')
+                        // Chỉ cho phép quản trị viên sửa
+                        ->disabled(fn (User $record) => Auth::user()->role != 'admin'),
+
                         Tables\Actions\Action::make('reset_password')
                         ->label('Đặt lại mật khẩu')
                         ->action(function (User $record) {
@@ -146,17 +181,89 @@ class UserResource extends Resource
                         ->requiresConfirmation()
                         ->modalHeading('Đặt lại mật khẩu')
                         ->modalDescription('Hệ thống sẽ gửi một email chứa mật khẩu mới đến tài khoản mail của người dùng. Bạn có chắc chắn muốn tiếp tục?')
-                        ->disabled(fn (User $record) => Auth::user()->role != 'admin'), // Không cho phép đặt lại mật khẩu nếu không phải là quản trị viên
+                        // Không cho phép đặt lại mật khẩu nếu không phải là quản trị viên hoặc người dùng không hoạt động
+                        ->disabled(fn (User $record) => Auth::user()->role != 'admin' || $record->status != 'active'),
 
-                    Tables\Actions\DeleteAction::make()
-                        ->label('Xóa')
+                    // Action đình chỉ/kích hoạt user
+                    Tables\Actions\Action::make('toggle_suspension')
+                        ->label(fn (User $record) => $record->status === 'suspended' ? 'Kích hoạt lại' : 'Đình chỉ')
+                        ->icon(fn (User $record) => $record->status === 'suspended' ? 'heroicon-o-check-circle' : 'heroicon-o-no-symbol')
+                        ->color(fn (User $record) => $record->status === 'suspended' ? 'success' : 'warning')
                         ->requiresConfirmation()
-                        ->modalHeading('Xác nhận xóa người dùng')
-                        ->modalDescription('Bạn có chắc chắn muốn xóa người dùng này? Hành động này không thể hoàn tác.')
-                        ->color('danger')
-                        ->icon('heroicon-o-trash')
-                        ->disabled(fn (User $record) => $record->id === Auth::id() || $record->role != 'admin') // Không cho phép xóa chính mình
-                        ,
+                        ->modalHeading(fn (User $record) => $record->status === 'suspended' ? 'Xác nhận kích hoạt lại người dùng' : 'Xác nhận đình chỉ người dùng')
+                        ->modalDescription(fn (User $record) => $record->status === 'suspended' 
+                            ? 'Người dùng sẽ có thể đăng nhập và sử dụng hệ thống trở lại. Bạn có chắc chắn?' 
+                            : 'Người dùng sẽ bị tạm dừng truy cập vào hệ thống. Bạn có chắc chắn?')
+                        ->form([
+                            Forms\Components\Textarea::make('reason')
+                                ->label('Lý do')
+                                ->required()
+                                ->placeholder(fn (User $record) => $record->status === 'suspended' 
+                                    ? 'Nhập lý do kích hoạt lại tài khoản...' 
+                                    : 'Nhập lý do đình chỉ tài khoản...')
+                                ->maxLength(500)
+                        ])
+                        ->action(function (User $record, array $data) {
+                            $isCurrentlySuspended = $record->status === 'suspended';
+                            $action = $isCurrentlySuspended ? 'reactivate' : 'suspend';
+                            
+                            // Cập nhật trạng thái
+                            $record->update([
+                                'status' => $isCurrentlySuspended ? 'active' : 'suspended',
+                                'suspended_at' => $isCurrentlySuspended ? null : now(),
+                                'suspended_by' => $isCurrentlySuspended ? null : Auth::id(),
+                                'suspension_reason' => $data['reason']
+                            ]);
+                            
+                            // Gửi email thông báo
+                            try {
+                                Mail::to($record->email)->send(new UserSuspensionNotification(
+                                    $record, 
+                                    Auth::user(), 
+                                    $data['reason'],
+                                    $action
+                                ));
+                                
+                                $message = $isCurrentlySuspended 
+                                    ? "Đã kích hoạt lại tài khoản và gửi email thông báo đến: {$record->email}"
+                                    : "Đã đình chỉ tài khoản và gửi email thông báo đến: {$record->email}";
+                                    
+                                Notification::make()
+                                    ->title($isCurrentlySuspended ? 'Kích hoạt thành công!' : 'Đình chỉ thành công!')
+                                    ->body($message)
+                                    ->success()
+                                    ->send();
+                                    
+                            } catch (\Exception $e) {
+                                $message = $isCurrentlySuspended 
+                                    ? 'Đã kích hoạt lại tài khoản nhưng không thể gửi email thông báo.'
+                                    : 'Đã đình chỉ tài khoản nhưng không thể gửi email thông báo.';
+                                    
+                                Notification::make()
+                                    ->title('Lỗi gửi email')
+                                    ->body($message)
+                                    ->warning()
+                                    ->send();
+                            }
+                        })
+                        ->disabled(fn (User $record) => $record->id === Auth::id() || Auth::user()->role != 'admin'), // Không cho phép tự đình chỉ mình
+
+                    // Action xóa (chỉ hiển thị cho admin và chỉ với user không có dữ liệu liên quan)
+                    // Tables\Actions\DeleteAction::make()
+                    //     ->label('Xóa vĩnh viễn')
+                    //     ->requiresConfirmation()
+                    //     ->modalHeading('⚠️ NGUY HIỂM: Xóa người dùng vĩnh viễn')
+                    //     ->modalDescription('Hành động này sẽ xóa vĩnh viễn người dùng và TẤT CẢ dữ liệu liên quan. Điều này KHÔNG THỂ hoàn tác!')
+                    //     ->color('danger')
+                    //     ->icon('heroicon-o-trash')
+                    //     ->disabled(fn (User $record) => 
+                    //         $record->id === Auth::id() || 
+                    //         Auth::user()->role != 'admin' ||
+                    //         $record?->course_registrations()?->exists() ||
+                    //         $record?->room_booking_groups()?->exists() ||
+                    //         $record?->room_bookings()?->exists()
+                    //     )
+                    //     ,
                 ])
                 ->icon('heroicon-o-ellipsis-horizontal')
                 ->iconButton()
@@ -164,9 +271,9 @@ class UserResource extends Resource
                 ->extraAttributes(['class' => 'border']),
             ])
             ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
-                ]),
+                // Tables\Actions\BulkActionGroup::make([
+                //     Tables\Actions\DeleteBulkAction::make(),
+                // ]),
             ]);
     }
 

@@ -4,13 +4,17 @@ namespace App\Filament\Pages\Auth;
 
 use App\Forms\Components\Recaptcha;
 use App\Helpers\RecaptchaHelper;
+use App\Models\User;
 use App\Rules\RecaptchaRule;
 use Filament\Forms\Components\Component;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
+use Filament\Http\Responses\Auth\Contracts\LoginResponse;
+use Filament\Notifications\Notification;
 use Filament\Pages\Auth\Login as BaseLogin;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\HtmlString;
+use Illuminate\Validation\ValidationException;
 
 class Login extends BaseLogin
 {
@@ -65,5 +69,41 @@ class Login extends BaseLogin
     {
         return parent::getRememberFormComponent()
             ->extraInputAttributes(['tabindex' => 4]);
+    }
+
+    public function authenticate(): ?LoginResponse
+    {
+        try {
+            $data = $this->form->getState();
+            
+            // Tìm user theo email
+            $user = User::where('email', $data['email'])->first();
+            
+            // Kiểm tra user có tồn tại không
+            if (!$user) {
+                throw ValidationException::withMessages([
+                    'data.email' => 'Email hoặc mật khẩu không đúng.',
+                ]);
+            }
+            
+            // Kiểm tra trạng thái tài khoản
+            if ($user->status !== 'active') {
+                $message = 'Tài khoản của bạn không thể đăng nhập. Vui lòng liên hệ quản trị viên.';
+
+                throw ValidationException::withMessages([
+                    'data.email' => $message,
+                ]);
+            }
+            
+            // Nếu tài khoản active, tiếp tục với authentication bình thường
+            return parent::authenticate();
+            
+        } catch (ValidationException $e) {
+            throw $e;
+        } catch (\Exception $e) {
+            throw ValidationException::withMessages([
+                'data.email' => 'Có lỗi xảy ra trong quá trình đăng nhập.',
+            ]);
+        }
     }
 }
