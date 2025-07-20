@@ -1,5 +1,7 @@
 @php
-    $duplicateDetails = $details->where('is_duplicate', true);
+    $duplicateDetails = $details
+                        ->where('is_duplicate', true)
+                        ->where('status', 'pending');
 @endphp
 <div class="space-y-4">
     <div class="pb-3">
@@ -29,6 +31,9 @@
                     </th>
                     <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                         Trạng thái
+                    </th>
+                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                        Thao tác
                     </th>
                 </tr>
             </thead>
@@ -69,6 +74,9 @@
                                         'label' => 'Trùng lịch',
                                         'style' => 'background-color: #fee2e2; color: #991b1b; padding: 4px 10px; border-radius: 9999px; font-size: 12px; font-weight: 500;'
                                     ];
+                                    if ($detail->status == 'rejected') {
+                                        $statusConfig['label'] .= ' (đã từ chối)';
+                                    }
                                 } else {
                                     $statusConfig = match($detail->status) {
                                     'pending' => ['label' => 'Chờ duyệt', 'style' => 'background-color: #fef3c7; color: #92400e; padding: 4px 10px; border-radius: 9999px; font-size: 12px; font-weight: 500;'],
@@ -82,6 +90,41 @@
                                 <span style="{{ $statusConfig['style'] }}">
                                     {{ $statusConfig['label'] }}
                                 </span>
+                            </div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                            <div class="flex space-x-2">
+                                {{-- Nút từ chối cho ngày có status pending hoặc bị trùng lịch --}}
+                                @if(($detail->status === 'pending' || $detail->is_duplicate) && $detail->status != 'rejected')
+                                    <button 
+                                        data-url="{{ route('admin.room-booking-details.reject', $detail->id) }}"
+                                        type="button"
+                                        onclick="rejectDetail()"
+                                        style="display: inline-flex; align-items: center; padding: 6px 12px; border: none; border-radius: 6px; font-size: 12px; font-weight: 500; color: #dc2626; background-color: #fef2f2; cursor: pointer; transition: background-color 0.2s;"
+                                        onmouseover="this.style.backgroundColor='#fecaca'"
+                                        onmouseout="this.style.backgroundColor='#fef2f2'"
+                                        title="Từ chối ngày này"
+                                    >
+                                        <x-heroicon-o-x-mark style="width: 16px; height: 16px; margin-right: 4px;" />
+                                        Từ chối
+                                    </button>
+                                @endif
+
+                                {{-- Nút hủy cho ngày có status approved --}}
+                                @if($detail->status === 'approved')
+                                    <button 
+                                        data-url="{{ route('admin.room-booking-details.cancel', $detail->id) }}"
+                                        type="button"
+                                        onclick="cancelDetail()"
+                                        style="display: inline-flex; align-items: center; padding: 6px 12px; border: none; border-radius: 6px; font-size: 12px; font-weight: 500; color: #d97706; background-color: #fffbeb; cursor: pointer; transition: background-color 0.2s;"
+                                        onmouseover="this.style.backgroundColor='#fed7aa'"
+                                        onmouseout="this.style.backgroundColor='#fffbeb'"
+                                        title="Hủy ngày này"
+                                    >
+                                        <x-heroicon-o-x-circle style="width: 16px; height: 16px; margin-right: 4px;" />
+                                        Hủy
+                                    </button>
+                                @endif
                             </div>
                         </td>
                     </tr>

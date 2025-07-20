@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\CourseController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\RoomController;
+use App\Http\Controllers\Admin\RoomBookingDetailController;
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/courses', [CourseController::class, 'index'])->name('courses.index');
@@ -16,3 +17,14 @@ Route::get('/contacts', [HomeController::class, 'contacts'])->name('contacts');
 Route::get('/news', [App\Http\Controllers\NewsController::class, 'index'])->name('news.index');
 Route::get('/news/category/{slug}', [App\Http\Controllers\NewsController::class, 'category'])->name('news.category');
 Route::get('/news/{slug}', [App\Http\Controllers\NewsController::class, 'show'])->name('news.show');
+
+// Admin routes for room booking details 
+Route::middleware(['web', 'auth'])->prefix('admin')->group(function () {
+    Route::post('/room-booking-details/{id}/reject', [RoomBookingDetailController::class, 'reject'])->name('admin.room-booking-details.reject');
+    Route::post('/room-booking-details/{id}/cancel', [RoomBookingDetailController::class, 'cancel'])->name('admin.room-booking-details.cancel');
+});
+
+// Login route để redirect về trang chủ
+Route::get('/login', function () {
+    return redirect('/');
+})->name('login');

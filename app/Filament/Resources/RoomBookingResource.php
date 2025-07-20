@@ -426,12 +426,12 @@ class RoomBookingResource extends Resource
 
                     Tables\Actions\ViewAction::make(),
 
-                    //thêm cái nút chỗ action tên là xem ngày đặt phòng, nhấn vào nó hiện modal, show hết data của details
+                    //thêm nút chỗ action tên là xem ngày đặt phòng, nhấn vào nó hiện modal, show hết data của details
                     Tables\Actions\Action::make('view_details')
                         ->label('Xem ngày đặt phòng')
                         ->icon('heroicon-o-calendar')
                         ->modalHeading(fn($record) => 'Chi tiết đặt phòng - ' . $record->booking_code)
-                        ->modalWidth('xl')
+                        ->modalWidth('2xl')
                         ->modalSubmitAction(false)
                         ->modalCancelAction(false)
                         ->modalContent(function ($record) {
@@ -466,8 +466,12 @@ class RoomBookingResource extends Resource
                             }
                             
                             $record->update(['status' => 'approved', 'approved_by' => Auth::id()]);
-                            //update tất cả các chi tiết liên quan
-                            $record->room_booking_details()->update(['status' => 'approved', 'approved_by' => Auth::id()]);
+                            // update tất cả các chi tiết liên quan
+                            // Chỉ duyệt các chi tiết có trạng thái 'pending' và ngày đặt phòng trong tương lai
+                            $record->room_booking_details()
+                                ->where('booking_date', '>=', now()->format('Y-m-d H:i:s'))
+                                ->where('status', '=', 'pending')
+                                ->update(['status' => 'approved', 'approved_by' => Auth::id()]);
                             $roomBookingService = new RoomBookingService();
                             // Cập nhật trạng thái is_duplicate cho các booking khác liên quan đến phòng này
                             $roomBookingService->updateDuplicateStatus($record->room_id);
@@ -486,6 +490,11 @@ class RoomBookingResource extends Resource
                                 'ip_address' => request()->ip(),
                                 'user_agent' => request()->userAgent(),
                             ]);
+                            \Filament\Notifications\Notification::make()
+                                ->title('Yêu cầu đã được duyệt')
+                                ->body('Yêu cầu đặt phòng của khách hàng đã được duyệt.')
+                                ->success()
+                                ->send();
                         })
                         ->requiresConfirmation()
                         ->disabled(fn(RoomBooking $record) => $record->status != 'pending'),
@@ -495,8 +504,8 @@ class RoomBookingResource extends Resource
                         ->icon('heroicon-o-x-mark')
                         ->action(function (RoomBooking $record) {
                             $record->update(['status' => 'rejected', 'rejected_by' => Auth::id()]);
-                            //update tất cả các chi tiết liên quan
-                            $record->room_booking_details()->update(['status' => 'rejected', 'rejected_by' => Auth::id()]);
+                            // update tất cả các chi tiết liên quan
+                            $updateCnt = $record->room_booking_details()->update(['status' => 'rejected', 'rejected_by' => Auth::id()]);
                             $record->refresh();
                             
                             Log::info('Room booking rejected', [
@@ -512,6 +521,12 @@ class RoomBookingResource extends Resource
                                 'ip_address' => request()->ip(),
                                 'user_agent' => request()->userAgent(),
                             ]);
+
+                            \Filament\Notifications\Notification::make()
+                                ->title('Yêu cầu đã bị từ chối')
+                                ->body('Yêu cầu đặt phòng của khách hàng đã bị từ chối (' . $updateCnt .  ' ngày).')
+                                ->danger()
+                                ->send();
                         })
                         ->requiresConfirmation()
                         ->disabled(fn(RoomBooking $record) => $record->status != 'pending'),
@@ -520,10 +535,12 @@ class RoomBookingResource extends Resource
                         ->icon('heroicon-o-x-circle')
                         ->action(function (RoomBooking $record) {
                             $record->update(['status' => 'cancelled_by_admin', 'cancelled_by' => Auth::id()]);
-                            //update tất cả các chi tiết liên quan
-                            $record->room_booking_details()
-                                ->where('booking_date', '>', now()->format('Y-m-d'))
-                                ->update(['status' => 'cancelled', 'cancelled_by' => Auth::id()]);
+                            // update tất cả các chi tiết liên quan
+                            // Chỉ hủy các chi tiết có trạng thái 'approved' và ngày đặt phòng trong tương lai
+                            $updateCnt = $record->room_booking_details()
+                                        ->where('booking_date', '>=', now()->format('Y-m-d H:i:s'))
+                                        ->where('status', '=', 'approved')
+                                        ->update(['status' => 'cancelled', 'cancelled_by' => Auth::id()]);
                             // Cập nhật trạng thái is_duplicate cho các booking khác liên quan đến phòng này
                             $roomBookingService = new RoomBookingService();
                             $roomBookingService->updateDuplicateStatus($record->room_id);
@@ -542,6 +559,12 @@ class RoomBookingResource extends Resource
                                 'ip_address' => request()->ip(),
                                 'user_agent' => request()->userAgent(),
                             ]);
+
+                            \Filament\Notifications\Notification::make()
+                                ->title('Yêu cầu đã bị hủy')
+                                ->body('Yêu cầu đặt phòng của khách hàng đã bị hủy (' . $updateCnt .  ' ngày).')
+                                ->danger()
+                                ->send();
                         })
                         ->requiresConfirmation()
                         ->disabled(fn(RoomBooking $record) => $record->status != 'approved'),
@@ -557,7 +580,7 @@ class RoomBookingResource extends Resource
                             return match ($record->status) {
                                 'pending' => 'Hãy từ chối trước',
                                 'approved' => 'Không thể xóa',
-                                'cacelled' => 'Không thể xóa',
+                                'cancelled' => 'Không thể xóa',
                                 default => 'Xóa yêu cầu',
                             };
                         })
@@ -596,7 +619,12 @@ class RoomBookingResource extends Resource
                             
                             $record->delete();
                             // xóa các chi tiết liên quan
-                            $record->room_booking_details()->delete();
+                            $deletedCount = $record->room_booking_details()->delete();
+                            \Filament\Notifications\Notification::make()
+                                ->title('Yêu cầu đã bị xóa')
+                                ->body("Yêu cầu đặt phòng đã bị xóa thành công. Đã xóa {$deletedCount} chi tiết liên quan.")
+                                ->success()
+                                ->send();
                         })
                 ])
                 ->icon('heroicon-o-ellipsis-vertical')
@@ -739,7 +767,7 @@ class RoomBookingResource extends Resource
                                     ]);
                                     // Update các chi tiết có ngày > hôm nay
                                     $record->room_booking_details()
-                                        ->where('booking_date', '>', now()->format('Y-m-d'))
+                                        ->where('booking_date', '>=', now()->format('Y-m-d H:i:s'))
                                         ->update([
                                             'status' => 'cancelled', 
                                             'cancelled_by' => Auth::id()
