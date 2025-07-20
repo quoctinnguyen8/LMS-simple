@@ -23,9 +23,6 @@
                     </div>
                 @endif
             @endforeach
-            @if ($news->isEmpty())
-                <p>Chưa có tin tức trong danh mục này.</p>
-            @endif
         </div>
     </section>
 </x-layouts>

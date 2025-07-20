@@ -14,24 +14,15 @@ class RoomController extends Controller
 {
     function index()
     {
-        $rooms = Room::all();
+        $rooms = Room::where('status', 'available') 
+            ->orderBy('created_at', 'desc')
+            ->get();
         return view('rooms.index', ['rooms' => $rooms]);
     }
     function show($id)
     {
         $room = Room::findOrFail($id);
-        //lịch sử đặt phòng
-        $bookingDetails = RoomBookingDetail::whereHas('room_booking', function ($query) use ($id) {
-            $query->where('room_id', $id)
-                ->where('booking_date', '>=', now()->startOfDay())
-                ->where('status', 'approved');
-        })
-        ->orderBy('booking_date', 'asc')
-        ->get();
-        return view('rooms.detail', [
-            'room' => $room,
-            'bookingDetails' => $bookingDetails,
-        ]);
+        return view('rooms.detail', ['room' => $room]);
     }
     function roomBookings(RoomRequest $request)
     {

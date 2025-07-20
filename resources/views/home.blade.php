@@ -22,8 +22,35 @@
         </section>
     @endif
     <section class="courses">
+        @if ($news->isNotEmpty())
+            <h1>Tin Tức Nổi Bật</h1>
+        @endif
+        <div class="news-list">
+            @foreach ($news as $news)
+                <div class="news-card">
+                    <div class="card-image">
+                        <img src="{{ Storage::url($news->featured_image) }}" alt="{{ $news->title }}">
+                    </div>
+                    <div class="card-info">
+                        <h2>{{ $news->title }}</h2>
+                        <p>{{ $news->summary }}</p>
+                        <p class="meta">
+                            Đăng ngày: {{ $news->published_at->format('d/m/Y') }} |
+                            Tác giả: {{ $news->user->name }} |
+                            Lượt xem: {{ $news->view_count }}
+                        </p>
+                        <a href="{{ route('news.show', $news->slug) }}" class="btn">Xem Chi Tiết</a>
+                    </div>
+                </div>
+            @endforeach
+        </div>
+        @if ($news->count() > 3)
+            <div class="view-more">
+                <a href="{{ route('news.index') }}" class="btn">Xem thêm</a>
+            </div>
+        @endif
         @if ($courses->isNotEmpty())
-            <h1>Khóa học nổi bật</h1>
+            <h1>Khóa Học Nổi Bật</h1>
         @endif
         <div class="course-list">
             @foreach ($courses as $course)
@@ -54,7 +81,7 @@
         @endif
 
         @if ($rooms->isNotEmpty())
-            <h1>Phòng học nổi bật</h1>
+            <h1>Phòng Học Nổi Bật</h1>
         @endif
         <div class="room-list">
             @foreach ($rooms as $room)

@@ -4,6 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 use App\Rules\RecaptchaRule;
+use Carbon\Carbon;
 
 class RoomRequest extends FormRequest
 {
@@ -42,6 +43,11 @@ class RoomRequest extends FormRequest
         } else {
             $rules['repeat_days'] .= '|nullable';
             $rules['end_date'] = '|same:start_date';
+            
+            $date = Carbon::createFromFormat('Y-m-d', $this->start_date);
+            if ($date->isToday()) {
+                $rules['start_time'] .= '|after_or_equal:' . now()->addMinutes(30)->format('H:i');
+            }
         }
         $room = \App\Models\Room::find($this->input('room_id'));
         if ($room) {
@@ -50,11 +56,28 @@ class RoomRequest extends FormRequest
         // Chỉ thêm reCAPTCHA validation cho form đặt phòng từ frontend
         if (
             config('services.recaptcha.enabled', false) &&
-            request()->is('rooms/*/bookings') || request()->routeIs('rooms.bookings')
+            request()->is('phong-hoc/*/đat-phong') || request()->routeIs('rooms.bookings')
         ) {
             $rules['g-recaptcha-response'] = ['required', new RecaptchaRule()];
         }
         return $rules;
+    }
+
+    public function withValidator($validator)
+    {
+        $validator->after(function ($validator) {
+            $start = Carbon::createFromFormat('H:i', $this->start_time);
+            $end = Carbon::createFromFormat('H:i', $this->end_time);
+            if ($end->hour < 6 && $end->minute < 30 || $end->hour > 23 || ($end->hour == 23 && $end->minute > 0)) {
+                $validator->errors()->add('end_time', 'Giờ kết thúc phải từ 6:30 đến 23:00.');
+            }
+            if ($end->hour == $start->hour && $end->minute - $start->minute < 30) {
+                $validator->errors()->add('end_time', 'Thời gian kết thúc phải cách thời gian bắt đầu ít nhất 30 phút.');
+            }
+            if ($start->hour < 6 || $start->hour > 22) {
+                $validator->errors()->add('start_time', 'Giờ bắt đầu phải từ 6:00 đến 22:00.');
+            }
+        });
     }
 
     public function atributes(): array
@@ -97,6 +120,7 @@ class RoomRequest extends FormRequest
             'end_date.same' => 'Ngày kết thúc phải giống với ngày bắt đầu khi chọn loại đặt phòng theo ngày.',
             'start_time.required' => 'Giờ bắt đầu là bắt buộc.',
             'start_time.date_format' => 'Giờ bắt đầu không đúng định dạng. Vui lòng sử dụng định dạng HH:MM.',
+            'start_time.after_or_equal' => 'Giờ bắt đầu phải sau hoặc bằng thời gian hiện tại ít nhất 30 phút.',
             'end_time.required' => 'Giờ kết thúc là bắt buộc.',
             'end_time.date_format' => 'Giờ kết thúc không đúng định dạng. Vui lòng sử dụng định dạng HH:MM.',
             'end_time.after' => 'Giờ kết thúc phải sau giờ bắt đầu.',

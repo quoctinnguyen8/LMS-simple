@@ -1,6 +1,6 @@
 <x-layouts title="Phòng Học">
     <section class="rooms">
-        <h1>Danh sách phòng học</h1>
+        <h1>Danh Sách Phòng Học</h1>
         <div class="room-list">
             @foreach ($rooms as $room)
                 <div class="room-card">

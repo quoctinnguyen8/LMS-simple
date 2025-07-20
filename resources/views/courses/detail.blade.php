@@ -6,14 +6,13 @@
                 <img id="course-image" src="{{ Storage::url($course->featured_image) }}" alt="{{ $course->title }}">
             </div>
             <div class="course-info">
-                <h1 id="course-title">{{ $course->title }}</h1>
+                <h2 id="course-title">{{ $course->title }}</h2>
                 <p id="course-duration"><strong>Ngày bắt đầu:</strong> {{ $course->start_date->format('d/m/Y') }}</p>
                 @if ($course->end_registration_date)
                     <p id="course-end-date"><strong>Ngày kết thúc đăng ký:</strong>
                         {{ $course->end_registration_date->format('d/m/Y') }}</p>
                 @endif
-                <p id="course-student-max"><strong>Số lượng học viên tố
-                    i đa:</strong> {{ $course->max_students }}
+                <p id="course-student-max"><strong>Số lượng học viên tối đa:</strong> {{ $course->max_students }}
                     người</p>
                 @if ($course->is_price_visible)
                     <p id="course-price"><strong>Giá:</strong> {{ number_format($course->price, 0, ',', '.') }} VNĐ</p>

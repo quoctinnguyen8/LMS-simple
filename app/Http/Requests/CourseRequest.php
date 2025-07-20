@@ -35,7 +35,7 @@ class CourseRequest extends FormRequest
         // Chỉ thêm reCAPTCHA validation cho form đăng ký khóa học từ frontend
         if (
             config('services.recaptcha.enabled', false) &&
-            (request()->is('courses/*/registration') || request()->routeIs('courses.registration'))
+            (request()->is('khoa-hoc/*/dang-ky') || request()->routeIs('courses.registration'))
         ) {
             $rules['g-recaptcha-response'] = ['required', new RecaptchaRule()];
         }

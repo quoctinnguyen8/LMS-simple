@@ -4,7 +4,7 @@
             <h1>{{ $category->name }}</h1>
             <p class="category-description">{{ $category->description }}</p>
         @else
-            <h1>Danh sách Khóa học</h1>
+            <h1>Danh Sách Khóa Học</h1>
         @endif
         <div class="course-list">
             @foreach ($courses as $course)
