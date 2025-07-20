@@ -113,7 +113,10 @@
                 const dots = document.querySelectorAll('.dot');
                 const prevButton = document.querySelector('.slider-prev');
                 const nextButton = document.querySelector('.slider-next');
+                const sliderContainer = document.querySelector('.slider-container');
                 let currentSlide = 0;
+                let startX = 0;
+                let endX = 0;
 
                 function showSlide(index) {
                     slides.forEach((slide, i) => {
@@ -132,6 +135,19 @@
                     showSlide(currentSlide);
                 }
 
+                function handleSwipe() {
+                    const swipeThreshold = 50;
+                    const swipeDistance = startX - endX;
+
+                    if (Math.abs(swipeDistance) > swipeThreshold) {
+                        if (swipeDistance > 0) {
+                            nextSlide();
+                        } else {
+                            prevSlide();
+                        }
+                    }
+                }
+
                 // Handle slide click
                 slides.forEach(slide => {
                     slide.addEventListener('click', () => {
@@ -140,6 +156,32 @@
                             window.location.href = url;
                         }
                     });
+                });
+
+                // Touch events for swipe
+                sliderContainer.addEventListener('touchstart', (e) => {
+                    startX = e.touches[0].clientX;
+                });
+
+                sliderContainer.addEventListener('touchend', (e) => {
+                    endX = e.changedTouches[0].clientX;
+                    handleSwipe();
+                });
+
+                // Mouse events for desktop swipe
+                sliderContainer.addEventListener('mousedown', (e) => {
+                    startX = e.clientX;
+                    sliderContainer.style.cursor = 'grabbing';
+                });
+
+                sliderContainer.addEventListener('mouseup', (e) => {
+                    endX = e.clientX;
+                    handleSwipe();
+                    sliderContainer.style.cursor = 'grab';
+                });
+
+                sliderContainer.addEventListener('mouseleave', () => {
+                    sliderContainer.style.cursor = 'grab';
                 });
 
                 prevButton.addEventListener('click', prevSlide);
