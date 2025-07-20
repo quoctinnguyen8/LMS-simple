@@ -177,13 +177,14 @@ nav {
      top: 0;
      right: -100%;
      width: 80%;
-     height: 200vh;
+     min-height: 100vh;
+     height: 100vh;
      background: var(--white);
      box-shadow: -2px 0 10px rgba(0, 0, 0, 0.1);
      transition: var(--transition);
      z-index: 1002;
      padding: 2rem 0;
-     overflow-y: auto;
+     overflow-y: auto !important;
      overflow-x: hidden;
      scrollbar-width: thin;
      scrollbar-color: var(--border-color) transparent;
