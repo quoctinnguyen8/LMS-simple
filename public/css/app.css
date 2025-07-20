@@ -176,14 +176,34 @@ nav {
      position: fixed;
      top: 0;
      right: -100%;
-     width: 320px;
-     height: 100vh;
+     width: 80%;
+     height: 200vh;
      background: var(--white);
      box-shadow: -2px 0 10px rgba(0, 0, 0, 0.1);
      transition: var(--transition);
      z-index: 1002;
      padding: 2rem 0;
      overflow-y: auto;
+     overflow-x: hidden;
+     scrollbar-width: thin;
+     scrollbar-color: var(--border-color) transparent;
+}
+
+.sidebar::-webkit-scrollbar {
+     width: 6px;
+}
+
+.sidebar::-webkit-scrollbar-track {
+     background: transparent;
+}
+
+.sidebar::-webkit-scrollbar-thumb {
+     background: var(--border-color);
+     border-radius: 3px;
+}
+
+.sidebar::-webkit-scrollbar-thumb:hover {
+     background: var(--text-secondary);
 }
 
 .sidebar-header {
@@ -233,13 +253,13 @@ nav {
      margin-left: 1rem;
 }
 
-.sidebar-menu .dropdown a{
-    width: 50%;
+.sidebar-menu .dropdown .dropdown-header a{
+    width: 60%;
 }
 
-.sidebar-menu .dropdown li:hover,
-.sidebar-menu li:hover,
-.sidebar-menu li:hover > a{
+.sidebar-menu .dropdown li div:hover,
+.sidebar-menu li div:hover,
+.sidebar-menu li div:hover > a{
      background-color: var(--background-color);
      color: var(--primary-color);
 }
@@ -247,10 +267,15 @@ nav {
      width: 100%;
     
 }
-.sidebar-menu .dropdown > a::after {
-     padding: 0 0.5rem;
+.sidebar-menu .dropdown .dropdown-header {
+     display: flex;
+     align-items: center;
+}
+
+.sidebar-menu .dropdown .dropdown-header::after {
      content: "▼";
-     margin-left: auto;
+     width: 20%;
+     text-align: right;
      font-size: 0.8rem;
      transition: var(--transition);
 }
@@ -448,8 +473,8 @@ h2 {
      overflow: hidden;
      transition: var(--transition);
      display: flex;
-     flex-direction: column;
-     width: 350px;
+     flex-direction: column; 
+     min-width: 358px;
 }
 
 .course-card:hover,

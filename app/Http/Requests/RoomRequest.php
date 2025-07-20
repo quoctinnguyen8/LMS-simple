@@ -120,7 +120,7 @@ class RoomRequest extends FormRequest
             'end_date.same' => 'Ngày kết thúc phải giống với ngày bắt đầu khi chọn loại đặt phòng theo ngày.',
             'start_time.required' => 'Giờ bắt đầu là bắt buộc.',
             'start_time.date_format' => 'Giờ bắt đầu không đúng định dạng. Vui lòng sử dụng định dạng HH:MM.',
-            'start_time.after_or_equal' => 'Giờ bắt đầu phải sau hoặc bằng thời gian hiện tại ít nhất 30 phút.',
+            'start_time.after_or_equal' => 'Giờ bắt đầu phải cách ít nhất 30 phút so với thời điểm hiện tại nếu đặt phòng trong ngày hôm nay.',
             'end_time.required' => 'Giờ kết thúc là bắt buộc.',
             'end_time.date_format' => 'Giờ kết thúc không đúng định dạng. Vui lòng sử dụng định dạng HH:MM.',
             'end_time.after' => 'Giờ kết thúc phải sau giờ bắt đầu.',

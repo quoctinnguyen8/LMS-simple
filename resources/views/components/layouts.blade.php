@@ -103,9 +103,11 @@
                     <ul class="sidebar-menu">
                         <li><a href="/" class="{{ request()->is('/') ? 'active' : '' }}">Trang chủ</a></li>
                         <li class="dropdown">
-                            <a href="{{ route('courses.index') }}"
-                                class="dropdown-toggle {{ request()->routeIs('courses.index') || request()->routeIs('courses.category') ? 'active' : '' }}">Khóa
-                                học</a>
+                            <div class="dropdown-header">
+                                <a href="{{ route('courses.index') }}"
+                                    class="dropdown-toggle {{ request()->routeIs('courses.index') || request()->routeIs('courses.category') ? 'active' : '' }}">Khóa
+                                    học</a>
+                            </div>
                             <ul class="dropdown-menu">
                                 <li><a href="{{ route('courses.index') }}"
                                         class="{{ request()->routeIs('courses.index') ? 'active' : '' }}">Tất cả khóa
@@ -122,9 +124,11 @@
                                 class="{{ request()->routeIs('rooms.index') || request()->routeIs('rooms.detail') ? 'active' : '' }}">Phòng
                                 học</a>
                         <li class="dropdown">
-                            <a href="{{ route('news.index') }} "
-                                class="dropdown-toggle {{ request()->routeIs('news.index') || request()->routeIs('news.category') ? 'active' : '' }}">Tin
-                                tức</a>
+                            <div class="dropdown-header">
+                                <a href="{{ route('news.index') }} "
+                                    class="dropdown-toggle {{ request()->routeIs('news.index') || request()->routeIs('news.category') ? 'active' : '' }}">Tin
+                                    tức</a>
+                            </div>
                             <ul class="dropdown-menu">
                                 <li><a href="{{ route('news.index') }}"
                                         class="{{ request()->routeIs('news.index') ? 'active' : '' }}">Tin tức mới
