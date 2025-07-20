@@ -72,7 +72,12 @@ class RoomBookingResource extends Resource
                     ])
                     ->columns(3),
                 Section::make('Thông tin đặt phòng')
-                    ->description('Thông tin cơ bản về đặt phòng')
+                    ->description(function ($record) {
+                        if ($record?->status === 'approved') {
+                            return 'Thông tin cơ bản về đặt phòng - ⚠️ Yêu cầu đã được duyệt, không thể chỉnh sửa các thông tin quan trọng';
+                        }
+                        return 'Thông tin cơ bản về đặt phòng';
+                    })
                     ->schema([
                         Forms\Components\Select::make('room_id')
                             ->label('Phòng học')
@@ -80,12 +85,14 @@ class RoomBookingResource extends Resource
                             ->searchable()
                             ->preload()
                             ->required()
+                            ->disabled(fn($record) => $record?->status === 'approved')
                             ->columnSpan(2),
 
                         Forms\Components\TextInput::make('reason')
                             ->label('Lý do đặt phòng')
                             ->required()
                             ->maxLength(255)
+                            ->disabled(fn($record) => $record?->status === 'approved')
                             ->columnSpan(2),
 
                         Forms\Components\DatePicker::make('start_date')
@@ -93,6 +100,7 @@ class RoomBookingResource extends Resource
                             ->required()
                             ->native(false)
                             ->displayFormat('d/m/Y')
+                            ->disabled(fn($record) => $record?->status === 'approved')
                             ->columnSpan([
                                 'default' => 2,
                                 'sm' => 2,
@@ -108,6 +116,7 @@ class RoomBookingResource extends Resource
                             ->minutesStep(5)
                             ->seconds(false) // Ẩn giây
                             ->default('08:00') // Giá trị mặc định
+                            ->disabled(fn($record) => $record?->status === 'approved')
                             ->live(onBlur: true)
                             ->afterStateUpdated(function ($state, Forms\Set $set) {
                                 if ($state) {
@@ -134,6 +143,7 @@ class RoomBookingResource extends Resource
                             ->native(false)
                             ->displayFormat('d/m/Y')
                             ->afterOrEqual('start_date')
+                            ->disabled(fn($record) => $record?->status === 'approved')
                             ->columnSpan([
                                 'default' => 2,
                                 'sm' => 2,
@@ -150,6 +160,7 @@ class RoomBookingResource extends Resource
                             ->seconds(false)
                             ->default('09:00') // Mặc định 1 giờ sau start_time
                             ->after('start_time')
+                            ->disabled(fn($record) => $record?->status === 'approved')
                             ->columnSpan([
                                 'default' => 2,
                                 'sm' => 2,
@@ -172,6 +183,7 @@ class RoomBookingResource extends Resource
                             ->columns(2) // Hiển thị 2 cột để gọn hơn
                             ->gridDirection('row') // Sắp xếp theo hàng ngang
                             ->helperText('Chọn các ngày trong tuần mà đặt phòng sẽ lặp lại từ ngày bắt đầu đến ngày kết thúc. Để trống nếu chỉ đặt một lần.')
+                            ->disabled(fn($record) => $record?->status === 'approved')
                             ->columnSpan(2),
                         // notes
                         Forms\Components\Textarea::make('notes')
@@ -426,6 +438,10 @@ class RoomBookingResource extends Resource
 
                     Tables\Actions\ViewAction::make(),
 
+                    // chỉ cho phép chỉnh sửa nếu status là 'pending' hoặc 'approved'
+                    Tables\Actions\EditAction::make()
+                        ->disabled(fn(RoomBooking $record) => $record->status === 'rejected' || $record->status === 'cancelled_by_admin' || $record->status === 'cancelled_by_customer'),
+
                     //thêm nút chỗ action tên là xem ngày đặt phòng, nhấn vào nó hiện modal, show hết data của details
                     Tables\Actions\Action::make('view_details')
                         ->label('Xem ngày đặt phòng')
@@ -530,6 +546,7 @@ class RoomBookingResource extends Resource
                         })
                         ->requiresConfirmation()
                         ->disabled(fn(RoomBooking $record) => $record->status != 'pending'),
+
                     Tables\Actions\Action::make('cancel')
                         ->label('Hủy yêu cầu đặt phòng')
                         ->icon('heroicon-o-x-circle')
@@ -569,11 +586,7 @@ class RoomBookingResource extends Resource
                         ->requiresConfirmation()
                         ->disabled(fn(RoomBooking $record) => $record->status != 'approved'),
 
-                    // chỉ cho phép chỉnh sửa nếu status là 'pending' hoặc 'approved'
-                    Tables\Actions\EditAction::make()
-                        ->disabled(fn(RoomBooking $record) => $record->status === 'rejected' || $record->status === 'cancelled_by_admin' || $record->status === 'cancelled_by_customer'),
                     // chỉ xóa các yêu cầu bị từ chối
-
                     Tables\Actions\DeleteAction::make()
                         ->label(function (RoomBooking $record) {
                             $record->status === 'rejected' ? 'Xóa yêu cầu' : 'Hãy từ chối yêu cầu này trước';
