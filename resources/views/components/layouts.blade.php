@@ -45,8 +45,7 @@
                 <ul class="desktop-menu">
                     <li><a href="/" class="{{ request()->is('/') ? 'active' : '' }}">Trang chủ</a></li>
                     <li class="dropdown">
-                        <a href="{{ route('courses.index') }}"
-                            class="dropdown-toggle {{ request()->routeIs('courses.index') || request()->routeIs('courses.category') ? 'active' : '' }}">Khóa
+                        <a class="dropdown-toggle {{ request()->routeIs('courses.index') || request()->routeIs('courses.category') || request()->routeIs('courses.show') ? 'active' : '' }}">Khóa
                             học</a>
                         <ul class="dropdown-menu">
                             <li><a href="{{ route('courses.index') }}"
@@ -61,11 +60,10 @@
                         </ul>
                     </li>
                     <li><a href="{{ route('rooms.index') }}"
-                            class="{{ request()->routeIs('rooms.index') || request()->routeIs('rooms.detail') ? 'active' : '' }}">Phòng
+                            class="{{ request()->routeIs('rooms.index') || request()->routeIs('rooms.show') ? 'active' : '' }}">Phòng
                             học</a></li>
                     <li class="dropdown">
-                        <a href="{{ route('news.index') }}"
-                            class="dropdown-toggle {{ request()->routeIs('news.index') || request()->routeIs('news.category') ? 'active' : '' }}">Tin
+                        <a class="dropdown-toggle {{ request()->routeIs('news.index') || request()->routeIs('news.category') || request()->routeIs('news.show') ? 'active' : '' }}">Tin
                             tức</a>
                         <ul class="dropdown-menu">
                             <li><a href="{{ route('news.index') }}"
@@ -105,10 +103,18 @@
                         <li class="dropdown">
                             <div class="dropdown-header">
                                 <a href="{{ route('courses.index') }}"
-                                    class="dropdown-toggle {{ request()->routeIs('courses.index') || request()->routeIs('courses.category') ? 'active' : '' }}">Khóa
+                                    class="dropdown-toggle {{ request()->routeIs('courses.index') || request()->routeIs('courses.category') || request()->routeIs('courses.show') ? 'active' : '' }}">Khóa
                                     học</a>
+                                <label for="dropdown-toggle-1" class="dropdown-icon">
+                                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                                        xmlns="http://www.w3.org/2000/svg" id="dropdown-icon-1">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M19 9l-7 7-7-7"></path>
+                                    </svg>
+                                </label>
+                                <input type="checkbox" id="dropdown-toggle-1" class="dropdown-toggle hidden">
                             </div>
-                            <ul class="dropdown-menu">
+                            <ul class="dropdown-menu" id="dropdown-menu-1">
                                 <li><a href="{{ route('courses.index') }}"
                                         class="{{ request()->routeIs('courses.index') ? 'active' : '' }}">Tất cả khóa
                                         học</a>
@@ -121,15 +127,23 @@
                             </ul>
                         </li>
                         <li><a href="{{ route('rooms.index') }}"
-                                class="{{ request()->routeIs('rooms.index') || request()->routeIs('rooms.detail') ? 'active' : '' }}">Phòng
+                                class="{{ request()->routeIs('rooms.index') || request()->routeIs('rooms.show') ? 'active' : '' }}">Phòng
                                 học</a>
                         <li class="dropdown">
                             <div class="dropdown-header">
                                 <a href="{{ route('news.index') }} "
-                                    class="dropdown-toggle {{ request()->routeIs('news.index') || request()->routeIs('news.category') ? 'active' : '' }}">Tin
+                                    class="dropdown-toggle {{ request()->routeIs('news.index') || request()->routeIs('news.category') || request()->routeIs('news.show') ? 'active' : '' }}">Tin
                                     tức</a>
+                                <label for="dropdown-toggle-2" class="dropdown-icon">
+                                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                                        xmlns="http://www.w3.org/2000/svg" id="dropdown-icon-2">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M19 9l-7 7-7-7"></path>
+                                    </svg>
+                                </label>
+                                <input type="checkbox" id="dropdown-toggle-2" class="dropdown-toggle hidden">
                             </div>
-                            <ul class="dropdown-menu">
+                            <ul class="dropdown-menu" id="dropdown-menu-2">
                                 <li><a href="{{ route('news.index') }}"
                                         class="{{ request()->routeIs('news.index') ? 'active' : '' }}">Tin tức mới
                                         nhất</a>
@@ -169,6 +183,32 @@
         </footer>
     </div>
     {{ $scripts ?? '' }}
+    <script>
+        const dropdownToggles1 = document.getElementById('dropdown-toggle-1');
+        const dropdownToggles2 = document.getElementById('dropdown-toggle-2');
+        const dropdownMenus1 = document.getElementById('dropdown-menu-1');
+        const dropdownMenus2 = document.getElementById('dropdown-menu-2');
+        const icon1 = document.getElementById('dropdown-icon-1');
+        const icon2 = document.getElementById('dropdown-icon-2');
+        dropdownToggles1.addEventListener('change', function() {
+            if (this.checked) {
+                dropdownMenus1.className += ' show-dropdown active';
+                icon1.style.transform = 'rotate(180deg)';
+            } else {
+                dropdownMenus1.className = 'dropdown-menu';
+                icon1.style.transform = 'rotate(0deg)';
+            }
+        });
+        dropdownToggles2.addEventListener('change', function() {
+            if (this.checked) {
+                dropdownMenus2.className += ' show-dropdown active';
+                icon2.style.transform = 'rotate(180deg)';
+            } else {
+                dropdownMenus2.className = 'dropdown-menu';
+                icon2.style.transform = 'rotate(0deg)';
+            }
+        });
+    </script>
     @if (App\Helpers\SettingHelper::get('custom_js'))
         <script>
             {!! App\Helpers\SettingHelper::get('custom_js') !!}

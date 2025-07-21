@@ -143,6 +143,13 @@ nav {
      transition: var(--transition);
 }
 
+.desktop-menu .dropdown-toggle::after {
+     content: '▼';
+     margin-left: 0.5rem;
+     font-size: 0.8rem;
+}
+
+
 .desktop-menu .dropdown-menu a:hover {
      background-color: var(--background-color);
      color: var(--primary-color);
@@ -250,42 +257,42 @@ nav {
      display: none;
      box-shadow: none;
 }
-.sidebar-menu .dropdown-menu li{
+
+.sidebar-menu .dropdown-menu li {
      padding-left: 1rem;
 }
 
-.sidebar-menu .dropdown .dropdown-header a{
-    width: 60%;
+.sidebar-menu .dropdown .dropdown-header a {
+     width: 60%;
 }
 
-.sidebar-menu .dropdown li div:hover,
-.sidebar-menu li div:hover,
-.sidebar-menu li div:hover > a{
-     background-color: var(--background-color);
-     color: var(--primary-color);
-}
+
 .sidebar-menu .dropdown-menu a {
      width: 100%;
-    
+
 }
+
 .sidebar-menu .dropdown .dropdown-header {
      display: flex;
      align-items: center;
 }
 
-.sidebar-menu .dropdown .dropdown-header::after {
-     content: "▼";
-     width: 20%;
-     text-align: right;
-     font-size: 0.8rem;
-     transition: var(--transition);
+.dropdown-icon {
+     width: 40%;
+     height: 100%;
+     display: flex;
+     padding: 1rem 2rem;
+     justify-content: left;
+     transition: transform 0.3s ease;
 }
 
-.sidebar-menu .dropdown.active > a::after {
-     transform: rotate(180deg);
+.dropdown-icon svg {
+     width: 16px;
+     height: 16px;
 }
 
-.sidebar-menu .dropdown:hover .dropdown-menu {
+
+.dropdown-menu.show-dropdown {
      display: block;
      animation: fadeIn 0.3s ease;
 }
@@ -471,7 +478,7 @@ h2 {
      overflow: hidden;
      transition: var(--transition);
      display: flex;
-     flex-direction: column; 
+     flex-direction: column;
      min-width: 358px;
 }
 
@@ -547,7 +554,8 @@ h2 {
      text-align: center;
 }
 
-.newscategory-description , .category-description{
+.newscategory-description,
+.category-description {
      font-size: 1rem;
      color: var(--text-secondary);
      margin-bottom: 2rem;
@@ -705,6 +713,7 @@ h2 {
      gap: 1rem;
      margin-bottom: 1rem;
 }
+
 
 .form-group {
      display: flex;
@@ -1053,9 +1062,11 @@ footer {
      h1 {
           font-size: 1.8rem;
      }
+
      h2 {
           font-size: 1.4rem;
      }
+
      .slider {
           height: 250px;
      }
@@ -1109,6 +1120,7 @@ footer {
      h1 {
           font-size: 2rem;
      }
+
      .slider {
           height: 300px;
      }
@@ -1126,6 +1138,7 @@ footer {
      .news-info h2 {
           font-size: 1.8rem;
      }
+
      .form-group input,
      .form-group select,
      .form-group textarea {
@@ -1150,6 +1163,7 @@ footer {
      h1 {
           font-size: 2.2rem;
      }
+
      .desktop-menu {
           display: flex;
      }
@@ -1164,7 +1178,7 @@ footer {
           grid-template-columns: repeat(2, 1fr);
      }
 
-     .form-row {
+     .half {
           grid-template-columns: repeat(2, 1fr);
      }
 
@@ -1219,6 +1233,7 @@ footer {
      h1 {
           font-size: 2.4rem;
      }
+
      .course-list,
      .room-list,
      .news-list {

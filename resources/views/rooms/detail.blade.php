@@ -40,86 +40,89 @@
                 @csrf
                 <h2>Thông tin đặt phòng</h2>
                 <input type="hidden" name="room_id" value="{{ $room->id }}">
-                <div class="form-row">
-                    <div class="form-group half">
+                <div class="form-row half">
+                    <div class="form-group">
                         <x-app-input name="name" label="Họ và tên" required />
                     </div>
-                    <div class="form-group half">
+                    <div class="form-group">
                         <x-app-input name="email" type="email" label="Email" required />
                     </div>
                 </div>
-                <div class="form-row">
-                    <div class="form-group half">
+                <div class="form-row half">
+                    <div class="form-group">
                         <x-app-input name="phone" type="tel" label="Số điện thoại" required />
                     </div>
-                    <div class="form-group half">
+                    <div class="form-group">
                         <x-app-input name="participants_count" type="number" label="Số người tham gia" value="5"
                             required />
                     </div>
                 </div>
-                <div class="form-group half">
-                    <x-app-input name="reason" label="Lý do đặt phòng" required />
-                </div>
-                <div class="form-group">
-                    <label for="notes">Ghi chú</label>
-                    <textarea id="notes" name="notes" rows="3" placeholder="Ghi chú">{{ old('notes') }}</textarea>
-                </div>
-                <div class="form-group">
-                    <label for="room-type">Loại đặt phòng</label>
-                    <select id="room-type" onchange="toggleRecurrence(this.value)" name="room_type">
-                        <option value="none" {{ old('room_type') == 'none' ? 'selected' : '' }}>Đặt theo ngày
-                        </option>
-                        <option value="weekly" {{ old('room_type') == 'weekly' ? 'selected' : '' }}>Đặt theo tuần
-                        </option>
-                    </select>
-                </div>
 
-                <div id="recurrence-days" class="form-group {{ old('room_type') != 'weekly' ? 'hidden' : '' }}">
-                    <label>Chọn ngày trong tuần <span style="color: red;">*</span></label>
-                    <div class="checkbox-group">
-                        @php
-                            $daysOfWeek = [
-                                'monday' => 'Thứ 2',
-                                'tuesday' => 'Thứ 3',
-                                'wednesday' => 'Thứ 4',
-                                'thursday' => 'Thứ 5',
-                                'friday' => 'Thứ 6',
-                                'saturday' => 'Thứ 7',
-                                'sunday' => 'Chủ nhật',
-                            ];
-                        @endphp
-                        <label>
-                            <input type="checkbox" name="all_days" value="all" id="all-days-checkbox"
-                                {{ old('all_days') ? 'checked' : '' }}>
-                            Chọn tất cả
-                        </label>
-                        @foreach ($daysOfWeek as $key => $day)
-                            <label>
-                                <input type="checkbox" name="repeat_days[]" value="{{ $key }}"
-                                    {{ in_array($key, old('repeat_days', [])) ? 'checked' : '' }}>
-                                {{ $day }}
-                            </label>
-                        @endforeach
-                    </div>
-                    @error('repeat_days')
-                        <span class="alert alert-danger">{{ $message }}</span>
-                    @enderror
-                </div>
 
                 <div class="form-row">
-                    <div class="form-group half">
+                    <div class="form-group">
+                        <x-app-input name="reason" label="Lý do đặt phòng" required />
+                    </div>
+                    <div class="form-group">
+                        <label for="notes">Ghi chú</label>
+                        <textarea id="notes" name="notes" rows="3" placeholder="Ghi chú">{{ old('notes') }}</textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="room-type">Loại đặt phòng</label>
+                        <select id="room-type" onchange="toggleRecurrence(this.value)" name="room_type">
+                            <option value="none" {{ old('room_type') == 'none' ? 'selected' : '' }}>Đặt theo ngày
+                            </option>
+                            <option value="weekly" {{ old('room_type') == 'weekly' ? 'selected' : '' }}>Đặt theo tuần
+                            </option>
+                        </select>
+                    </div>
+
+                    <div id="recurrence-days" class="form-group {{ old('room_type') != 'weekly' ? 'hidden' : '' }}">
+                        <label>Chọn ngày trong tuần <span style="color: red;">*</span></label>
+                        <div class="checkbox-group">
+                            @php
+                                $daysOfWeek = [
+                                    'monday' => 'Thứ 2',
+                                    'tuesday' => 'Thứ 3',
+                                    'wednesday' => 'Thứ 4',
+                                    'thursday' => 'Thứ 5',
+                                    'friday' => 'Thứ 6',
+                                    'saturday' => 'Thứ 7',
+                                    'sunday' => 'Chủ nhật',
+                                ];
+                            @endphp
+                            <label>
+                                <input type="checkbox" name="all_days" value="all" id="all-days-checkbox"
+                                    {{ old('all_days') ? 'checked' : '' }}>
+                                Chọn tất cả
+                            </label>
+                            @foreach ($daysOfWeek as $key => $day)
+                                <label>
+                                    <input type="checkbox" name="repeat_days[]" value="{{ $key }}"
+                                        {{ in_array($key, old('repeat_days', [])) ? 'checked' : '' }}>
+                                    {{ $day }}
+                                </label>
+                            @endforeach
+                        </div>
+                        @error('repeat_days')
+                            <span class="alert alert-danger">{{ $message }}</span>
+                        @enderror
+                    </div>
+                </div>
+                <div class="form-row half">
+                    <div class="form-group">
                         <x-app-input name="start_date" type="date" label="Ngày bắt đầu" required />
                     </div>
-                    <div class="form-group half">
+                    <div class="form-group">
                         <x-app-input name="end_date" type="date" label="Ngày kết thúc" required />
                     </div>
                 </div>
 
-                <div class="form-row">
-                    <div class="form-group half">
+                <div class="form-row half">
+                    <div class="form-group">
                         <x-app-input name="start_time" type="time" label="Giờ bắt đầu" required />
                     </div>
-                    <div class="form-group half">
+                    <div class="form-group">
                         <x-app-input name="end_time" type="time" label="Giờ kết thúc" required />
                     </div>
                 </div>
@@ -152,7 +155,7 @@
                 });
             }
             const allDaysCheckbox = document.getElementById('all-days-checkbox');
-           allDaysCheckbox.addEventListener('change', function() {
+            allDaysCheckbox.addEventListener('change', function() {
                 const checkboxes = document.querySelectorAll('#recurrence-days input[type="checkbox"]');
                 if (this.checked) {
                     checkboxes.forEach(checkbox => {

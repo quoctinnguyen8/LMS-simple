@@ -41,23 +41,23 @@
                 @csrf
                 <h2>Đăng ký khóa học</h2>
                 <input type="hidden" name="course_id" value="{{ $course->id }}">
-                <div class="form-row">
-                    <div class="form-group half">
+                <div class="form-row half">
+                    <div class="form-group">
                         <x-app-input name="name" label="Họ và tên" placeholder="Nhập họ và tên" required />
                     </div>
-                    <div class="form-group half">
+                    <div class="form-group">
                         <x-app-input name="email" type="email" label="Email" placeholder="Nhập email" required />
                     </div>
-                    <div class="form-group half">
+                    <div class="form-group">
                         <x-app-input name="phone" type="tel" label="Số điện thoại"
                             placeholder="Nhập số điện thoại" required />
                     </div>
-                    <div class="form-group half">
+                    <div class="form-group">
                         <x-app-input name="dob" type="date" label="Ngày sinh" required />
                     </div>
                 </div>
-                <div class="form-row">
-                    <div class="form-group half">
+                <div class="form-row half">
+                    <div class="form-group">
                         <label for="enroll-gender">Giới tính <span style="color: red;">*</span></label>
                         <select id="enroll-gender" name="gender" required>
                             <option value="">Chọn giới tính</option>
@@ -66,7 +66,7 @@
                             <option value="other" {{ old('gender') == 'other' ? 'selected' : '' }}>Khác</option>
                         </select>
                     </div>
-                    <div class="form-group half">
+                    <div class="form-group">
                         <label for="enroll-address">Địa chỉ</label>
                         <textarea id="enroll-address" name="address" rows="2" placeholder="Địa chỉ">{{ old('address') }}</textarea>
                     </div>
