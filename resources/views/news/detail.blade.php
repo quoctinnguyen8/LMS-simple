@@ -3,7 +3,7 @@
     <section class="news-detail">
         <div class="news-header">
             <div class="news-info">
-                <h1>{{ $news_item->title }}</h1>
+                <h2>{{ $news_item->title }}</h2>
                 <p class="meta">
                     Đăng ngày: {{ $news_item->published_at->format('d/m/Y') }} |
                     Tác giả: {{ $news_item->user->name }} |

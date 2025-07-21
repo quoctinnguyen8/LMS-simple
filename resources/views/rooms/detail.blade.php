@@ -6,7 +6,7 @@
                 <img id="room-image" src="{{ Storage::url($room->image) }}" alt="{{ $room->name }}">
             </div>
             <div class="room-info">
-                <h1 id="room-title">{{ $room->name }}</h1>
+                <h2 id="room-title">{{ $room->name }}</h2>
                 <p id="room-capacity"><strong>Sức chứa:</strong> {{ $room->capacity }} người</p>
                 <p id="room-status"><strong>Trạng thái:</strong>
                     @php
@@ -53,7 +53,8 @@
                         <x-app-input name="phone" type="tel" label="Số điện thoại" required />
                     </div>
                     <div class="form-group half">
-                        <x-app-input name="participants_count" type="number" label="Số người tham gia" required />
+                        <x-app-input name="participants_count" type="number" label="Số người tham gia" value="5"
+                            required />
                     </div>
                 </div>
                 <div class="form-group half">
@@ -66,14 +67,15 @@
                 <div class="form-group">
                     <label for="room-type">Loại đặt phòng</label>
                     <select id="room-type" onchange="toggleRecurrence(this.value)" name="room_type">
-                        <option value="none" {{ old('room_type') == 'none' ? 'selected' : '' }}>Đặt 1 ngày</option>
-                        <option value="weekly" {{ old('room_type') == 'weekly' ? 'selected' : '' }}>Đặt hàng tuần
+                        <option value="none" {{ old('room_type') == 'none' ? 'selected' : '' }}>Đặt theo ngày
+                        </option>
+                        <option value="weekly" {{ old('room_type') == 'weekly' ? 'selected' : '' }}>Đặt theo tuần
                         </option>
                     </select>
                 </div>
 
                 <div id="recurrence-days" class="form-group {{ old('room_type') != 'weekly' ? 'hidden' : '' }}">
-                    <label>Chọn ngày trong tuần</label>
+                    <label>Chọn ngày trong tuần <span style="color: red;">*</span></label>
                     <div class="checkbox-group">
                         @php
                             $daysOfWeek = [
@@ -86,6 +88,11 @@
                                 'sunday' => 'Chủ nhật',
                             ];
                         @endphp
+                        <label>
+                            <input type="checkbox" name="all_days" value="all" id="all-days-checkbox"
+                                {{ old('all_days') ? 'checked' : '' }}>
+                            Chọn tất cả
+                        </label>
                         @foreach ($daysOfWeek as $key => $day)
                             <label>
                                 <input type="checkbox" name="repeat_days[]" value="{{ $key }}"
@@ -94,6 +101,9 @@
                             </label>
                         @endforeach
                     </div>
+                    @error('repeat_days')
+                        <span class="alert alert-danger">{{ $message }}</span>
+                    @enderror
                 </div>
 
                 <div class="form-row">
@@ -139,6 +149,27 @@
                     if (type !== 'weekly') {
                         checkbox.checked = false;
                     }
+                });
+            }
+            const allDaysCheckbox = document.getElementById('all-days-checkbox');
+           allDaysCheckbox.addEventListener('change', function() {
+                const checkboxes = document.querySelectorAll('#recurrence-days input[type="checkbox"]');
+                if (this.checked) {
+                    checkboxes.forEach(checkbox => {
+                        checkbox.checked = true;
+                    });
+                } else {
+                    checkboxes.forEach(checkbox => {
+                        checkbox.checked = false;
+                    });
+                }
+            });
+            let room_type = document.getElementById('room-type');
+            if (room_type.value === 'none') {
+                let start_date = document.getElementById('start_date');
+                let end_date = document.getElementById('end_date');
+                start_date.addEventListener('change', function() {
+                    end_date.value = start_date.value;
                 });
             }
         </script>

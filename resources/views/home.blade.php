@@ -22,8 +22,35 @@
         </section>
     @endif
     <section class="courses">
+        @if ($news->isNotEmpty())
+            <h1>Tin Tức Nổi Bật</h1>
+        @endif
+        <div class="news-list">
+            @foreach ($news as $news)
+                <div class="news-card">
+                    <div class="card-image">
+                        <img src="{{ Storage::url($news->featured_image) }}" alt="{{ $news->title }}">
+                    </div>
+                    <div class="card-info">
+                        <h2>{{ $news->title }}</h2>
+                        <p>{{ $news->summary }}</p>
+                        <p class="meta">
+                            Đăng ngày: {{ $news->published_at->format('d/m/Y') }} |
+                            Tác giả: {{ $news->user->name }} |
+                            Lượt xem: {{ $news->view_count }}
+                        </p>
+                        <a href="{{ route('news.show', $news->slug) }}" class="btn">Xem Chi Tiết</a>
+                    </div>
+                </div>
+            @endforeach
+        </div>
+        @if ($news->count() > 3)
+            <div class="view-more">
+                <a href="{{ route('news.index') }}" class="btn">Xem thêm</a>
+            </div>
+        @endif
         @if ($courses->isNotEmpty())
-            <h1>Khóa học nổi bật</h1>
+            <h1>Khóa Học Nổi Bật</h1>
         @endif
         <div class="course-list">
             @foreach ($courses as $course)
@@ -32,22 +59,6 @@
                         <img src="{{ Storage::url($course->featured_image) }}" alt="{{ $course->title }}">
                     </div>
                     <div class="card-info">
-                        @php
-                            $statusConfig = match ($course->status) {
-                                'draft' => [
-                                    'style' => 'background-color: gray; color: white;',
-                                    'text' => 'Chưa mở',
-                                ],
-                                'published' => [
-                                    'style' => 'background-color: green; color: white;',
-                                    'text' => 'Đang mở',
-                                ],
-                                default => ['style' => 'background-color: red; color: white;', 'text' => 'Đóng'],
-                            };
-                        @endphp
-                        <span class="badge" style="{{ $statusConfig['style'] }}">
-                            {{ $statusConfig['text'] }}
-                        </span>
                         <h2>{{ $course->title }}</h2>
                         <p>{{ $course->description }}</p>
                         @if ($course->is_price_visible)
@@ -61,9 +72,16 @@
                     </div>
                 </div>
             @endforeach
+
         </div>
+        @if ($courses->count() > 3)
+            <div class="view-more">
+                <a href="{{ route('courses.index') }}" class="btn">Xem thêm</a>
+            </div>
+        @endif
+
         @if ($rooms->isNotEmpty())
-            <h1>Phòng học nổi bật</h1>
+            <h1>Phòng Học Nổi Bật</h1>
         @endif
         <div class="room-list">
             @foreach ($rooms as $room)
@@ -72,25 +90,6 @@
                         <img src="{{ Storage::url($room->image) }}" alt="{{ $room->name }}">
                     </div>
                     <div class="card-info">
-                        @php
-                            $statusConfig = match ($room->status) {
-                                'available' => [
-                                    'style' => 'background-color: green; color: white;',
-                                    'text' => 'Có sẵn',
-                                ],
-                                'maintenance' => [
-                                    'style' => 'background-color: orange; color: white;',
-                                    'text' => 'Bảo trì',
-                                ],
-                                default => [
-                                    'style' => 'background-color: red; color: white;',
-                                    'text' => 'Không có sẵn',
-                                ],
-                            };
-                        @endphp
-                        <span class="badge" style="{{ $statusConfig['style'] }}">
-                            {{ $statusConfig['text'] }}
-                        </span>
                         <h2>{{ $room->name }}</h2>
                         <p><strong>Vị trí:</strong> {{ $room->location }}</p>
                         <p><strong>Sức chứa:</strong> {{ $room->capacity }} người</p>
@@ -101,15 +100,23 @@
                 </div>
             @endforeach
         </div>
+        @if ($rooms->count() > 3)
+            <div class="view-more">
+                <a href="{{ route('rooms.index') }}" class="btn">Xem thêm</a>
+            </div>
+        @endif
     </section>
-    <slot:script>
+    <x-slot:scripts>
         <script>
             document.addEventListener('DOMContentLoaded', () => {
                 const slides = document.querySelectorAll('.slide');
                 const dots = document.querySelectorAll('.dot');
                 const prevButton = document.querySelector('.slider-prev');
                 const nextButton = document.querySelector('.slider-next');
+                const sliderContainer = document.querySelector('.slider-container');
                 let currentSlide = 0;
+                let startX = 0;
+                let endX = 0;
 
                 function showSlide(index) {
                     slides.forEach((slide, i) => {
@@ -128,6 +135,19 @@
                     showSlide(currentSlide);
                 }
 
+                function handleSwipe() {
+                    const swipeThreshold = 50;
+                    const swipeDistance = startX - endX;
+
+                    if (Math.abs(swipeDistance) > swipeThreshold) {
+                        if (swipeDistance > 0) {
+                            nextSlide();
+                        } else {
+                            prevSlide();
+                        }
+                    }
+                }
+
                 // Handle slide click
                 slides.forEach(slide => {
                     slide.addEventListener('click', () => {
@@ -136,6 +156,32 @@
                             window.location.href = url;
                         }
                     });
+                });
+
+                // Touch events for swipe
+                sliderContainer.addEventListener('touchstart', (e) => {
+                    startX = e.touches[0].clientX;
+                });
+
+                sliderContainer.addEventListener('touchend', (e) => {
+                    endX = e.changedTouches[0].clientX;
+                    handleSwipe();
+                });
+
+                // Mouse events for desktop swipe
+                sliderContainer.addEventListener('mousedown', (e) => {
+                    startX = e.clientX;
+                    sliderContainer.style.cursor = 'grabbing';
+                });
+
+                sliderContainer.addEventListener('mouseup', (e) => {
+                    endX = e.clientX;
+                    handleSwipe();
+                    sliderContainer.style.cursor = 'grab';
+                });
+
+                sliderContainer.addEventListener('mouseleave', () => {
+                    sliderContainer.style.cursor = 'grab';
                 });
 
                 prevButton.addEventListener('click', prevSlide);
@@ -154,5 +200,5 @@
                 showSlide(currentSlide);
             });
         </script>
-    </slot:script>
+    </x-slot:scripts>
 </x-layouts>

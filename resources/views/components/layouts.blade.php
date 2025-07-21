@@ -44,22 +44,42 @@
                 </label>
                 <ul class="desktop-menu">
                     <li><a href="/" class="{{ request()->is('/') ? 'active' : '' }}">Trang chủ</a></li>
-                    <li><a href="{{ route('courses.index') }}"
-                            class="{{ request()->is('courses*') ? 'active' : '' }}">Khóa học</a></li>
-                    <li><a href="{{ route('rooms.index') }}"
-                            class="{{ request()->is('rooms*') ? 'active' : '' }}">Phòng
-                            học</a></li>
                     <li class="dropdown">
-                        <a href="#" class="dropdown-toggle {{ request()->is('news*') ? 'active' : '' }}">Tin
-                            tức</a>
+                        <a href="{{ route('courses.index') }}"
+                            class="dropdown-toggle {{ request()->routeIs('courses.index') || request()->routeIs('courses.category') ? 'active' : '' }}">Khóa
+                            học</a>
                         <ul class="dropdown-menu">
-                            @foreach (App\Models\NewsCategory::all() as $newsCategory)
-                                <li><a href="{{ route('news.category', $newsCategory->slug) }}"
-                                        class="news-category">{{ $newsCategory->name }}</a></li>
+                            <li><a href="{{ route('courses.index') }}"
+                                    class="{{ request()->routeIs('courses.index') ? 'active' : '' }}">Tất cả khóa
+                                    học</a>
+                            </li>
+                            @foreach (App\Models\Category::all() as $Category)
+                                <li><a href="{{ route('courses.category', $Category->slug) }}"
+                                        class="course-category {{ request()->routeIs('courses.category') && request()->route('slug') == $Category->slug ? 'active' : '' }}">{{ $Category->name }}</a>
+                                </li>
                             @endforeach
                         </ul>
                     </li>
-                    <li><a href="{{ route('contacts') }}" class="{{ request()->is('contacts') ? 'active' : '' }}">Liên
+                    <li><a href="{{ route('rooms.index') }}"
+                            class="{{ request()->routeIs('rooms.index') || request()->routeIs('rooms.detail') ? 'active' : '' }}">Phòng
+                            học</a></li>
+                    <li class="dropdown">
+                        <a href="{{ route('news.index') }}"
+                            class="dropdown-toggle {{ request()->routeIs('news.index') || request()->routeIs('news.category') ? 'active' : '' }}">Tin
+                            tức</a>
+                        <ul class="dropdown-menu">
+                            <li><a href="{{ route('news.index') }}"
+                                    class="{{ request()->routeIs('news.index') ? 'active' : '' }}">Tin tức mới nhất</a>
+                            </li>
+                            @foreach (App\Models\NewsCategory::all() as $newsCategory)
+                                <li><a href="{{ route('news.category', $newsCategory->slug) }}"
+                                        class="news-category {{ request()->routeIs('news.category') && request()->route('slug') == $newsCategory->slug ? 'active' : '' }}">{{ $newsCategory->name }}</a>
+                                </li>
+                            @endforeach
+                        </ul>
+                    </li>
+                    <li><a href="{{ route('contacts') }}"
+                            class="{{ request()->routeIs('contacts') ? 'active' : '' }}">Liên
                             hệ</a></li>
 
                 </ul>
@@ -82,23 +102,46 @@
                     </div>
                     <ul class="sidebar-menu">
                         <li><a href="/" class="{{ request()->is('/') ? 'active' : '' }}">Trang chủ</a></li>
-                        <li><a href="{{ route('courses.index') }}"
-                                class="{{ request()->is('courses*') ? 'active' : '' }}">Khóa học</a></li>
-                        <li><a href="{{ route('rooms.index') }}"
-                                class="{{ request()->is('rooms*') ? 'active' : '' }}">Phòng học</a></li>
                         <li class="dropdown">
-                            <a href="#" class="dropdown-toggle {{ request()->is('news*') ? 'active' : '' }}">Tin
-                                tức</a>
+                            <div class="dropdown-header">
+                                <a href="{{ route('courses.index') }}"
+                                    class="dropdown-toggle {{ request()->routeIs('courses.index') || request()->routeIs('courses.category') ? 'active' : '' }}">Khóa
+                                    học</a>
+                            </div>
                             <ul class="dropdown-menu">
+                                <li><a href="{{ route('courses.index') }}"
+                                        class="{{ request()->routeIs('courses.index') ? 'active' : '' }}">Tất cả khóa
+                                        học</a>
+                                </li>
+                                @foreach (App\Models\Category::all() as $Category)
+                                    <li><a href="{{ route('courses.category', $Category->slug) }}"
+                                            class="course-category {{ request()->routeIs('courses.category') && request()->route('slug') == $Category->slug ? 'active' : '' }}">{{ $Category->name }}</a>
+                                    </li>
+                                @endforeach
+                            </ul>
+                        </li>
+                        <li><a href="{{ route('rooms.index') }}"
+                                class="{{ request()->routeIs('rooms.index') || request()->routeIs('rooms.detail') ? 'active' : '' }}">Phòng
+                                học</a>
+                        <li class="dropdown">
+                            <div class="dropdown-header">
+                                <a href="{{ route('news.index') }} "
+                                    class="dropdown-toggle {{ request()->routeIs('news.index') || request()->routeIs('news.category') ? 'active' : '' }}">Tin
+                                    tức</a>
+                            </div>
+                            <ul class="dropdown-menu">
+                                <li><a href="{{ route('news.index') }}"
+                                        class="{{ request()->routeIs('news.index') ? 'active' : '' }}">Tin tức mới
+                                        nhất</a>
+                                </li>
                                 @foreach (App\Models\NewsCategory::all() as $newsCategory)
                                     <li><a href="{{ route('news.category', $newsCategory->slug) }}"
-                                            class="news-category">{{ $newsCategory->name }}</a></li>
+                                            class="news-category {{ request()->routeIs('news.category') && request()->route('slug') == $newsCategory->slug ? 'active' : '' }}">{{ $newsCategory->name }}</a>
                                 @endforeach
                             </ul>
                         </li>
                         <li><a href="{{ route('contacts') }}"
-                                class="{{ request()->is('contacts') ? 'active' : '' }}">Liên
-                                hệ</a></li>
+                                class="{{ request()->routeIs('contacts') ? 'active' : '' }}">Liên hệ</a></li>
                     </ul>
                 </div>
                 <label for="menu-toggle" class="overlay"></label>
@@ -122,18 +165,6 @@
                 <a href="{{ route('courses.index') }}">Khóa học</a>
                 <a href="{{ route('rooms.index') }}">Phòng học</a>
                 <a href="{{ route('home') }}">Trang chủ</a>
-            </div>
-            <div class="social-media">
-                @if (App\Helpers\SettingHelper::get('facebook'))
-                    <a href="{{ App\Helpers\SettingHelper::get('facebook') }}" target="_blank" class="social-link">
-                        <i class="fab fa-facebook"></i> Facebook
-                    </a>
-                @endif
-                @if (App\Helpers\SettingHelper::get('zalo'))
-                    <a href="{{ App\Helpers\SettingHelper::get('zalo') }}" target="_blank" class="social-link">
-                        <img src="{{ asset('images/zalo-icon.png') }}" alt="Zalo" width="16"> Zalo
-                    </a>
-                @endif
             </div>
         </footer>
     </div>

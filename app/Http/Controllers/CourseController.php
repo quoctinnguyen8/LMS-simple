@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\CourseRequest;
+use App\Models\Category;
 use Illuminate\Http\Request;
 use App\Models\Course;
 use App\Models\CourseRegistration;
@@ -14,7 +15,7 @@ class CourseController extends Controller
     public function index()
     {
         $courses = Course::where('status', '!=', 'draft')
-            ->where('end_registration_date', '>=', now())
+            ->where('start_date', '>=', now()->subDays(14))
             ->orderBy('created_at', 'desc')
             ->get();
         return view('courses.index', ['courses' => $courses]);
@@ -24,6 +25,17 @@ class CourseController extends Controller
         $course = Course::where('slug', $slug)
             ->firstOrFail();
         return view('courses.detail')->with('course', $course);
+    }
+
+    public function category($slug)
+    {
+        $category = Category::where('slug', $slug)->firstOrFail();
+        $courses = Course::where('category_id', $category->id)
+            ->where('status', '!=', 'draft')
+            ->orderBy('created_at', 'desc')
+            ->get();
+        return view('courses.index')->with('courses', $courses)
+            ->with('category', $category);
     }
 
     public function course_registration(CourseRequest $request)

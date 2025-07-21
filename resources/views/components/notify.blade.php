@@ -20,7 +20,7 @@
         if (notify && notify.style.display !== 'none') {
             setTimeout(() => {
                 notify.style.display = 'none';
-            }, 3000);
+            }, 5000); // 5 seconds
         }
     });
 </script>
