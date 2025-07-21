@@ -60,6 +60,9 @@ class BookingConfirmationNotification extends Mailable
                 'status' => $this->booking->status,
                 'bookingDetails' => $this->booking->room_booking_details,
                 'centerName' => SettingHelper::get('center_name', 'Hệ thống quản lý học tập'),
+                'centerAddress' => SettingHelper::get('center_address', ''),
+                'centerPhone' => SettingHelper::get('center_phone', ''),
+                'centerEmail' => SettingHelper::get('center_email', ''),
                 'createdAt' => $this->booking->created_at->format('d/m/Y H:i'),
             ]
         );
