@@ -28,6 +28,8 @@ class AdminPanelProvider extends PanelProvider
             ->default()
             ->id('admin')
             ->path('admin')
+            ->favicon(fn () => asset('storage/' . SettingHelper::get('logo') ?? null))
+            ->homeUrl('/')
             ->brandName(SettingHelper::getSystemInfo()['center_name'] ?? 'Learning Center')
             ->login(\App\Filament\Pages\Auth\Login::class)
             ->colors([
