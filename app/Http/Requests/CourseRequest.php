@@ -28,7 +28,7 @@ class CourseRequest extends FormRequest
             'email' => 'required|email|max:255|regex:/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/',
             'phone' => 'required|string|regex:/^0[0-9]{9}$/|unique:course_registrations,student_phone,NULL,id,course_id,' . $this->course_id,
             'dob' => 'required|date|before:today|after:1900-01-01',
-            'address' => 'nullable|string|min:10|max:500',
+            'address' => 'nullable|string|max:1000',
             'gender' => 'required|in:male,female,other',
         ];
 
@@ -82,7 +82,6 @@ class CourseRequest extends FormRequest
             'dob.before' => 'Ngày sinh phải trước ngày hôm nay.',
             'dob.after' => 'Ngày sinh phải sau ngày 01/01/1900.',
             'address.string' => 'Địa chỉ phải là chuỗi ký tự.',
-            'address.min' => 'Địa chỉ phải có ít nhất :min ký tự.',
             'address.max' => 'Địa chỉ không được vượt quá :max ký tự.',
             'gender.required' => 'Giới tính là bắt buộc.',
             'gender.in' => 'Giới tính không hợp lệ. Vui lòng chọn nam, nữ hoặc khác.',

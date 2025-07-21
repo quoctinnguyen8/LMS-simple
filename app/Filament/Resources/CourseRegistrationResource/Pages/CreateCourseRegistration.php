@@ -3,10 +3,12 @@
 namespace App\Filament\Resources\CourseRegistrationResource\Pages;
 
 use App\Filament\Resources\CourseRegistrationResource;
+use App\Mail\CourseRegistrationNotification;
 use Filament\Actions;
 use Filament\Resources\Pages\CreateRecord;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 
 class CreateCourseRegistration extends CreateRecord
 {
@@ -24,7 +26,6 @@ class CreateCourseRegistration extends CreateRecord
     protected function afterCreate(): void
     {
         $record = $this->record;
-        
         Log::info('Course registration created', [
             'registration_id' => $record->id,
             'course_id' => $record->course_id,

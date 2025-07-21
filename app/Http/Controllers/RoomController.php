@@ -3,12 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\RoomRequest;
-use Illuminate\Http\Request;
 use App\Models\Room;
 use App\Models\RoomBooking;
-use App\Models\RoomBookingDetail;
-use Illuminate\Support\Facades\Auth;
 use App\Services\RoomBookingService;
+use App\Mail\BookingConfirmationNotification;
+use Illuminate\Support\Facades\Mail;
 
 class RoomController extends Controller
 {
@@ -47,6 +46,8 @@ class RoomController extends Controller
         $booking = RoomBooking::create($data);
 
         $roomBookingService->createBookingDetails($booking, $data, true, false);
+        $booking->refresh();
+        Mail::to($booking->customer_email)->send(new BookingConfirmationNotification($booking));
         return redirect()->route('rooms.show', ['id' => $validated['room_id']])
             ->with('success', 'Đặt phòng thành công!');
     }

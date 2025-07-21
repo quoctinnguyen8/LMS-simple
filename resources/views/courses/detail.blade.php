@@ -49,7 +49,7 @@
                         <x-app-input name="email" type="email" label="Email" placeholder="Nhập email" required />
                     </div>
                     <div class="form-group">
-                        <x-app-input name="phone" type="tel" label="Số điện thoại"
+                        <x-app-input name="phone" type="phone" label="Số điện thoại"
                             placeholder="Nhập số điện thoại" required />
                     </div>
                     <div class="form-group">
@@ -65,10 +65,16 @@
                             <option value="female" {{ old('gender') == 'female' ? 'selected' : '' }}>Nữ</option>
                             <option value="other" {{ old('gender') == 'other' ? 'selected' : '' }}>Khác</option>
                         </select>
+                        @error('gender')
+                            <span class="alert alert-danger">{{ $message }}</span>
+                        @enderror
                     </div>
                     <div class="form-group">
                         <label for="enroll-address">Địa chỉ</label>
                         <textarea id="enroll-address" name="address" rows="2" placeholder="Địa chỉ">{{ old('address') }}</textarea>
+                        @error('address')
+                            <span class="alert alert-danger">{{ $message }}</span>
+                        @enderror
                     </div>
                 </div>
 
