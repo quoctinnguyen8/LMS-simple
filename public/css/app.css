@@ -1086,6 +1086,7 @@ footer {
      .form-group select,
      .form-group textarea {
           font-size: 16px;
+          width: 100%;
           /* Prevent zoom on iOS */
      }
 
@@ -1124,6 +1125,11 @@ footer {
      .room-info h2,
      .news-info h2 {
           font-size: 1.8rem;
+     }
+     .form-group input,
+     .form-group select,
+     .form-group textarea {
+          width: 100%;
      }
 
      .card-info {
