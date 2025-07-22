@@ -34,7 +34,7 @@ class CourseRegistrationNotification extends Mailable
         $centerName = SettingHelper::get('center_name', 'Hệ thống quản lý học tập');
         
         return new Envelope(
-            subject: 'Thông báo đăng ký khóa học thành công - ' . $centerName,
+            subject: 'Thông báo đăng ký khóa học - ' . $centerName,
             from: new Address(
                 config('mail.from.address', 'noreply@example.com'),
                 $centerName

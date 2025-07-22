@@ -15,6 +15,8 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\CourseRegistrationNotification;
 
 class CourseRegistrationResource extends Resource
 {
@@ -278,7 +280,7 @@ class CourseRegistrationResource extends Resource
             ->actions([
                 Tables\Actions\ActionGroup::make([
                     Tables\Actions\ViewAction::make(),
-                    
+
                     Tables\Actions\EditAction::make(),
 
                     // Action xác nhận đăng ký
@@ -291,7 +293,9 @@ class CourseRegistrationResource extends Resource
                         ->action(function (CourseRegistration $record) {
                             $oldStatus = $record->status;
                             $record->update(['status' => 'confirmed']);
-                            
+                            if ($record->student_email) {
+                                Mail::to($record->student_email)->send(new CourseRegistrationNotification($record));
+                            }
                             Log::info('Course registration confirmed', [
                                 'registration_id' => $record->id,
                                 'course_id' => $record->course_id,
@@ -319,7 +323,9 @@ class CourseRegistrationResource extends Resource
                         ->action(function (CourseRegistration $record) {
                             $oldStatus = $record->status;
                             $record->update(['status' => 'canceled']);
-                            
+                            if ($record->student_email) {
+                                Mail::to($record->student_email)->send(new CourseRegistrationNotification($record));
+                            }
                             Log::info('Course registration cancelled', [
                                 'registration_id' => $record->id,
                                 'course_id' => $record->course_id,
@@ -348,7 +354,9 @@ class CourseRegistrationResource extends Resource
                         ->action(function (CourseRegistration $record) {
                             $oldStatus = $record->status;
                             $record->update(['status' => 'completed']);
-                            
+                            if ($record->student_email) {
+                                Mail::to($record->student_email)->send(new CourseRegistrationNotification($record, 'completed'));
+                            }
                             Log::info('Course registration completed', [
                                 'registration_id' => $record->id,
                                 'course_id' => $record->course_id,
@@ -395,12 +403,13 @@ class CourseRegistrationResource extends Resource
                         ->action(function (CourseRegistration $record, array $data) {
                             $oldPaymentStatus = $record->payment_status;
                             $oldActualPrice = $record->actual_price;
-                            
+
                             $record->update([
-                                'payment_status' => $data['payment_status'],
-                                'actual_price' => $data['actual_price']
+                                'payment_status' => $data['payment_status']
                             ]);
-                            
+                            if ($record->student_email) {
+                                Mail::to($record->student_email)->send(new CourseRegistrationNotification($record));
+                            }
                             Log::info('Course registration payment updated', [
                                 'registration_id' => $record->id,
                                 'course_id' => $record->course_id,
@@ -442,11 +451,11 @@ class CourseRegistrationResource extends Resource
                         })
                         ->disabled(fn(CourseRegistration $record) => Auth::user()->role !== 'admin')
                 ])
-                ->icon('heroicon-o-ellipsis-vertical')
-                ->color('gray')
-                ->tooltip('Thao tác')
-                ->iconButton()
-                ->extraAttributes(['class' => 'border']),
+                    ->icon('heroicon-o-ellipsis-vertical')
+                    ->color('gray')
+                    ->tooltip('Thao tác')
+                    ->iconButton()
+                    ->extraAttributes(['class' => 'border']),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
@@ -461,7 +470,7 @@ class CourseRegistrationResource extends Resource
                         ->action(function ($records) {
                             $confirmedCount = 0;
                             $confirmedRegistrations = [];
-                            
+
                             foreach ($records as $record) {
                                 if ($record->status === 'pending') {
                                     $record->update(['status' => 'confirmed']);
@@ -471,9 +480,12 @@ class CourseRegistrationResource extends Resource
                                         'student_name' => $record->student_name,
                                         'course_title' => $record->course->title ?? 'Unknown',
                                     ];
+                                    if ($record->student_email) {
+                                        Mail::to($record->student_email)->send(new CourseRegistrationNotification($record));
+                                    }
                                 }
                             }
-                            
+
                             Log::info('Bulk confirm course registrations completed', [
                                 'confirmed_count' => $confirmedCount,
                                 'total_selected' => count($records),
@@ -483,7 +495,7 @@ class CourseRegistrationResource extends Resource
                                 'ip_address' => request()->ip(),
                                 'user_agent' => request()->userAgent(),
                             ]);
-                            
+
                             \Filament\Notifications\Notification::make()
                                 ->title('Hoàn thành xác nhận hàng loạt')
                                 ->body("Đã xác nhận {$confirmedCount} đăng ký.")
@@ -504,7 +516,7 @@ class CourseRegistrationResource extends Resource
                         ->action(function ($records) {
                             $cancelledCount = 0;
                             $cancelledRegistrations = [];
-                            
+
                             foreach ($records as $record) {
                                 if (in_array($record->status, ['pending', 'confirmed'])) {
                                     $record->update(['status' => 'canceled']);
@@ -514,9 +526,12 @@ class CourseRegistrationResource extends Resource
                                         'student_name' => $record->student_name,
                                         'course_title' => $record->course->title ?? 'Unknown',
                                     ];
+                                    if ($record->student_email) {
+                                        Mail::to($record->student_email)->send(new CourseRegistrationNotification($record));
+                                    }
                                 }
                             }
-                            
+
                             Log::info('Bulk cancel course registrations completed', [
                                 'cancelled_count' => $cancelledCount,
                                 'total_selected' => count($records),
@@ -526,7 +541,7 @@ class CourseRegistrationResource extends Resource
                                 'ip_address' => request()->ip(),
                                 'user_agent' => request()->userAgent(),
                             ]);
-                            
+
                             \Filament\Notifications\Notification::make()
                                 ->title('Hoàn thành hủy hàng loạt')
                                 ->body("Đã hủy {$cancelledCount} đăng ký.")
@@ -550,7 +565,7 @@ class CourseRegistrationResource extends Resource
                                     'actual_price' => $record->actual_price,
                                 ];
                             }
-                            
+
                             Log::info('Bulk delete course registrations', [
                                 'deleted_count' => count($records),
                                 'deleted_registrations' => $deletedRegistrations,
