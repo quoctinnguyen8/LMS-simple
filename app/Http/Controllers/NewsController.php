@@ -33,7 +33,24 @@ class NewsController extends Controller
         $news_item = News::where('slug', $slug)
             ->where('is_published', true)
             ->firstOrFail();
-        $news_item->increment('view_count'); 
-        return view('news.detail', compact('news_item'));
+        $recentNews = News::where('is_published', true)
+            ->orderBy('created_at', 'desc')
+            ->take(5)
+            ->get();
+        $relatedNews = News::where('category_id', $news_item->category_id)
+            ->where('id', '!=', $news_item->id)
+            ->where('is_published', true)
+            ->orderBy('created_at', 'desc')
+            ->take(3)
+            ->get();
+        $previousNews = News::where('id', '<', $news_item->id)
+            ->where('is_published', true)
+            ->orderBy('id', 'desc')
+            ->first();
+        $nextNews = News::where('id', '>', $news_item->id)
+            ->where('is_published', true)
+            ->orderBy('id', 'asc')
+            ->first();
+        return view('news.detail', compact('news_item', 'recentNews', 'relatedNews', 'previousNews', 'nextNews'));
     }
 }

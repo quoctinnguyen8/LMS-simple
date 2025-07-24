@@ -24,32 +24,98 @@
 </head>
 
 <body>
-    <div class="container">
-        <header>
-            <nav>
-                <div class="logo">
-                    <a href="{{ url('/') }}">
-                        <img src="{{ asset('storage/' . App\Helpers\SettingHelper::get('logo')) }}"
-                            alt="{{ App\Helpers\SettingHelper::get('center_name', 'Trung tâm đào tạo') }}"
-                            class="logo-image" style="max-height: 100px;">
-                    </a>
+    <header>
+        <nav>
+            <div class="logo">
+                <a href="{{ url('/') }}">
+                    <img src="{{ asset('storage/' . App\Helpers\SettingHelper::get('logo')) }}"
+                        alt="{{ App\Helpers\SettingHelper::get('center_name', 'Trung tâm đào tạo') }}"
+                        class="logo-image" style="max-height: 100px;">
+                </a>
+            </div>
+            <input type="checkbox" id="menu-toggle" class="hidden">
+            <label for="menu-toggle" class="menu-button">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7">
+                    </path>
+                </svg>
+            </label>
+            <ul class="desktop-menu">
+                <li><a href="/" class="{{ request()->is('/') ? 'active' : '' }}">Trang chủ</a></li>
+                <li class="dropdown">
+                    <a href="{{ route('courses.index') }}"
+                        class="dropdown-toggle {{ request()->routeIs('courses.index') || request()->routeIs('courses.category') || request()->routeIs('courses.show') ? 'active' : '' }}"
+                        id="courses-toggle">Các khóa học</a>
+                    <ul class="dropdown-menu">
+                        <li><a href="{{ route('courses.index') }}"
+                                class="{{ request()->routeIs('courses.index') ? 'active' : '' }}">Tất cả các khóa
+                                học</a>
+                        </li>
+                        @foreach (App\Models\Category::all() as $Category)
+                            <li><a href="{{ route('courses.category', $Category->slug) }}"
+                                    class="course-category {{ request()->routeIs('courses.category') && request()->route('slug') == $Category->slug ? 'active' : '' }}">{{ $Category->name }}</a>
+                            </li>
+                        @endforeach
+                    </ul>
+                </li>
+                <li><a href="{{ route('rooms.index') }}"
+                        class="{{ request()->routeIs('rooms.index') || request()->routeIs('rooms.show') ? 'active' : '' }}">Phòng
+                        học</a></li>
+                <li class="dropdown">
+                    <a href="{{ route('news.index') }}"
+                        class="dropdown-toggle {{ request()->routeIs('news.index') || request()->routeIs('news.category') || request()->routeIs('news.show') ? 'active' : '' }}"
+                        id="news-toggle">Tin tức</a>
+                    <ul class="dropdown-menu">
+                        <li><a href="{{ route('news.index') }}"
+                                class="{{ request()->routeIs('news.index') ? 'active' : '' }}">Tin tức mới nhất</a>
+                        </li>
+                        @foreach (App\Models\NewsCategory::all() as $newsCategory)
+                            <li><a href="{{ route('news.category', $newsCategory->slug) }}"
+                                    class="news-category {{ request()->routeIs('news.category') && request()->route('slug') == $newsCategory->slug ? 'active' : '' }}">{{ $newsCategory->name }}</a>
+                            </li>
+                        @endforeach
+                    </ul>
+                </li>
+                <li><a href="{{ route('contacts') }}"
+                        class="{{ request()->routeIs('contacts') ? 'active' : '' }}">Liên hệ</a></li>
+            </ul>
+            <div class="sidebar">
+                <div class="sidebar-header">
+                    <div class="logo">
+                        <a href="{{ url('/') }}">
+                            <img src="{{ asset('storage/' . App\Helpers\SettingHelper::get('logo')) }}"
+                                alt="{{ App\Helpers\SettingHelper::get('center_name', 'Trung tâm đào tạo') }}"
+                                class="logo-image" style="max-height: 100px;">
+                        </a>
+                    </div>
+                    <label for="menu-toggle" class="close-button">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                            xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </label>
                 </div>
-                <input type="checkbox" id="menu-toggle" class="hidden">
-                <label for="menu-toggle" class="menu-button">
-                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M4 6h16M4 12h16m-7 6h7">
-                        </path>
-                    </svg>
-                </label>
-                <ul class="desktop-menu">
+                <ul class="sidebar-menu">
                     <li><a href="/" class="{{ request()->is('/') ? 'active' : '' }}">Trang chủ</a></li>
                     <li class="dropdown">
-                        <a class="dropdown-toggle {{ request()->routeIs('courses.index') || request()->routeIs('courses.category') || request()->routeIs('courses.show') ? 'active' : '' }}">Khóa
-                            học</a>
-                        <ul class="dropdown-menu">
+                        <div class="dropdown-header">
+                            <a href="{{ route('courses.index') }}"
+                                class="dropdown-toggle {{ request()->routeIs('courses.index') || request()->routeIs('courses.category') || request()->routeIs('courses.show') ? 'active' : '' }}">Các
+                                khóa
+                                học</a>
+                            <label for="dropdown-toggle-1" class="dropdown-icon">
+                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                                    xmlns="http://www.w3.org/2000/svg" id="dropdown-icon-1">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M19 9l-7 7-7-7"></path>
+                                </svg>
+                            </label>
+                            <input type="checkbox" id="dropdown-toggle-1" class="dropdown-toggle hidden">
+                        </div>
+                        <ul class="dropdown-menu" id="dropdown-menu-1">
                             <li><a href="{{ route('courses.index') }}"
-                                    class="{{ request()->routeIs('courses.index') ? 'active' : '' }}">Tất cả khóa
+                                    class="{{ request()->routeIs('courses.index') ? 'active' : '' }}">Tất cả các khóa
                                     học</a>
                             </li>
                             @foreach (App\Models\Category::all() as $Category)
@@ -61,127 +127,76 @@
                     </li>
                     <li><a href="{{ route('rooms.index') }}"
                             class="{{ request()->routeIs('rooms.index') || request()->routeIs('rooms.show') ? 'active' : '' }}">Phòng
-                            học</a></li>
+                            học</a>
                     <li class="dropdown">
-                        <a class="dropdown-toggle {{ request()->routeIs('news.index') || request()->routeIs('news.category') || request()->routeIs('news.show') ? 'active' : '' }}">Tin
-                            tức</a>
-                        <ul class="dropdown-menu">
+                        <div class="dropdown-header">
+                            <a href="{{ route('news.index') }} "
+                                class="dropdown-toggle {{ request()->routeIs('news.index') || request()->routeIs('news.category') || request()->routeIs('news.show') ? 'active' : '' }}">Tin
+                                tức - Sự kiện</a>
+                            <label for="dropdown-toggle-2" class="dropdown-icon">
+                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                                    xmlns="http://www.w3.org/2000/svg" id="dropdown-icon-2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M19 9l-7 7-7-7"></path>
+                                </svg>
+                            </label>
+                            <input type="checkbox" id="dropdown-toggle-2" class="dropdown-toggle hidden">
+                        </div>
+                        <ul class="dropdown-menu" id="dropdown-menu-2">
                             <li><a href="{{ route('news.index') }}"
-                                    class="{{ request()->routeIs('news.index') ? 'active' : '' }}">Tin tức mới nhất</a>
+                                    class="{{ request()->routeIs('news.index') ? 'active' : '' }}">Tin tức mới
+                                    nhất</a>
                             </li>
                             @foreach (App\Models\NewsCategory::all() as $newsCategory)
                                 <li><a href="{{ route('news.category', $newsCategory->slug) }}"
                                         class="news-category {{ request()->routeIs('news.category') && request()->route('slug') == $newsCategory->slug ? 'active' : '' }}">{{ $newsCategory->name }}</a>
-                                </li>
                             @endforeach
                         </ul>
                     </li>
                     <li><a href="{{ route('contacts') }}"
-                            class="{{ request()->routeIs('contacts') ? 'active' : '' }}">Liên
-                            hệ</a></li>
-
+                            class="{{ request()->routeIs('contacts') ? 'active' : '' }}">Liên hệ</a></li>
                 </ul>
-                <div class="sidebar">
-                    <div class="sidebar-header">
-                        <div class="logo">
-                            <a href="{{ url('/') }}">
-                                <img src="{{ asset('storage/' . App\Helpers\SettingHelper::get('logo')) }}"
-                                    alt="{{ App\Helpers\SettingHelper::get('center_name', 'Trung tâm đào tạo') }}"
-                                    class="logo-image" style="max-height: 100px;">
-                            </a>
-                        </div>
-                        <label for="menu-toggle" class="close-button">
-                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"
-                                xmlns="http://www.w3.org/2000/svg">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M6 18L18 6M6 6l12 12"></path>
-                            </svg>
-                        </label>
-                    </div>
-                    <ul class="sidebar-menu">
-                        <li><a href="/" class="{{ request()->is('/') ? 'active' : '' }}">Trang chủ</a></li>
-                        <li class="dropdown">
-                            <div class="dropdown-header">
-                                <a href="{{ route('courses.index') }}"
-                                    class="dropdown-toggle {{ request()->routeIs('courses.index') || request()->routeIs('courses.category') || request()->routeIs('courses.show') ? 'active' : '' }}">Khóa
-                                    học</a>
-                                <label for="dropdown-toggle-1" class="dropdown-icon">
-                                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"
-                                        xmlns="http://www.w3.org/2000/svg" id="dropdown-icon-1">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M19 9l-7 7-7-7"></path>
-                                    </svg>
-                                </label>
-                                <input type="checkbox" id="dropdown-toggle-1" class="dropdown-toggle hidden">
-                            </div>
-                            <ul class="dropdown-menu" id="dropdown-menu-1">
-                                <li><a href="{{ route('courses.index') }}"
-                                        class="{{ request()->routeIs('courses.index') ? 'active' : '' }}">Tất cả khóa
-                                        học</a>
-                                </li>
-                                @foreach (App\Models\Category::all() as $Category)
-                                    <li><a href="{{ route('courses.category', $Category->slug) }}"
-                                            class="course-category {{ request()->routeIs('courses.category') && request()->route('slug') == $Category->slug ? 'active' : '' }}">{{ $Category->name }}</a>
-                                    </li>
-                                @endforeach
-                            </ul>
-                        </li>
-                        <li><a href="{{ route('rooms.index') }}"
-                                class="{{ request()->routeIs('rooms.index') || request()->routeIs('rooms.show') ? 'active' : '' }}">Phòng
-                                học</a>
-                        <li class="dropdown">
-                            <div class="dropdown-header">
-                                <a href="{{ route('news.index') }} "
-                                    class="dropdown-toggle {{ request()->routeIs('news.index') || request()->routeIs('news.category') || request()->routeIs('news.show') ? 'active' : '' }}">Tin
-                                    tức</a>
-                                <label for="dropdown-toggle-2" class="dropdown-icon">
-                                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"
-                                        xmlns="http://www.w3.org/2000/svg" id="dropdown-icon-2">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M19 9l-7 7-7-7"></path>
-                                    </svg>
-                                </label>
-                                <input type="checkbox" id="dropdown-toggle-2" class="dropdown-toggle hidden">
-                            </div>
-                            <ul class="dropdown-menu" id="dropdown-menu-2">
-                                <li><a href="{{ route('news.index') }}"
-                                        class="{{ request()->routeIs('news.index') ? 'active' : '' }}">Tin tức mới
-                                        nhất</a>
-                                </li>
-                                @foreach (App\Models\NewsCategory::all() as $newsCategory)
-                                    <li><a href="{{ route('news.category', $newsCategory->slug) }}"
-                                            class="news-category {{ request()->routeIs('news.category') && request()->route('slug') == $newsCategory->slug ? 'active' : '' }}">{{ $newsCategory->name }}</a>
-                                @endforeach
-                            </ul>
-                        </li>
-                        <li><a href="{{ route('contacts') }}"
-                                class="{{ request()->routeIs('contacts') ? 'active' : '' }}">Liên hệ</a></li>
-                    </ul>
-                </div>
-                <label for="menu-toggle" class="overlay"></label>
-            </nav>
-        </header>
-        <main>
-            @include('includes._notify')
-            {{ $slot }}
-        </main>
-        <footer>
-            <div class="footer-content">
-                <p>&copy; {{ date('Y') }}
-                    {{ App\Helpers\SettingHelper::get('center_name', 'Trung tâm đào tạo') }}.
-                    All rights reserved.</p>
-                <p>Địa chỉ: {{ App\Helpers\SettingHelper::get('address', 'Chưa cập nhật') }}</p>
-                <p>Điện thoại: {{ App\Helpers\SettingHelper::get('phone', 'Chưa cập nhật') }}</p>
-                <p>Email: {{ App\Helpers\SettingHelper::get('email', 'Chưa cập nhật') }}</p>
             </div>
-            <div class="footer-links">
-                <a href="{{ route('contacts') }}">Liên hệ</a>
-                <a href="{{ route('courses.index') }}">Khóa học</a>
-                <a href="{{ route('rooms.index') }}">Phòng học</a>
-                <a href="{{ route('home') }}">Trang chủ</a>
+            <label for="menu-toggle" class="overlay"></label>
+        </nav>
+    </header>
+    <main>
+        @include('includes._notify')
+        {{ $slot }}
+    </main>
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>{{ App\Helpers\SettingHelper::get('center_name', 'Trung tâm đào tạo') }}</h3>
+                <p>{{ App\Helpers\SettingHelper::get('center_description', 'Chưa cập nhật') }}</p>
             </div>
-        </footer>
-    </div>
+            <div class="footer-section">
+                <h3>Khóa học</h3>
+                @foreach (App\Models\Category::all() as $Category)
+                    <a href="{{ route('courses.category', $Category->slug) }}"
+                        class="course-category {{ request()->routeIs('courses.category') && request()->route('slug') == $Category->slug ? 'active' : '' }}">{{ $Category->name }}</a><br>
+                @endforeach
+            </div>
+            <div class="footer-section">
+                <h3>Liên hệ</h3>
+                <p><strong>Địa chỉ:</strong> {{ App\Helpers\SettingHelper::get('address', 'Chưa cập nhật') }}</p>
+                <p><strong>Điện thoại:</strong> {{ App\Helpers\SettingHelper::get('phone', 'Chưa cập nhật') }}</p>
+                <p><strong>Email:</strong> {{ App\Helpers\SettingHelper::get('email', 'Chưa cập nhật') }}</p>
+                <p><strong>Website:</strong> {{ App\Helpers\SettingHelper::get('website', 'Chưa cập nhật') }}</p>
+            </div>
+            <div class="footer-section">
+                <h3>Giờ làm việc</h3>
+                <p>Thứ 2 - Thứ 6: 8:00 - 21:00</p>
+                <p>Thứ 7 - Chủ nhật: 8:00 - 17:00</p>
+                <p><strong>Hotline 24/7:</strong> {{ App\Helpers\SettingHelper::get('hotline', 'Chưa cập nhật') }}</p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; {{ date('Y') }} {{ App\Helpers\SettingHelper::get('center_name', 'Trung tâm đào tạo') }}.
+                All rights reserved.</p>
+        </div>
+    </footer>
     {{ $scripts ?? '' }}
     <script>
         const dropdownToggles1 = document.getElementById('dropdown-toggle-1');
@@ -208,6 +223,35 @@
                 icon2.style.transform = 'rotate(0deg)';
             }
         });
+
+        function isTouchDevice() {
+            return 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+        }
+
+        if (isTouchDevice()) {
+            document.querySelectorAll('.desktop-menu .dropdown > .dropdown-toggle').forEach(function(toggle) {
+                let tapped = false;
+                toggle.addEventListener('touchend', function(e) {
+                    const parent = toggle.parentElement;
+                    const dropdownMenu = parent.querySelector('.dropdown-menu');
+                    if (!tapped) {
+                        e.preventDefault();
+                        // Hide other dropdowns
+                        document.querySelectorAll('.desktop-menu .dropdown .dropdown-menu').forEach(
+                            function(menu) {
+                                if (menu !== dropdownMenu) menu.classList.remove('show-dropdown');
+                            });
+                        dropdownMenu.classList.toggle('show-dropdown');
+                        tapped = true;
+                        setTimeout(function() {
+                            tapped = false;
+                        }, 500);
+                    } else {
+                        window.location = toggle.getAttribute('href');
+                    }
+                });
+            });
+        }
     </script>
     @if (App\Helpers\SettingHelper::get('custom_js'))
         <script>

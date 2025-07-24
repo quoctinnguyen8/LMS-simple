@@ -1,22 +1,58 @@
 <x-layouts title="Phòng Học">
-    <section class="rooms">
-        <h1>Danh Sách Phòng Học</h1>
-        <div class="room-list">
+    <!-- Hero Section -->
+    <section class="classrooms-hero">
+        <div class="classrooms-hero-content">
+            <h1>Phòng học tại {{ App\Helpers\SettingHelper::get('center_name', 'Trung tâm đào tạo') }}</h1>
+            <p>Khám phá các phòng học hiện đại và tiện nghi của chúng tôi, nơi mang đến trải nghiệm học tập tốt nhất cho
+                học viên.</p>
+        </div>
+    </section>
+
+    <!-- Classrooms Section -->
+    <section class="classrooms-section">
+        <div class="classrooms-container">
             @foreach ($rooms as $room)
-                <div class="room-card">
-                    <div class="card-image">
+                <div class="classroom-card">
+                    <div class="classroom-image">
                         <img src="{{ Storage::url($room->image) }}" alt="{{ $room->name }}">
+                        <div class="classroom-overlay">
+                            <button class="view-btn"
+                                onclick="window.location.href='{{ route('rooms.show', $room->id) }}'">Xem chi
+                                tiết</button>
+                        </div>
                     </div>
-                    <div class="card-info">
-                        <h2>{{ $room->name }}</h2>
-                        <p><strong>Vị trí:</strong> {{ $room->location }}</p>
-                        <p><strong>Sức chứa:</strong> {{ $room->capacity }} người</p>
-                        <p><strong>Giá thuê:</strong> {{ number_format($room->price, 0, ',', '.') }}
-                            VNĐ/{{ App\Helpers\SettingHelper::get('room_rental_unit') }}</p>
-                        <a href="{{ route('rooms.show', $room->id) }}" class="btn">Xem Chi Tiết</a>
+                    <div class="classroom-info">
+                        <h3>{{ $room->name }}</h3>
+                        <div class="classroom-specs">
+                            <span class="spec">👥 {{ $room->capacity }} chỗ ngồi</span>
+                        </div>
+                      <div class="classroom-location">
+                            <span class="location">📍{{ Str::limit($room->location, 50, '...') }}</span>
+                        </div>
+                        <div class="classroom-price">
+                            <span class="price">💰 {{ number_format($room->price, 0, ',', '.') }}
+                                VNĐ/{{ App\Helpers\SettingHelper::get('room_unit', 'giờ') }}</span>
+                        </div>
+                        <style>
+                            .classroom-location {
+                                font-size: 0.95rem;
+                                color: #555;
+                                margin-bottom: 4px;
+                            }
+                            .classroom-price {
+                                font-size: 1rem;
+                                color: #f60;
+                                font-weight: 500;
+                                margin-bottom: 4px;
+                            }
+                        </style>
+                        <div class="classroom-status available">
+                            {{ $room->status == 'available' ? 'Có sẵn' : 'Đã đặt' }}
+                        </div>
                     </div>
                 </div>
             @endforeach
         </div>
     </section>
+
 </x-layouts>
