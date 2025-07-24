@@ -322,7 +322,6 @@ nav {
     height: 100%;
     position: relative;
     overflow: hidden;
-    cursor: pointer;
 }
 
 .slide img {
@@ -371,7 +370,7 @@ nav {
     height: 12px;
     border-radius: 50%;
     background: rgba(255, 255, 255, 0.5);
-    cursor: pointer;
+    
     transition: all 0.3s ease;
 }
 
@@ -393,7 +392,6 @@ nav {
     color: white;
     font-size: 24px;
     padding: 15px;
-    cursor: pointer;
     border-radius: 50%;
     transition: background 0.3s ease;
     z-index: 10;
@@ -1927,11 +1925,7 @@ nav {
         gap: 8px;
         margin-bottom: 10px;
     }
-
-    .recaptcha-wrapper .g-recaptcha {
-        transform: scale(0.9);
-        transform-origin: 0 0;
-    }
+    
 }
 
 @media (max-width: 480px) {
@@ -1950,11 +1944,6 @@ nav {
     .news-card-content {
         padding: 20px;
     }
-
-    /* .nav-collapse {
-        width: 100%;
-        left: -100%;
-    } */
 
     .slider-section {
         height: 350px;
@@ -3037,7 +3026,7 @@ img[data-loaded="true"] {
     .room-detail-card,
     .booking-form-card,
     .room-description-card {
-        padding: 0;
+        padding: 15px;
     }
 
     .registration-form-card {

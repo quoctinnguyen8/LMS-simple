@@ -45,7 +45,7 @@
                 <li class="dropdown">
                     <a href="{{ route('courses.index') }}"
                         class="dropdown-toggle {{ request()->routeIs('courses.index') || request()->routeIs('courses.category') || request()->routeIs('courses.show') ? 'active' : '' }}"
-                        id="courses-toggle">Các khóa học</a>
+                        id="courses-toggle">Khóa học</a>
                     <ul class="dropdown-menu">
                         <li><a href="{{ route('courses.index') }}"
                                 class="{{ request()->routeIs('courses.index') ? 'active' : '' }}">Tất cả các khóa
@@ -64,10 +64,10 @@
                 <li class="dropdown">
                     <a href="{{ route('news.index') }}"
                         class="dropdown-toggle {{ request()->routeIs('news.index') || request()->routeIs('news.category') || request()->routeIs('news.show') ? 'active' : '' }}"
-                        id="news-toggle">Tin tức</a>
+                        id="news-toggle">Tin tức - Sự kiện</a>
                     <ul class="dropdown-menu">
                         <li><a href="{{ route('news.index') }}"
-                                class="{{ request()->routeIs('news.index') ? 'active' : '' }}">Tin tức mới nhất</a>
+                                class="{{ request()->routeIs('news.index') ? 'active' : '' }}">Tin tức nổi bật</a>
                         </li>
                         @foreach (App\Models\NewsCategory::all() as $newsCategory)
                             <li><a href="{{ route('news.category', $newsCategory->slug) }}"
@@ -101,8 +101,8 @@
                     <li class="dropdown">
                         <div class="dropdown-header">
                             <a href="{{ route('courses.index') }}"
-                                class="dropdown-toggle {{ request()->routeIs('courses.index') || request()->routeIs('courses.category') || request()->routeIs('courses.show') ? 'active' : '' }}">Các
-                                khóa
+                                class="dropdown-toggle {{ request()->routeIs('courses.index') || request()->routeIs('courses.category') || request()->routeIs('courses.show') ? 'active' : '' }}">
+                                Khóa
                                 học</a>
                             <label for="dropdown-toggle-1" class="dropdown-icon">
                                 <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"

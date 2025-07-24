@@ -6,9 +6,8 @@
                 <h1>{{ $newsCategory->name }}</h1>
                 <p>{{ $newsCategory->description }}</p>
             @else
-                <h1>Tin tức & Sự kiện</h1>
-                <p>Cập nhật những thông tin mới nhất về hoạt động, sự kiện và tin tức nổi bật tại
-                    {{ App\Helpers\SettingHelper::get('center_name', 'Trung tâm đào tạo') }}</p>
+                <h1>Tin tức nổi bật</h1>
+                <p>Khám phá những tin tức mới nhất và nổi bật từ trung tâm đào tạo của chúng tôi.</p>
             @endif
         </div>
     </section>
@@ -16,9 +15,6 @@
     <!-- Featured News -->
     <section class="featured-news">
         <div class="featured-container">
-            @if (!isset($newsCategory))
-                <h2>Tin tức nổi bật</h2>
-            @endif
             @foreach ($news as $item)
                 <div class="featured-article">
                     <div class="featured-image">

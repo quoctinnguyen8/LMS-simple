@@ -5,8 +5,8 @@
                 <h1>{{ $category->name }}</h1>
                 <p>{{ $category->description }}</p>
             @else
-                <h1>Các khóa học chất lượng cao</h1>
-                <p>Khám phá các khóa học đa dạng và chất lượng tại {{ App\Helpers\SettingHelper::get('center_name', 'Trung tâm đào tạo') }}</p>
+                <h1>Tất cả các khóa học</h1>
+                <p>Khám phá các khóa học chất lượng cao tại trung tâm đào tạo của chúng tôi.</p>
             @endif
         </div>
     </section>
