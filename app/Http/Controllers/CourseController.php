@@ -4,11 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\CourseRequest;
 use App\Models\Category;
-use Illuminate\Http\Request;
 use App\Models\Course;
 use App\Models\CourseRegistration;
-use Dotenv\Validator;
 use Illuminate\Support\Facades\Auth;
+use App\Mail\CourseRegistrationNotification;
+use Illuminate\Support\Facades\Mail;
 
 class CourseController extends Controller
 {
@@ -64,6 +64,7 @@ class CourseController extends Controller
         $registration->student_gender = $validatedData['gender'];
         $registration->created_by = Auth::id() ?? null;
         $registration->save();
+        Mail::to($registration->student_email)->send(new CourseRegistrationNotification($registration));    
         return redirect()->route('courses.show', ['slug' => $course->slug])->with('success', 'Đăng ký khóa học thành công.');
     }
 }
