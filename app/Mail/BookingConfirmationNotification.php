@@ -34,7 +34,7 @@ class BookingConfirmationNotification extends Mailable
         $centerName = SettingHelper::get('center_name', 'Hệ thống quản lý học tập');
         
         return new Envelope(
-            subject: 'Xác nhận đặt phòng - Đang chờ duyệt - ' . $centerName,
+            subject: 'Thông báo xác nhận đặt phòng - ' . $centerName,
             from: new Address(
                 config('mail.from.address', 'noreply@example.com'),
                 $centerName

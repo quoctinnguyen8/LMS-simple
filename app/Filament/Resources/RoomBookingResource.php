@@ -3,6 +3,7 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\RoomBookingResource\Pages;
+use App\Mail\BookingConfirmationNotification;
 use App\Models\RoomBooking;
 use App\Models\Room;
 use App\Models\User;
@@ -21,6 +22,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use App\Services\RoomBookingService;
 use Filament\Support\Enums\MaxWidth;
+use Illuminate\Support\Facades\Mail;
 
 class RoomBookingResource extends Resource
 {
@@ -472,7 +474,7 @@ class RoomBookingResource extends Resource
                                     'reason' => 'Booking has duplicate schedule',
                                     'ip_address' => request()->ip(),
                                 ]);
-                                
+
                                 \Filament\Notifications\Notification::make()
                                     ->title('Không thể duyệt')
                                     ->body('Yêu cầu đặt phòng này bị trùng lịch, không thể duyệt.')
@@ -480,7 +482,7 @@ class RoomBookingResource extends Resource
                                     ->send();
                                 return;
                             }
-                            
+
                             $record->update(['status' => 'approved', 'approved_by' => Auth::id()]);
                             // update tất cả các chi tiết liên quan
                             // Chỉ duyệt các chi tiết có trạng thái 'pending' và ngày đặt phòng trong tương lai
@@ -492,7 +494,7 @@ class RoomBookingResource extends Resource
                             // Cập nhật trạng thái is_duplicate cho các booking khác liên quan đến phòng này
                             $roomBookingService->updateDuplicateStatus($record->room_id);
                             $record->refresh();
-                            
+
                             Log::info('Room booking approved', [
                                 'booking_id' => $record->id,
                                 'booking_code' => $record->booking_code,
@@ -506,6 +508,11 @@ class RoomBookingResource extends Resource
                                 'ip_address' => request()->ip(),
                                 'user_agent' => request()->userAgent(),
                             ]);
+                            //nếu có email thì gửi thông báo
+                            if ($record->customer_email) {
+                                // Gửi email thông báo
+                                Mail::to($record->customer_email)->send(new BookingConfirmationNotification($record));
+                            }
                             \Filament\Notifications\Notification::make()
                                 ->title('Yêu cầu đã được duyệt')
                                 ->body('Yêu cầu đặt phòng của khách hàng đã được duyệt.')
@@ -523,7 +530,7 @@ class RoomBookingResource extends Resource
                             // update tất cả các chi tiết liên quan
                             $updateCnt = $record->room_booking_details()->update(['status' => 'rejected', 'rejected_by' => Auth::id()]);
                             $record->refresh();
-                            
+
                             Log::info('Room booking rejected', [
                                 'booking_id' => $record->id,
                                 'booking_code' => $record->booking_code,
@@ -537,7 +544,11 @@ class RoomBookingResource extends Resource
                                 'ip_address' => request()->ip(),
                                 'user_agent' => request()->userAgent(),
                             ]);
-
+                            //nếu có email thì gửi thông báo
+                            if ($record->customer_email) {
+                                // Gửi email thông báo
+                                Mail::to($record->customer_email)->send(new BookingConfirmationNotification($record));
+                            }
                             \Filament\Notifications\Notification::make()
                                 ->title('Yêu cầu đã bị từ chối')
                                 ->body('Yêu cầu đặt phòng của khách hàng đã bị từ chối (' . $updateCnt .  ' ngày).')
@@ -555,14 +566,14 @@ class RoomBookingResource extends Resource
                             // update tất cả các chi tiết liên quan
                             // Chỉ hủy các chi tiết có trạng thái 'approved' và ngày đặt phòng trong tương lai
                             $updateCnt = $record->room_booking_details()
-                                        ->where('booking_date', '>=', now()->format('Y-m-d H:i:s'))
-                                        ->where('status', '=', 'approved')
-                                        ->update(['status' => 'cancelled', 'cancelled_by' => Auth::id()]);
+                                ->where('booking_date', '>=', now()->format('Y-m-d H:i:s'))
+                                ->where('status', '=', 'approved')
+                                ->update(['status' => 'cancelled', 'cancelled_by' => Auth::id()]);
                             // Cập nhật trạng thái is_duplicate cho các booking khác liên quan đến phòng này
                             $roomBookingService = new RoomBookingService();
                             $roomBookingService->updateDuplicateStatus($record->room_id);
                             $record->refresh();
-                            
+
                             Log::info('Room booking cancelled by admin', [
                                 'booking_id' => $record->id,
                                 'booking_code' => $record->booking_code,
@@ -576,7 +587,11 @@ class RoomBookingResource extends Resource
                                 'ip_address' => request()->ip(),
                                 'user_agent' => request()->userAgent(),
                             ]);
-
+                            //nếu có email thì gửi thông báo
+                            if ($record->customer_email) {
+                                // Gửi email thông báo
+                                Mail::to($record->customer_email)->send(new BookingConfirmationNotification($record));
+                            }
                             \Filament\Notifications\Notification::make()
                                 ->title('Yêu cầu đã bị hủy')
                                 ->body('Yêu cầu đặt phòng của khách hàng đã bị hủy (' . $updateCnt .  ' ngày).')
@@ -611,7 +626,7 @@ class RoomBookingResource extends Resource
                                 ]);
                                 return; // Không xóa nếu không phải yêu cầu bị từ chối
                             }
-                            
+
                             // Log trước khi xóa để giữ thông tin
                             Log::info('Room booking deleted', [
                                 'booking_id' => $record->id,
@@ -629,7 +644,7 @@ class RoomBookingResource extends Resource
                                 'ip_address' => request()->ip(),
                                 'user_agent' => request()->userAgent(),
                             ]);
-                            
+
                             $record->delete();
                             // xóa các chi tiết liên quan
                             $deletedCount = $record->room_booking_details()->delete();
@@ -640,11 +655,11 @@ class RoomBookingResource extends Resource
                                 ->send();
                         })
                 ])
-                ->icon('heroicon-o-ellipsis-vertical')
-                ->color('gray')
-                ->tooltip('Thao tác')
-                ->extraAttributes(['class' => 'border'])
-                ->iconButton(),
+                    ->icon('heroicon-o-ellipsis-vertical')
+                    ->color('gray')
+                    ->tooltip('Thao tác')
+                    ->extraAttributes(['class' => 'border'])
+                    ->iconButton(),
             ])
             ->bulkActions([
                 BulkActionGroup::make([
@@ -660,17 +675,17 @@ class RoomBookingResource extends Resource
                             $approvedCount = 0;
                             $duplicateCount = 0;
                             $approvedBookings = [];
-                            
+
                             foreach ($records as $record) {
                                 // Chỉ duyệt những record có status = 'pending' và không bị trùng lịch
                                 if ($record->status == 'pending' && !$record->is_duplicate) {
                                     $record->update([
-                                        'status' => 'approved', 
+                                        'status' => 'approved',
                                         'approved_by' => Auth::id()
                                     ]);
                                     // Update tất cả các chi tiết liên quan
                                     $record->room_booking_details()->update([
-                                        'status' => 'approved', 
+                                        'status' => 'approved',
                                         'approved_by' => Auth::id()
                                     ]);
                                     $approvedCount++;
@@ -680,14 +695,18 @@ class RoomBookingResource extends Resource
                                         'room_name' => $record->room->name ?? 'Unknown',
                                         'customer_name' => $record->customer_name,
                                     ];
-                                    
+
                                     // Cập nhật trạng thái is_duplicate cho các booking khác
                                     $roomBookingService->updateDuplicateStatus($record->room_id);
+                                    //gửi email thông báo nếu có
+                                    if ($record->customer_email) {
+                                        Mail::to($record->customer_email)->send(new BookingConfirmationNotification($record));
+                                    }
                                 } elseif ($record->is_duplicate) {
                                     $duplicateCount++;
                                 }
                             }
-                            
+
                             Log::info('Bulk approve room bookings completed', [
                                 'approved_count' => $approvedCount,
                                 'duplicate_count' => $duplicateCount,
@@ -698,11 +717,11 @@ class RoomBookingResource extends Resource
                                 'ip_address' => request()->ip(),
                                 'user_agent' => request()->userAgent(),
                             ]);
-                            
+
                             \Filament\Notifications\Notification::make()
                                 ->title('Hoàn thành duyệt hàng loạt')
-                                ->body("Đã duyệt {$approvedCount} yêu cầu." . 
-                                      ($duplicateCount > 0 ? " {$duplicateCount} yêu cầu bị trùng lịch không thể duyệt." : ""))
+                                ->body("Đã duyệt {$approvedCount} yêu cầu." .
+                                    ($duplicateCount > 0 ? " {$duplicateCount} yêu cầu bị trùng lịch không thể duyệt." : ""))
                                 ->success()
                                 ->send();
                         })
@@ -718,17 +737,17 @@ class RoomBookingResource extends Resource
                         ->action(function ($records) {
                             $rejectedCount = 0;
                             $rejectedBookings = [];
-                            
+
                             foreach ($records as $record) {
                                 // Chỉ từ chối những record có status = 'pending'
                                 if ($record->status == 'pending') {
                                     $record->update([
-                                        'status' => 'rejected', 
+                                        'status' => 'rejected',
                                         'rejected_by' => Auth::id()
                                     ]);
                                     // Update tất cả các chi tiết liên quan
                                     $record->room_booking_details()->update([
-                                        'status' => 'rejected', 
+                                        'status' => 'rejected',
                                         'rejected_by' => Auth::id()
                                     ]);
                                     $rejectedCount++;
@@ -738,9 +757,13 @@ class RoomBookingResource extends Resource
                                         'room_name' => $record->room->name ?? 'Unknown',
                                         'customer_name' => $record->customer_name,
                                     ];
+                                    //nếu có email thì gửi thông báo
+                                    if ($record->customer_email) {
+                                        Mail::to($record->customer_email)->send(new BookingConfirmationNotification($record));
+                                    }
                                 }
                             }
-                            
+
                             Log::info('Bulk reject room bookings completed', [
                                 'rejected_count' => $rejectedCount,
                                 'total_selected' => count($records),
@@ -750,7 +773,7 @@ class RoomBookingResource extends Resource
                                 'ip_address' => request()->ip(),
                                 'user_agent' => request()->userAgent(),
                             ]);
-                            
+
                             \Filament\Notifications\Notification::make()
                                 ->title('Hoàn thành từ chối hàng loạt')
                                 ->body("Đã từ chối {$rejectedCount} yêu cầu.")
@@ -770,19 +793,19 @@ class RoomBookingResource extends Resource
                             $roomBookingService = new RoomBookingService();
                             $cancelledCount = 0;
                             $cancelledBookings = [];
-                            
+
                             foreach ($records as $record) {
                                 // Chỉ hủy những record có status = 'approved'
                                 if ($record->status == 'approved') {
                                     $record->update([
-                                        'status' => 'cancelled_by_admin', 
+                                        'status' => 'cancelled_by_admin',
                                         'cancelled_by' => Auth::id()
                                     ]);
                                     // Update các chi tiết có ngày > hôm nay
                                     $record->room_booking_details()
                                         ->where('booking_date', '>=', now()->format('Y-m-d H:i:s'))
                                         ->update([
-                                            'status' => 'cancelled', 
+                                            'status' => 'cancelled',
                                             'cancelled_by' => Auth::id()
                                         ]);
                                     $cancelledCount++;
@@ -792,12 +815,16 @@ class RoomBookingResource extends Resource
                                         'room_name' => $record->room->name ?? 'Unknown',
                                         'customer_name' => $record->customer_name,
                                     ];
-                                    
+
                                     // Cập nhật trạng thái is_duplicate cho các booking khác
                                     $roomBookingService->updateDuplicateStatus($record->room_id);
+                                    //nếu có email thì gửi thông báo
+                                    if ($record->customer_email) {
+                                        Mail::to($record->customer_email)->send(new BookingConfirmationNotification($record));
+                                    }
                                 }
                             }
-                            
+
                             Log::info('Bulk cancel room bookings completed', [
                                 'cancelled_count' => $cancelledCount,
                                 'total_selected' => count($records),
@@ -807,7 +834,7 @@ class RoomBookingResource extends Resource
                                 'ip_address' => request()->ip(),
                                 'user_agent' => request()->userAgent(),
                             ]);
-                            
+
                             \Filament\Notifications\Notification::make()
                                 ->title('Hoàn thành hủy hàng loạt')
                                 ->body("Đã hủy {$cancelledCount} yêu cầu.")
@@ -827,7 +854,7 @@ class RoomBookingResource extends Resource
                         ->action(function ($records) {
                             $deletedCount = 0;
                             $deletedBookings = [];
-                            
+
                             foreach ($records as $record) {
                                 // Chỉ xóa những record có status = 'rejected'
                                 if ($record->status == 'rejected') {
@@ -842,7 +869,7 @@ class RoomBookingResource extends Resource
                                         'start_date' => $record->start_date,
                                         'end_date' => $record->end_date,
                                     ];
-                                    
+
                                     // Xóa các chi tiết liên quan trước
                                     $record->room_booking_details()->delete();
                                     // Xóa record chính
@@ -850,7 +877,7 @@ class RoomBookingResource extends Resource
                                     $deletedCount++;
                                 }
                             }
-                            
+
                             Log::info('Bulk delete room bookings completed', [
                                 'deleted_count' => $deletedCount,
                                 'total_selected' => count($records),
@@ -860,7 +887,7 @@ class RoomBookingResource extends Resource
                                 'ip_address' => request()->ip(),
                                 'user_agent' => request()->userAgent(),
                             ]);
-                            
+
                             \Filament\Notifications\Notification::make()
                                 ->title('Hoàn thành xóa hàng loạt')
                                 ->body("Đã xóa {$deletedCount} yêu cầu bị từ chối.")

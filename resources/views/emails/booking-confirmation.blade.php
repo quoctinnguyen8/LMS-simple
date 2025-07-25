@@ -237,7 +237,19 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1>🏢 Xác nhận đặt phòng</h1>
+            @if ($status === 'pending')
+                <h1>Xác nhận đặt phòng - Đang chờ duyệt</h1>
+            @elseif($status === 'approved')
+                <h1>Xác nhận đặt phòng - Đã phê duyệt</h1>
+            @elseif($status === 'rejected') 
+                <h1>Xác nhận đặt phòng - Đã từ chối</h1>    
+            @elseif($status === 'cancelled_by_admin')
+                <h1>Xác nhận đặt phòng - Đã hủy bởi quản trị viên</h1>
+            @elseif($status === 'cancelled_by_customer')
+                <h1>Xác nhận đặt phòng - Đã hủy theo yêu cầu của bạn</h1>
+            @else
+                <h1>Xác nhận đặt phòng - {{ ucfirst($status) }}</h1>
+            @endif
         </div>
 
         <div class="content">
