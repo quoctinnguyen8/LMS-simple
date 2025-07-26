@@ -129,8 +129,7 @@
                         </div>
                         <ul class="dropdown-menu" id="dropdown-menu-2">
                             <li><a href="{{ route('news.index') }}"
-                                    class="{{ request()->routeIs('news.index') ? 'active' : '' }}">Tin tức mới
-                                    nhất</a>
+                                    class="{{ request()->routeIs('news.index') ? 'active' : '' }}">Tin tức nổi bật</a>
                             </li>
                             @foreach (App\Models\NewsCategory::all() as $newsCategory)
                                 <li><a href="{{ route('news.category', $newsCategory->slug) }}"
