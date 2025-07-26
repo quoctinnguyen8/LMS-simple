@@ -139,7 +139,7 @@ class CourseResource extends Resource
                                 'xl' => 2,
                             ]),
                         Forms\Components\DatePicker::make('start_date')
-                            ->label('Ngày bắt đầu')
+                            ->label('Ngày khai giảng')
                             ->displayFormat('d/m/Y')
                             ->native(false)
                             ->required()
@@ -283,7 +283,7 @@ class CourseResource extends Resource
                     ->sortable(),
                 Tables\Columns\TextColumn::make('start_date')
                     ->date('d/m/Y')
-                    ->label('Ngày bắt đầu')
+                    ->label('Khai giảng')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('end_registration_date')
                     ->date('d/m/Y')
