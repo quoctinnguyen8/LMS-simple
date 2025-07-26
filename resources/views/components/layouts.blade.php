@@ -35,7 +35,7 @@
             </div>
             <input type="checkbox" id="menu-toggle" class="hidden">
             <label for="menu-toggle" class="menu-button">
-                <x-heroicon-o-bars-3 class="w-8 h-8" /> 
+                <x-heroicon-o-bars-3 class="w-8 h-8" />
             </label>
             <ul class="desktop-menu">
                 <li><a href="/" class="{{ request()->is('/') ? 'active' : '' }}">Trang chủ</a></li>
@@ -176,6 +176,19 @@
                 <p>Thứ 7 - Chủ nhật: 8:00 - 17:00</p>
                 <p><strong>Hotline 24/7:</strong> {{ App\Helpers\SettingHelper::get('hotline', 'Chưa cập nhật') }}</p>
             </div>
+        </div>
+        <div class="footer-menu">
+            <ul>
+                <li><a class="{{ request()->is('/') ? 'active' : '' }}" href="/">Trang chủ</a></li>
+                <li><a class="{{ request()->routeIs('courses.index') || request()->routeIs('courses.category') || request()->routeIs('courses.show') ? 'active' : '' }}"
+                        href="{{ route('courses.index') }}">Khóa học</a></li>
+                <li><a class="{{ request()->routeIs('rooms.index') || request()->routeIs('rooms.show') ? 'active' : '' }}"
+                        href="{{ route('rooms.index') }}">Phòng học</a></li>
+                <li><a class="{{ request()->routeIs('news.index') || request()->routeIs('news.category') || request()->routeIs('news.show') ? 'active' : '' }}"
+                        href="{{ route('news.index') }}">Tin tức - Sự kiện</a></li>
+                <li><a class="{{ request()->routeIs('contacts') ? 'active' : '' }}"
+                        href="{{ route('contacts') }}">Liên hệ</a></li>
+            </ul>
         </div>
         <div class="footer-bottom">
             <p>&copy; {{ date('Y') }} {{ App\Helpers\SettingHelper::get('center_name', 'Trung tâm đào tạo') }}.

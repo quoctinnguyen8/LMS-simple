@@ -97,7 +97,7 @@
     <h2 class="courses-section-title">Khóa học mới nhất</h2>
     <section class="home-courses-section">
         <div class="courses-container">
-            @foreach ($courses as $course)
+            @foreach ($courses->take(3) as $course)
                 <div class="course-card-detailed">
                     <div class="course-image">
                         <img src="{{ Storage::url($course->featured_image) }}" alt="{{ $course->title }}">
@@ -144,11 +144,16 @@
                 </div>
             @endforeach
         </div>
+        @if ($courses->count() > 3)
+            <div class="view-all-courses">
+                <button onclick="window.location.href='{{ route('courses.index') }}'">Xem tất cả khóa học</button>
+            </div>
+        @endif
     </section>
     <h2 class="classrooms-section-title">Phòng học hiện đại</h2>
     <section class="home-classrooms-section">
         <div class="classrooms-container">
-            @foreach ($rooms as $room)
+            @foreach ($rooms->take(3) as $room)
                 <div class="classroom-card">
                     <div class="classroom-image">
                         <img src="{{ Storage::url($room->image) }}" alt="{{ $room->name }}">
@@ -161,7 +166,7 @@
                     <div class="classroom-info">
                         <h3>{{ $room->name }}</h3>
                         <div class="classroom-specs">
-                            <x-heroicon-o-user-group class="inline w-5 h-5 text-gray-500 align-middle mr-1" />
+                            <x-heroicon-o-user-group class="inline w-5 h-5 text-gray-500 align-middle" />
                             {{ $room->capacity }} chỗ ngồi
                         </div>
                         <div class="classroom-location">
@@ -177,20 +182,6 @@
                                 VNĐ/{{ App\Helpers\SettingHelper::get('room_unit', 'giờ') }}
                             </span>
                         </div>
-                        <style>
-                            .classroom-location {
-                                font-size: 0.95rem;
-                                color: #555;
-                                margin-bottom: 4px;
-                            }
-
-                            .classroom-price {
-                                font-size: 1rem;
-                                color: #f60;
-                                font-weight: 500;
-                                margin-bottom: 4px;
-                            }
-                        </style>
                         <div class="classroom-status available">
                             {{ $room->status == 'available' ? 'Có sẵn' : 'Đã đặt' }}
                         </div>
@@ -198,12 +189,17 @@
                 </div>
             @endforeach
         </div>
+        @if ($rooms->count() > 3)
+            <div class="view-all-rooms">
+                <button onclick="window.location.href='{{ route('rooms.index') }}'">Xem tất cả phòng học</button>
+            </div>
+        @endif
     </section>
     <!-- News Section -->
     <section class="news-section" id="news">
         <h2>Tin tức mới nhất</h2>
         <div class="news-grid">
-            @foreach ($news as $newsItem)
+            @foreach ($news->take(3) as $newsItem)
                 <div class="news-card">
                     <img src="{{ Storage::url($newsItem->featured_image) }}" alt="{{ $newsItem->title }}">
                     <div class="news-card-content">
@@ -217,6 +213,11 @@
                 </div>
             @endforeach
         </div>
+        @if ($news->count() > 3)
+            <div class="view-all-news">
+                <button onclick="window.location.href='{{ route('news.index') }}'">Xem tất cả tin tức</button>
+            </div>
+        @endif
     </section>
     <x-slot:scripts>
         <script>

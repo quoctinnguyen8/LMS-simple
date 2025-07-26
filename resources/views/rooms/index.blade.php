@@ -24,7 +24,7 @@
                     <div class="classroom-info">
                         <h3>{{ $room->name }}</h3>
                         <div class="classroom-specs">
-                                <x-heroicon-o-user-group class="inline w-5 h-5 text-gray-500 align-middle mr-1" />
+                                <x-heroicon-o-user-group class="inline w-5 h-5 text-gray-500 align-middle" />
                                 {{ $room->capacity }} chỗ ngồi
                         </div>
                       <div class="classroom-location">
@@ -39,19 +39,6 @@
                                 {{ number_format($room->price, 0, ',', '.') }} VNĐ/{{ App\Helpers\SettingHelper::get('room_unit', 'giờ') }}
                             </span>
                         </div>
-                        <style>
-                            .classroom-location {
-                                font-size: 0.95rem;
-                                color: #555;
-                                margin-bottom: 4px;
-                            }
-                            .classroom-price {
-                                font-size: 1rem;
-                                color: #f60;
-                                font-weight: 500;
-                                margin-bottom: 4px;
-                            }
-                        </style>
                         <div class="classroom-status available">
                             {{ $room->status == 'available' ? 'Có sẵn' : 'Đã đặt' }}
                         </div>

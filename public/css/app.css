@@ -820,12 +820,7 @@ nav {
 }
 
 .footer-section a {
-    /*     
-    color: #ccc;
-    margin-bottom: 12px;
-    font-size: 0.95em;
-    line-height: 1.6; */
-    color: #ccc;
+    color: #fff;
     margin-bottom: 12px;
     font-size: 0.95em;
     line-height: 1.6;
@@ -833,9 +828,12 @@ nav {
     transition: color 0.2s ease;
 }
 
+.footer-section a:hover {
+    color: #ccc;
+}
+
 .footer-bottom {
     text-align: center;
-    margin-top: 40px;
     padding-top: 25px;
     border-top: 1px solid #444;
     color: #999;
@@ -1047,6 +1045,7 @@ nav {
     padding: 60px 20px;
     background-color: #f9f9f9;
 }
+
 .home-courses-section {
     padding: 60px 20px;
 }
@@ -1618,6 +1617,7 @@ nav {
     padding: 60px 20px;
     background-color: #f9f9f9;
 }
+
 .home-classrooms-section {
     padding: 60px 20px;
 }
@@ -3107,48 +3107,63 @@ img[data-loaded="true"] {
         max-width: 320px;
     }
 }
+
 .inline {
     display: inline-block;
 }
+
 .w-4 {
     width: 1rem !important;
 }
+
 .h-4 {
     height: 1rem !important;
 }
-.w-5{
+
+.w-5 {
     width: 1.25rem !important;
 }
-.h-5{
+
+.h-5 {
     height: 1.25rem !important;
 }
-.w-8{
+
+.w-8 {
     width: 2rem !important;
 }
-.h-8{
+
+.h-8 {
     height: 2rem !important;
 }
+
 .text-blue-500 {
     color: #3b82f6 !important;
 }
+
 .text-yellow-500 {
     color: #f59e0b !important;
 }
+
 .text-red-500 {
     color: #ef4444 !important;
 }
+
 .text-green-500 {
     color: #10b981 !important;
 }
+
 .text-gray-500 {
     color: #6b7280 !important;
 }
+
 .text-gray-700 {
     color: #374151 !important;
 }
+
 .align-middle {
     vertical-align: middle !important;
 }
+
 .mr-1 {
     margin-right: 0.25rem !important;
 }
@@ -3161,6 +3176,7 @@ img[data-loaded="true"] {
     margin: 60px 0 30px 0;
     position: relative;
 }
+
 .courses-section-title::after {
     content: '';
     display: block;
@@ -3170,6 +3186,7 @@ img[data-loaded="true"] {
     background: #f60;
     border-radius: 2px;
 }
+
 .classrooms-section-title {
     font-size: 2.2em;
     color: #333;
@@ -3177,6 +3194,7 @@ img[data-loaded="true"] {
     margin: 60px 0 30px 0;
     position: relative;
 }
+
 .classrooms-section-title::after {
     content: '';
     display: block;
@@ -3188,16 +3206,102 @@ img[data-loaded="true"] {
 }
 
 @media (max-width: 768px) {
+
     .courses-section-title,
     .classrooms-section-title {
         font-size: 1.5em;
         margin: 40px 0 20px 0;
     }
 }
+
 @media (max-width: 480px) {
+
     .courses-section-title,
     .classrooms-section-title {
         font-size: 1.1em;
         margin: 30px 0 12px 0;
     }
+}
+
+.view-all-news,
+.view-all-rooms,
+.view-all-courses {
+    text-align: center;
+    margin-top: 20px;
+}
+
+.view-all-news button,
+.view-all-rooms button,
+.view-all-courses button {
+    background-color: #f60;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.view-all-news button:hover,
+.view-all-rooms button:hover,
+.view-all-courses button:hover {
+    background-color: #e55b00;
+}
+
+.classroom-location {
+    font-size: 0.95rem;
+    color: #555;
+    margin-bottom: 4px;
+}
+
+.classroom-price {
+    font-size: 1rem;
+    color: #f60;
+    font-weight: 500;
+    margin-bottom: 4px;
+}
+
+.footer-menu {
+    text-align: center;
+    margin-top: 20px;
+}
+
+.footer-menu ul {
+    list-style: none;
+    padding: 0;
+    display: inline-block;
+}
+
+.footer-menu li {
+    display: inline;
+    margin: 0 15px;
+}
+
+.footer-menu a {
+    color: #fff;
+    text-decoration: none;
+    font-size: 0.95em;
+}
+
+.footer-menu a:hover {
+    color: #ccc;
+}
+
+@media (max-width: 768px) {
+    .footer-menu ul {
+        display: block;
+    }
+
+    .footer-menu li {
+        display: block;
+        margin: 10px 0;
+    }
+}
+.footer-menu {
+    padding: 20px;
+    border-top: 2px solid #f60;
+}
+.footer-section .active,
+.footer-menu .active {
+    color: #f60;
+    font-weight: bold;
 }
