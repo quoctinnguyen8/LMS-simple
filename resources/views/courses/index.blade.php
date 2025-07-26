@@ -29,16 +29,16 @@
                                     Khai giảng: {{ $course->start_date->format('d/m/Y') }}
                                 </span>
                             @endif
-                            @if ($course->registration_deadline)
+                            @if ($course->end_registration_date)
                                 <span class="registration-deadline">
                                     <x-heroicon-o-clock class="inline w-5 h-5 text-gray-500 align-middle" />
-                                    Hạn đăng ký: {{ $course->registration_deadline->format('d/m/Y') }}
+                                    Hạn đăng ký: {{ $course->end_registration_date->format('d/m/Y') }}
                                 </span>
                             @endif
                         </div>
                         <p>
                             <x-heroicon-o-book-open class="inline w-5 h-5 text-gray-500 align-middle" />
-                            {{ $course->description }}</p>
+                             {{ Str::limit($course->description, 80, '...') }}
                         <div class="course-price">
                             @if ($course->is_price_visible)
                                 <span class="price">
@@ -53,8 +53,6 @@
                             <button class="enroll-btn"
                                 onclick="window.location.href='{{ route('courses.show', $course->slug) }}'">Xem chi
                                 tiết</button>
-                            <button class="trial-btn" onclick="window.location.href='{{ route('contacts') }}'">Liên hệ
-                                tư vấn</button>
                         </div>
                     </div>
                 </div>

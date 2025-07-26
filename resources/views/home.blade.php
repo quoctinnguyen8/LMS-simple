@@ -112,16 +112,16 @@
                                     Khai giảng: {{ $course->start_date->format('d/m/Y') }}
                                 </span>
                             @endif
-                            @if ($course->registration_deadline)
+                            @if ($course->end_registration_date)
                                 <span class="registration-deadline">
                                     <x-heroicon-o-clock class="inline w-5 h-5 text-gray-500 align-middle" />
-                                    Hạn đăng ký: {{ $course->registration_deadline->format('d/m/Y') }}
+                                    Hạn đăng ký: {{ $course->end_registration_date->format('d/m/Y') }}
                                 </span>
                             @endif
                         </div>
                         <p>
                             <x-heroicon-o-book-open class="inline w-5 h-5 text-gray-500 align-middle" />
-                            {{ $course->description }}
+                            {{ Str::limit($course->description, 80, '...') }}
                         </p>
                         <div class="course-price">
                             @if ($course->is_price_visible)
@@ -137,8 +137,6 @@
                             <button class="enroll-btn"
                                 onclick="window.location.href='{{ route('courses.show', $course->slug) }}'">Xem chi
                                 tiết</button>
-                            <button class="trial-btn" onclick="window.location.href='{{ route('contacts') }}'">Liên hệ
-                                tư vấn</button>
                         </div>
                     </div>
                 </div>
@@ -195,25 +193,33 @@
             </div>
         @endif
     </section>
-    <!-- News Section -->
-    <section class="news-section" id="news">
-        <h2>Tin tức mới nhất</h2>
-        <div class="news-grid">
-            @foreach ($news->take(3) as $newsItem)
-                <div class="news-card">
-                    <img src="{{ Storage::url($newsItem->featured_image) }}" alt="{{ $newsItem->title }}">
-                    <div class="news-card-content">
-                        <div class="date">{{ $newsItem->published_at->format('d/m/Y') }}</div>
-                        <h3>{{ $newsItem->title }}</h3>
-                        <p>{{ $newsItem->summary }}</p>
-                        <button class="read-more"
-                            onclick="window.location.href='{{ route('news.show', $newsItem->slug) }}'">Đọc
-                            thêm</button>
+    <h2 class="news-section-title">Tin tức mới nhất</h2>
+    <section class="featured-news">
+        <div class="featured-container">
+            @foreach ($news as $item)
+                <div class="featured-article">
+                    <div class="featured-image">
+                        <img src="{{ Storage::url($item->featured_image) }}" alt="{{ $item->title }}">
+                        <div class="featured-category">{{ $item->news_category->name }}</div>
+                    </div>
+                    <div class="featured-content">
+                        <div class="featured-date">{{ $item->published_at->format('d/m/Y') }}</div>
+                        <h3>{{ $item->title }}</h3>
+                        <p>{{ $item->summary }}</p>
+                        <div class="featured-stats">
+                            <span>
+                                <x-heroicon-o-eye class="inline w-5 h-5 text-gray-500 align-middle" />
+                                {{ $item->view_count }} lượt xem
+                            </span>
+                        </div>
+                        <button class="read-more-btn"
+                            onclick="window.location.href='{{ route('news.show', $item->slug) }}'">Đọc toàn bộ bài
+                            viết</button>
                     </div>
                 </div>
             @endforeach
         </div>
-        @if ($news->count() > 3)
+         @if ($news->count() > 3)
             <div class="view-all-news">
                 <button onclick="window.location.href='{{ route('news.index') }}'">Xem tất cả tin tức</button>
             </div>

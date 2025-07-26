@@ -43,14 +43,6 @@ class NewsController extends Controller
             ->orderBy('created_at', 'desc')
             ->take(3)
             ->get();
-        $previousNews = News::where('id', '<', $news_item->id)
-            ->where('is_published', true)
-            ->orderBy('id', 'desc')
-            ->first();
-        $nextNews = News::where('id', '>', $news_item->id)
-            ->where('is_published', true)
-            ->orderBy('id', 'asc')
-            ->first();
-        return view('news.detail', compact('news_item', 'recentNews', 'relatedNews', 'previousNews', 'nextNews'));
+        return view('news.detail', compact('news_item', 'recentNews', 'relatedNews'));
     }
 }

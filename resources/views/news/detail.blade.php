@@ -67,25 +67,4 @@
             </div>
         </div>
     </section>
-
-    <!-- Navigation -->
-    <section class="news-navigation">
-        <div class="news-nav-container">
-            @if($previousNews)
-                <div class="nav-item prev">
-                    <span class="nav-label">Bài trước</span>
-                    <a href="{{ route('news.show', $previousNews->slug) }}">{{ $previousNews->title }}</a>
-                </div>
-            @endif
-            
-            <a href="{{ route('news.index') }}" class="back-to-list">Quay lại danh sách</a>
-            
-            @if($nextNews)
-                <div class="nav-item next">
-                    <span class="nav-label">Bài tiếp</span>
-                    <a href="{{ route('news.show', $nextNews->slug) }}">{{ $nextNews->title }}</a>
-                </div>
-            @endif
-        </div>
-    </section>
 </x-layouts>
