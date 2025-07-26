@@ -29,21 +29,27 @@
                 <div class="room-detail-info">
                     <div class="room-specs-grid">
                         <div class="room-spec">
-                            <span class="spec-icon">👥</span>
+                            <span class="spec-icon">
+                                <x-heroicon-o-users class="inline w-5 h-5 text-gray-500 align-middle" />
+                            </span>
                             <div class="spec-info">
                                 <strong>Sức chứa</strong>
                                 <span>{{ $room->capacity }} người</span>
                             </div>
                         </div>
                         <div class="room-spec">
-                            <span class="spec-icon">📍</span>
+                            <span class="spec-icon">
+                                <x-heroicon-o-map-pin class="inline w-5 h-5 text-gray-500 align-middle" />
+                            </span>
                             <div class="spec-info">
                                 <strong>Vị trí</strong>
                                 <span>{{ $room->location }}</span>
                             </div>
                         </div>
                         <div class="room-spec">
-                            <span class="spec-icon">💰</span>
+                            <span class="spec-icon">
+                                <x-heroicon-o-currency-dollar class="inline w-5 h-5 text-gray-500 align-middle" />
+                            </span>
                             <div class="spec-info">
                                 <strong>Giá thuê</strong>
                                 <span>{{ number_format($room->price, 0, ',', '.') }}

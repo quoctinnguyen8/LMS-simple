@@ -24,18 +24,26 @@
                         <h3>{{ $course->title }}</h3>
                         <div class="course-meta">
                             @if ($course->start_date)
-                                <span class="start-date">🗓️ Khai giảng:
-                                    {{ $course->start_date->format('d/m/Y') }}</span>
+                                <span class="start-date">
+                                    <x-heroicon-o-calendar class="inline w-5 h-5 text-gray-500 align-middle" />
+                                    Khai giảng: {{ $course->start_date->format('d/m/Y') }}
+                                </span>
                             @endif
                             @if ($course->registration_deadline)
-                                <span class="registration-deadline">⏳ Hạn đăng ký:
-                                    {{ $course->registration_deadline->format('d/m/Y') }}</span>
+                                <span class="registration-deadline">
+                                    <x-heroicon-o-clock class="inline w-5 h-5 text-gray-500 align-middle" />
+                                    Hạn đăng ký: {{ $course->registration_deadline->format('d/m/Y') }}
+                                </span>
                             @endif
                         </div>
-                        <p>{{ $course->description }}</p>
+                        <p>
+                            <x-heroicon-o-book-open class="inline w-5 h-5 text-gray-500 align-middle" />
+                            {{ $course->description }}</p>
                         <div class="course-price">
                             @if ($course->is_price_visible)
-                                <span class="price">{{ number_format($course->price, 0, ',', '.') }}
+                                <span class="price">
+                                    <x-heroicon-o-currency-dollar class="inline w-5 h-5 text-gray-500 align-middle" />
+                                    {{ number_format($course->price, 0, ',', '.') }}
                                     VNĐ/{{ App\Helpers\SettingHelper::get('course_unit', 'khóa') }}</span>
                             @else
                                 <span class="price">Liên hệ để biết thêm chi tiết</span>

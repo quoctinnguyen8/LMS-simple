@@ -35,10 +35,7 @@
             </div>
             <input type="checkbox" id="menu-toggle" class="hidden">
             <label for="menu-toggle" class="menu-button">
-                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7">
-                    </path>
-                </svg>
+                <x-heroicon-o-bars-3 class="w-8 h-8" /> 
             </label>
             <ul class="desktop-menu">
                 <li><a href="/" class="{{ request()->is('/') ? 'active' : '' }}">Trang chủ</a></li>
@@ -89,11 +86,7 @@
                         </a>
                     </div>
                     <label for="menu-toggle" class="close-button">
-                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"
-                            xmlns="http://www.w3.org/2000/svg">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M6 18L18 6M6 6l12 12"></path>
-                        </svg>
+                        <x-heroicon-o-x-mark class="w-8 h-8" />
                     </label>
                 </div>
                 <ul class="sidebar-menu">
@@ -105,11 +98,7 @@
                                 Khóa
                                 học</a>
                             <label for="dropdown-toggle-1" class="dropdown-icon">
-                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"
-                                    xmlns="http://www.w3.org/2000/svg" id="dropdown-icon-1">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M19 9l-7 7-7-7"></path>
-                                </svg>
+                                <x-heroicon-o-chevron-down id="dropdown-icon-1" class="w-6 h-6" />
                             </label>
                             <input type="checkbox" id="dropdown-toggle-1" class="dropdown-toggle hidden">
                         </div>
@@ -134,11 +123,7 @@
                                 class="dropdown-toggle {{ request()->routeIs('news.index') || request()->routeIs('news.category') || request()->routeIs('news.show') ? 'active' : '' }}">Tin
                                 tức - Sự kiện</a>
                             <label for="dropdown-toggle-2" class="dropdown-icon">
-                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"
-                                    xmlns="http://www.w3.org/2000/svg" id="dropdown-icon-2">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M19 9l-7 7-7-7"></path>
-                                </svg>
+                                <x-heroicon-o-chevron-down id="dropdown-icon-2" class="w-6 h-6" />
                             </label>
                             <input type="checkbox" id="dropdown-toggle-2" class="dropdown-toggle hidden">
                         </div>

@@ -8,7 +8,10 @@
             <div class="news-detail-meta">
                 <span class="publish-date">{{ $news_item->published_at->format('d/m/Y') }}</span>
                 <span class="author">Tác giả: {{ $news_item->user->name }}</span>
-                <span class="view-count"><i>👁</i> {{ $news_item->view_count }} lượt xem</span>
+                <span class="view-count">
+                    <x-heroicon-o-eye class="inline w-4 h-4 text-gray-500 align-middle" />
+                    {{ $news_item->view_count }} lượt xem
+                </span>
             </div>
             <p class="news-summary">{{ $news_item->summary }}</p>
         </div>

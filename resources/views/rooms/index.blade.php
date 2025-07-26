@@ -24,14 +24,20 @@
                     <div class="classroom-info">
                         <h3>{{ $room->name }}</h3>
                         <div class="classroom-specs">
-                            <span class="spec">👥 {{ $room->capacity }} chỗ ngồi</span>
+                                <x-heroicon-o-user-group class="inline w-5 h-5 text-gray-500 align-middle mr-1" />
+                                {{ $room->capacity }} chỗ ngồi
                         </div>
                       <div class="classroom-location">
-                            <span class="location">📍{{ Str::limit($room->location, 50, '...') }}</span>
+                            <span class="location">
+                                <x-heroicon-o-map-pin class="inline w-5 h-5 text-gray-500 align-middle" />
+                                {{ Str::limit($room->location, 50, '...') }}
+                            </span>
                         </div>
                         <div class="classroom-price">
-                            <span class="price">💰 {{ number_format($room->price, 0, ',', '.') }}
-                                VNĐ/{{ App\Helpers\SettingHelper::get('room_unit', 'giờ') }}</span>
+                            <span class="price">
+                                <x-heroicon-o-currency-dollar class="inline w-5 h-5 text-gray-500 align-middle" />
+                                {{ number_format($room->price, 0, ',', '.') }} VNĐ/{{ App\Helpers\SettingHelper::get('room_unit', 'giờ') }}
+                            </span>
                         </div>
                         <style>
                             .classroom-location {

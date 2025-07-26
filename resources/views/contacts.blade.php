@@ -12,22 +12,30 @@
         <div class="contact-info-container">
             <div class="contact-info-grid">
                 <div class="contact-info-card">
-                    <div class="contact-icon">📍</div>
+                    <div class="contact-icon">
+                        <x-heroicon-o-map-pin class="w-8 h-8 text-blue-500" />
+                    </div>
                     <h3>Địa chỉ</h3>
                     <p>{{ App\Helpers\SettingHelper::get('address', 'Chưa cập nhật') }}</p>
                 </div>
                 <div class="contact-info-card">
-                    <div class="contact-icon">📞</div>
+                    <div class="contact-icon">
+                        <x-heroicon-o-phone class="w-8 h-8 text-green-500" />
+                    </div>
                     <h3>Điện thoại</h3>
                     <p>{{ App\Helpers\SettingHelper::get('phone', 'Chưa cập nhật') }}</p>
                 </div>
                 <div class="contact-info-card">
-                    <div class="contact-icon">✉️</div>
+                    <div class="contact-icon">
+                        <x-heroicon-o-envelope class="w-8 h-8 text-red-500" />
+                    </div>
                     <h3>Email</h3>
                     <p>{{ App\Helpers\SettingHelper::get('email', 'Chưa cập nhật') }}</p>
                 </div>
                 <div class="contact-info-card">
-                    <div class="contact-icon">🕒</div>
+                    <div class="contact-icon">
+                        <x-heroicon-o-clock class="w-8 h-8 text-yellow-500" />
+                    </div>
                     <h3>Giờ làm việc</h3>
                     <p>T2-T6: 8:00 - 21:00<br>T7-CN: 8:00 - 17:00</p>
                 </div>

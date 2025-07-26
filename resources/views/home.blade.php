@@ -31,22 +31,22 @@
     <!-- Achievements -->
     <section class="achievements">
         <div class="achievement">
-            <div class="icon">✓</div>
+            <x-heroicon-o-check class="icon" />
             <h3>10+</h3>
             <p>Năm kinh nghiệm và phát triển</p>
         </div>
         <div class="achievement">
-            <div class="icon">🎓</div>
+            <x-heroicon-o-academic-cap class="icon" />
             <h3>100%</h3>
             <p>Giảng viên có chứng chỉ quốc tế</p>
         </div>
         <div class="achievement">
-            <div class="icon">👥</div>
-            <h3>300K+</h3>
+            <x-heroicon-o-users class="icon" />
+            <h3>500+</h3>
             <p>Học viên tin tựởng</p>
         </div>
         <div class="achievement">
-            <div class="icon">🏆</div>
+            <x-heroicon-o-academic-cap class="icon" />
             <h3>98%</h3>
             <p>Đạt mục tiêu đề ra</p>
         </div>
@@ -56,19 +56,37 @@
         <h2>Học viên nói gì về chúng tôi</h2>
         <div class="feedback-grid">
             <div class="feedback-card">
-                <div class="stars">★★★★★</div>
+                  <div class="stars">
+                    <x-heroicon-s-star class="w-5 h-5 text-yellow-400 inline" />
+                    <x-heroicon-s-star class="w-5 h-5 text-yellow-400 inline" />
+                    <x-heroicon-s-star class="w-5 h-5 text-yellow-400 inline" />
+                    <x-heroicon-s-star class="w-5 h-5 text-yellow-400 inline" />
+                    <x-heroicon-s-star class="w-5 h-5 text-yellow-400 inline" />
+                </div>
                 <p>"Giảng viên rất nhiệt tình và phương pháp giảng dạy rất hay. Con em tôi đã tiến bộ rất nhiều sau 6
                     tháng học tại đây."</p>
                 <div class="student-name">- Chị Nguyễn Thị Lan, Phụ huynh</div>
             </div>
             <div class="feedback-card">
-                <div class="stars">★★★★★</div>
+                  <div class="stars">
+                    <x-heroicon-s-star class="w-5 h-5 text-yellow-400 inline" />
+                    <x-heroicon-s-star class="w-5 h-5 text-yellow-400 inline" />
+                    <x-heroicon-s-star class="w-5 h-5 text-yellow-400 inline" />
+                    <x-heroicon-s-star class="w-5 h-5 text-yellow-400 inline" />
+                    <x-heroicon-s-star class="w-5 h-5 text-yellow-400 inline" />
+                </div>
                 <p>"Môi trường học tập tuyệt vời, cơ sở vật chất hiện đại. Tôi đã đạt IELTS 7.0 sau 4 tháng học tại
                     Study Academy."</p>
                 <div class="student-name">- Anh Trần Minh Khoa, Học viên IELTS</div>
             </div>
             <div class="feedback-card">
-                <div class="stars">★★★★★</div>
+                <div class="stars">
+                    <x-heroicon-s-star class="w-5 h-5 text-yellow-400 inline" />
+                    <x-heroicon-s-star class="w-5 h-5 text-yellow-400 inline" />
+                    <x-heroicon-s-star class="w-5 h-5 text-yellow-400 inline" />
+                    <x-heroicon-s-star class="w-5 h-5 text-yellow-400 inline" />
+                    <x-heroicon-s-star class="w-5 h-5 text-yellow-400 inline" />
+                </div>
                 <p>"Khóa học tiếng Anh doanh nghiệp rất thực tế, giúp tôi tự tin hơn trong công việc. Cảm ơn các thầy
                     cô!"</p>
                 <div class="student-name">- Chị Phạm Thúy Nga, Nhân viên văn phòng</div>
@@ -76,6 +94,111 @@
         </div>
     </section> --}}
 
+    <h2 class="courses-section-title">Khóa học mới nhất</h2>
+    <section class="home-courses-section">
+        <div class="courses-container">
+            @foreach ($courses as $course)
+                <div class="course-card-detailed">
+                    <div class="course-image">
+                        <img src="{{ Storage::url($course->featured_image) }}" alt="{{ $course->title }}">
+                        <div class="course-level">{{ $course->category->name }}</div>
+                    </div>
+                    <div class="course-info-detailed">
+                        <h3>{{ $course->title }}</h3>
+                        <div class="course-meta">
+                            @if ($course->start_date)
+                                <span class="start-date">
+                                    <x-heroicon-o-calendar class="inline w-5 h-5 text-gray-500 align-middle" />
+                                    Khai giảng: {{ $course->start_date->format('d/m/Y') }}
+                                </span>
+                            @endif
+                            @if ($course->registration_deadline)
+                                <span class="registration-deadline">
+                                    <x-heroicon-o-clock class="inline w-5 h-5 text-gray-500 align-middle" />
+                                    Hạn đăng ký: {{ $course->registration_deadline->format('d/m/Y') }}
+                                </span>
+                            @endif
+                        </div>
+                        <p>
+                            <x-heroicon-o-book-open class="inline w-5 h-5 text-gray-500 align-middle" />
+                            {{ $course->description }}
+                        </p>
+                        <div class="course-price">
+                            @if ($course->is_price_visible)
+                                <span class="price">
+                                    <x-heroicon-o-currency-dollar class="inline w-5 h-5 text-gray-500 align-middle" />
+                                    {{ number_format($course->price, 0, ',', '.') }}
+                                    VNĐ/{{ App\Helpers\SettingHelper::get('course_unit', 'khóa') }}</span>
+                            @else
+                                <span class="price">Liên hệ để biết thêm chi tiết</span>
+                            @endif
+                        </div>
+                        <div class="course-actions">
+                            <button class="enroll-btn"
+                                onclick="window.location.href='{{ route('courses.show', $course->slug) }}'">Xem chi
+                                tiết</button>
+                            <button class="trial-btn" onclick="window.location.href='{{ route('contacts') }}'">Liên hệ
+                                tư vấn</button>
+                        </div>
+                    </div>
+                </div>
+            @endforeach
+        </div>
+    </section>
+    <h2 class="classrooms-section-title">Phòng học hiện đại</h2>
+    <section class="home-classrooms-section">
+        <div class="classrooms-container">
+            @foreach ($rooms as $room)
+                <div class="classroom-card">
+                    <div class="classroom-image">
+                        <img src="{{ Storage::url($room->image) }}" alt="{{ $room->name }}">
+                        <div class="classroom-overlay">
+                            <button class="view-btn"
+                                onclick="window.location.href='{{ route('rooms.show', $room->id) }}'">Xem chi
+                                tiết</button>
+                        </div>
+                    </div>
+                    <div class="classroom-info">
+                        <h3>{{ $room->name }}</h3>
+                        <div class="classroom-specs">
+                            <x-heroicon-o-user-group class="inline w-5 h-5 text-gray-500 align-middle mr-1" />
+                            {{ $room->capacity }} chỗ ngồi
+                        </div>
+                        <div class="classroom-location">
+                            <span class="location">
+                                <x-heroicon-o-map-pin class="inline w-5 h-5 text-gray-500 align-middle" />
+                                {{ Str::limit($room->location, 50, '...') }}
+                            </span>
+                        </div>
+                        <div class="classroom-price">
+                            <span class="price">
+                                <x-heroicon-o-currency-dollar class="inline w-5 h-5 text-gray-500 align-middle" />
+                                {{ number_format($room->price, 0, ',', '.') }}
+                                VNĐ/{{ App\Helpers\SettingHelper::get('room_unit', 'giờ') }}
+                            </span>
+                        </div>
+                        <style>
+                            .classroom-location {
+                                font-size: 0.95rem;
+                                color: #555;
+                                margin-bottom: 4px;
+                            }
+
+                            .classroom-price {
+                                font-size: 1rem;
+                                color: #f60;
+                                font-weight: 500;
+                                margin-bottom: 4px;
+                            }
+                        </style>
+                        <div class="classroom-status available">
+                            {{ $room->status == 'available' ? 'Có sẵn' : 'Đã đặt' }}
+                        </div>
+                    </div>
+                </div>
+            @endforeach
+        </div>
+    </section>
     <!-- News Section -->
     <section class="news-section" id="news">
         <h2>Tin tức mới nhất</h2>

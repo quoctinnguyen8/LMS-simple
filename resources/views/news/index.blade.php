@@ -26,7 +26,10 @@
                         <h3>{{ $item->title }}</h3>
                         <p>{{ $item->summary }}</p>
                         <div class="featured-stats">
-                            <span><i>👁</i> {{ $item->view_count }} lượt xem</span>
+                            <span>
+                                <x-heroicon-o-eye class="inline w-5 h-5 text-gray-500 align-middle" />
+                                {{ $item->view_count }} lượt xem
+                            </span>
                         </div>
                         <button class="read-more-btn"
                             onclick="window.location.href='{{ route('news.show', $item->slug) }}'">Đọc toàn bộ bài
@@ -117,8 +120,14 @@
                                 tảng, mục tiêu đạt 6.5+ trong 2 tháng. Đăng ký ngay để nhận ưu đãi đặc biệt!</p>
                             <div class="article-footer">
                                 <div class="article-stats">
-                                    <span>👁 856</span>
-                                    <span>💬 12</span>
+                                    <span>
+                                        <x-heroicon-o-eye class="inline w-5 h-5 text-gray-500" />
+                                        856
+                                    </span>
+                                    <span>
+                                        <x-heroicon-o-chat-bubble-left-ellipsis class="inline w-5 h-5 text-gray-500" />
+                                        12
+                                    </span>
                                 </div>
                                 <button class="read-more">Đọc thêm</button>
                             </div>
@@ -141,8 +150,14 @@
                                 hợp với môi trường làm việc hiện đại.</p>
                             <div class="article-footer">
                                 <div class="article-stats">
-                                    <span>👁 423</span>
-                                    <span>💬 6</span>
+                                    <span>
+                                        <x-heroicon-o-eye class="inline w-5 h-5 text-gray-500" />
+                                        423
+                                    </span>
+                                    <span>
+                                        <x-heroicon-o-chat-bubble-left-ellipsis class="inline w-5 h-5 text-gray-500" />
+                                        6
+                                    </span>
                                 </div>
                                 <button class="read-more">Đọc thêm</button>
                             </div>
