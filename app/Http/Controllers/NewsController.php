@@ -34,6 +34,7 @@ class NewsController extends Controller
             ->where('is_published', true)
             ->firstOrFail();
         $recentNews = News::where('is_published', true)
+            ->where('id', '!=', $news_item->id)
             ->orderBy('created_at', 'desc')
             ->take(5)
             ->get();

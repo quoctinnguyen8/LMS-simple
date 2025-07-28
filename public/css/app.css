@@ -963,6 +963,7 @@ nav {
     transform: translateY(-3px);
     box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
 }
+
 .course-image {
     flex: 0 0 40%;
     width: 350px;
@@ -1001,6 +1002,7 @@ nav {
         max-width: 100%;
         max-height: 180px;
     }
+
     .course-image img {
         width: 100%;
         height: 100%;
@@ -1111,7 +1113,8 @@ nav {
     gap: 15px;
     margin-top: auto;
 }
-.classroom-actions{
+
+.classroom-actions {
     display: flex;
     gap: 15px;
     margin-top: auto;
@@ -1267,20 +1270,19 @@ nav {
     font-size: 0.9em;
 }
 
-.read-more-btn {
-    background: #f60;
-    color: white;
-    border: none;
-    padding: 12px 24px;
-    border-radius: 6px;
-    cursor: pointer;
+.read-more-link {
+    display: inline-block;
+    margin-top: 8px;
+    color: #f60;
     font-weight: 500;
-    transition: all 0.2s ease;
+    text-decoration: none;
+    transition: color 0.2s;
+    border-radius: 4px;
 }
 
-.read-more-btn:hover {
-    background: #e55100;
-    transform: translateY(-1px);
+.read-more-link:hover {
+    color: #e55100;
+    text-decoration: underline;
 }
 
 .news-main-section {
@@ -1824,6 +1826,7 @@ nav {
         flex-direction: column;
         gap: 10px;
     }
+
     .classroom-actions {
         flex-direction: column;
         gap: 10px;
@@ -3140,6 +3143,7 @@ img[data-loaded="true"] {
     background: #f60;
     border-radius: 2px;
 }
+
 .news-section-title {
     font-size: 2.2em;
     color: #333;
@@ -3147,6 +3151,7 @@ img[data-loaded="true"] {
     margin: 60px 0 30px 0;
     position: relative;
 }
+
 .news-section-title::after {
     content: '';
     display: block;
@@ -3248,10 +3253,12 @@ img[data-loaded="true"] {
         margin: 10px 0;
     }
 }
+
 .footer-menu {
     padding: 20px;
     border-top: 2px solid #f60;
 }
+
 .footer-section .active,
 .footer-menu .active {
     color: #f60;
