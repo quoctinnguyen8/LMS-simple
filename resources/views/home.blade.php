@@ -155,11 +155,6 @@
                 <div class="classroom-card">
                     <div class="classroom-image">
                         <img src="{{ Storage::url($room->image) }}" alt="{{ $room->name }}">
-                        <div class="classroom-overlay">
-                            <button class="view-btn"
-                                onclick="window.location.href='{{ route('rooms.show', $room->id) }}'">Xem chi
-                                tiết</button>
-                        </div>
                     </div>
                     <div class="classroom-info">
                         <h3>{{ $room->name }}</h3>
@@ -180,8 +175,10 @@
                                 VNĐ/{{ App\Helpers\SettingHelper::get('room_unit', 'giờ') }}
                             </span>
                         </div>
-                        <div class="classroom-status available">
-                            {{ $room->status == 'available' ? 'Có sẵn' : 'Đã đặt' }}
+                        <div class="classroom-actions">
+                            <button class="view-btn"
+                                onclick="window.location.href='{{ route('rooms.show', $room->id) }}'">Xem chi
+                                tiết</button>
                         </div>
                     </div>
                 </div>

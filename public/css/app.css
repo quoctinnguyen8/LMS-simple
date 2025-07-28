@@ -1111,6 +1111,11 @@ nav {
     gap: 15px;
     margin-top: auto;
 }
+.classroom-actions{
+    display: flex;
+    gap: 15px;
+    margin-top: auto;
+}
 
 .enroll-btn,
 .trial-btn {
@@ -1816,6 +1821,10 @@ nav {
     }
 
     .course-actions {
+        flex-direction: column;
+        gap: 10px;
+    }
+    .classroom-actions {
         flex-direction: column;
         gap: 10px;
     }
