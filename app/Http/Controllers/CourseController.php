@@ -14,7 +14,7 @@ class CourseController extends Controller
 {
     public function index()
     {
-        $courses = Course::where('status', '!=', 'draft')
+        $courses = Course::where('status', 'published')
             ->where('start_date', '>=', now()->subDays(14))
             ->orderBy('created_at', 'desc')
             ->get();
@@ -31,7 +31,7 @@ class CourseController extends Controller
     {
         $category = Category::where('slug', $slug)->firstOrFail();
         $courses = Course::where('category_id', $category->id)
-            ->where('status', '!=', 'draft')
+            ->where('status', 'published')
             ->orderBy('created_at', 'desc')
             ->get();
         return view('courses.index')->with('courses', $courses)

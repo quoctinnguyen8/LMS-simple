@@ -15,7 +15,7 @@ class HomeController extends Controller
         $rooms = Room::where('status', 'available')
             ->orderBy('created_at', 'desc')
             ->get();
-        $courses = Course::where('status','!=', 'draft')
+        $courses = Course::where('status','published')
             ->where('start_date', '>=', now()->subDays(14))
             ->orderBy('created_at', 'desc')
             ->get();
