@@ -3,7 +3,7 @@
     <section class="contact-hero">
         <div class="contact-hero-content">
             <h1>Liên hệ với chúng tôi</h1>
-            <p>Hãy để lại thông tin, chúng tôi sẽ liên hệ tư vấn miễn phí cho bạn</p>
+            <p>Hãy liên hệ với chúng tôi để được tư vấn và hỗ trợ tốt nhất về các dịch vụ đào tạo và học tập.</p>
         </div>
     </section>
 
@@ -42,75 +42,6 @@
             </div>
         </div>
     </section>
-
-    {{-- <!-- Contact Form Section -->
-    <section class="contact-form-section">
-        <div class="contact-form-container">
-            <div class="contact-form-wrapper">
-                <div class="form-content">
-                    <h2>Đăng ký tư vấn miễn phí</h2>
-                    <p>Để lại thông tin liên hệ, chúng tôi sẽ gọi lại trong vòng 24h</p>
-
-                    <form class="contact-form" id="contactForm">
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label for="fullName">Họ và tên *</label>
-                                <input type="text" id="fullName" name="fullName" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="phone">Số điện thoại *</label>
-                                <input type="tel" id="phone" name="phone" required>
-                            </div>
-                        </div>
-
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label for="email">Email</label>
-                                <input type="email" id="email" name="email">
-                            </div>
-                            <div class="form-group">
-                                <label for="age">Độ tuổi</label>
-                                <select id="age" name="age">
-                                    <option value="">Chọn độ tuổi</option>
-                                    <option value="3-5">3-5 tuổi</option>
-                                    <option value="6-12">6-12 tuổi</option>
-                                    <option value="13-17">13-17 tuổi</option>
-                                    <option value="18+">18+ tuổi</option>
-                                </select>
-                            </div>
-                        </div>
-
-                        <div class="form-group full-width">
-                            <label for="course">Khóa học quan tâm</label>
-                            <select id="course" name="course">
-                                <option value="">Chọn khóa học</option>
-                                <option value="thieu-nhi">Tiếng Anh Thiếu nhi</option>
-                                <option value="ielts">Luyện thi IELTS</option>
-                                <option value="giao-tiep">Tiếng Anh giao tiếp</option>
-                                <option value="doanh-nghiep">Tiếng Anh doanh nghiệp</option>
-                                <option value="toeic">Luyện thi TOEIC</option>
-                            </select>
-                        </div>
-
-                        <div class="form-group full-width">
-                            <label for="message">Tin nhắn</label>
-                            <textarea id="message" name="message" rows="4" placeholder="Chia sẻ mục tiêu học tập hoặc câu hỏi của bạn..."></textarea>
-                        </div>
-
-                        <button type="submit" class="submit-btn">
-                            <span>Gửi thông tin</span>
-                            <div class="btn-loader" style="display: none;"></div>
-                        </button>
-                    </form>
-                </div>
-
-                <div class="form-image">
-                    <img src="https://khoinguonsangtao.vn/wp-content/uploads/2022/07/hinh-nen-may-tinh-thien-nhien-tuyet-tac-dong-co-xanh.jpg"
-                        alt="Tư vấn học tập">
-                </div>
-            </div>
-        </div>
-    </section> --}}
 
     <!-- Map Section -->
     <section class="map-section">

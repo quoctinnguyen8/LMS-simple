@@ -31,9 +31,9 @@
                                 {{ $item->view_count }} lượt xem
                             </span>
                         </div>
-                        <button class="read-more-btn"
-                            onclick="window.location.href='{{ route('news.show', $item->slug) }}'">Đọc toàn bộ bài
-                            viết</button>
+                         <a href="{{ route('news.show', $item->slug) }}" class="read-more-link">
+                            Xem thêm &rarr;
+                        </a>
                     </div>
                 </div>
             @endforeach

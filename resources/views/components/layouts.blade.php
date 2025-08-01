@@ -167,13 +167,11 @@
                 <p><strong>Địa chỉ:</strong> {{ App\Helpers\SettingHelper::get('address', 'Chưa cập nhật') }}</p>
                 <p><strong>Điện thoại:</strong> {{ App\Helpers\SettingHelper::get('phone', 'Chưa cập nhật') }}</p>
                 <p><strong>Email:</strong> {{ App\Helpers\SettingHelper::get('email', 'Chưa cập nhật') }}</p>
-                <p><strong>Website:</strong> {{ App\Helpers\SettingHelper::get('website', 'Chưa cập nhật') }}</p>
             </div>
             <div class="footer-section">
                 <h3>Giờ làm việc</h3>
                 <p>Thứ 2 - Thứ 6: 8:00 - 21:00</p>
                 <p>Thứ 7 - Chủ nhật: 8:00 - 17:00</p>
-                <p><strong>Hotline 24/7:</strong> {{ App\Helpers\SettingHelper::get('hotline', 'Chưa cập nhật') }}</p>
             </div>
         </div>
         <div class="footer-menu">
