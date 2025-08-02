@@ -192,6 +192,25 @@
                 All rights reserved.</p>
         </div>
     </footer>
+    <!-- Floating Contact Buttons -->
+    <div class="floating-contact-buttons">
+        <!-- Phone Button -->
+        <a href="tel:{{ App\Helpers\SettingHelper::get('phone', '') }}" target="_blank"
+            class="contact-btn contact-btn-phone" aria-label="Gọi điện">
+            <x-heroicon-o-phone class="w-6 h-6" />
+        </a>
+        <!-- Zalo Button -->
+        <a href="https://zalo.me/{{ App\Helpers\SettingHelper::get('zalo', '') }}" target="_blank"
+            class="contact-btn contact-btn-zalo" aria-label="Zalo">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/9/91/Icon_of_Zalo.svg" alt="Zalo">
+        </a>
+        <!-- Facebook Button -->
+        <a href="{{ App\Helpers\SettingHelper::get('facebook_fanpage', 'https://facebook.com') }}" target="_blank"
+            class="contact-btn contact-btn-facebook" aria-label="Facebook">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/5/51/Facebook_f_logo_%282019%29.svg"
+                alt="Facebook">
+        </a>
+    </div>
     {{ $scripts ?? '' }}
     <script>
         const dropdownToggles1 = document.getElementById('dropdown-toggle-1');

@@ -295,6 +295,7 @@ nav {
         display: none;
     }
 }
+
 .slider-section {
     max-width: 1200px;
     margin: 0 auto 2rem auto;
@@ -730,6 +731,7 @@ nav {
     padding: 100px 20px;
     text-align: center;
 }
+
 .contact-hero-content h1 {
     color: #f60;
     margin-bottom: 20px;
@@ -743,6 +745,7 @@ nav {
     .contact-hero-content h1 {
         font-size: 3em;
     }
+
     .contact-hero-content p {
         font-size: 1.2em;
     }
@@ -752,6 +755,7 @@ nav {
     .contact-hero-content h1 {
         font-size: 3.5em;
     }
+
     .contact-hero-content p {
         font-size: 1.3em;
     }
@@ -761,6 +765,7 @@ nav {
     .contact-hero-content h1 {
         font-size: 4em;
     }
+
     .contact-hero-content p {
         font-size: 1.4em;
     }
@@ -938,6 +943,7 @@ nav {
     padding: 100px 20px;
     text-align: center;
 }
+
 /* Responsive font sizes for courses-hero-content */
 .courses-hero-content h1 {
     color: #f60;
@@ -952,6 +958,7 @@ nav {
     .courses-hero-content h1 {
         font-size: 3em;
     }
+
     .courses-hero-content p {
         font-size: 1.2em;
     }
@@ -961,6 +968,7 @@ nav {
     .courses-hero-content h1 {
         font-size: 3.5em;
     }
+
     .courses-hero-content p {
         font-size: 1.3em;
     }
@@ -970,6 +978,7 @@ nav {
     .courses-hero-content h1 {
         font-size: 4em;
     }
+
     .courses-hero-content p {
         font-size: 1.4em;
     }
@@ -1207,6 +1216,7 @@ nav {
     padding: 100px 20px;
     text-align: center;
 }
+
 .news-hero-content h1 {
     color: #f60;
     margin-bottom: 20px;
@@ -1220,6 +1230,7 @@ nav {
     .news-hero-content h1 {
         font-size: 3em;
     }
+
     .news-hero-content p {
         font-size: 1.2em;
     }
@@ -1229,6 +1240,7 @@ nav {
     .news-hero-content h1 {
         font-size: 3.5em;
     }
+
     .news-hero-content p {
         font-size: 1.3em;
     }
@@ -1238,6 +1250,7 @@ nav {
     .news-hero-content h1 {
         font-size: 4em;
     }
+
     .news-hero-content p {
         font-size: 1.4em;
     }
@@ -1608,6 +1621,7 @@ nav {
     padding: 100px 20px;
     text-align: center;
 }
+
 .classrooms-hero-content h1 {
     color: #f60;
     margin-bottom: 20px;
@@ -1621,6 +1635,7 @@ nav {
     .classrooms-hero-content h1 {
         font-size: 3em;
     }
+
     .classrooms-hero-content p {
         font-size: 1.2em;
     }
@@ -1630,6 +1645,7 @@ nav {
     .classrooms-hero-content h1 {
         font-size: 3.5em;
     }
+
     .classrooms-hero-content p {
         font-size: 1.3em;
     }
@@ -1639,6 +1655,7 @@ nav {
     .classrooms-hero-content h1 {
         font-size: 4em;
     }
+
     .classrooms-hero-content p {
         font-size: 1.4em;
     }
@@ -3165,6 +3182,22 @@ img[data-loaded="true"] {
     height: 1.25rem !important;
 }
 
+.w-6 {
+    width: 1.5rem !important;
+}
+
+.h-6 {
+    height: 1.5rem !important;
+}
+
+.w-7 {
+    width: 1.75rem !important;
+}
+
+.h-7 {
+    height: 1.75rem !important;
+}
+
 .w-8 {
     width: 2rem !important;
 }
@@ -3361,4 +3394,169 @@ img[data-loaded="true"] {
 .footer-menu .active {
     color: #f60;
     font-weight: bold;
+}
+.floating-contact-buttons {
+    position: fixed;
+    right: 25px;
+    bottom: 20px;
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    pointer-events: auto;
+}
+
+.contact-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background-color: #fff;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    color: #2c3e50;
+    text-decoration: none;
+    font-size: 18px;
+    border: 1px solid #ecf0f1;
+    overflow: hidden;
+}
+
+.contact-btn:hover {
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+    transform: translateY(-3px);
+}
+
+.contact-btn-phone {
+    background-color: #27ae60;
+    color: #fff;
+    position: relative;
+    overflow: visible;
+}
+
+.contact-btn-phone::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 60px;
+    height: 60px;
+    background: rgba(39, 174, 96, 0.3);
+    border-radius: 50%;
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 0.7;
+    animation: phone-wave 1.5s infinite;
+    pointer-events: none;
+    z-index: 0;
+}
+
+@keyframes phone-wave {
+    0% {
+        transform: translate(-50%, -50%) scale(1);
+        opacity: 0.7;
+    }
+    70% {
+        transform: translate(-50%, -50%) scale(1.8);
+        opacity: 0.2;
+    }
+    100% {
+        transform: translate(-50%, -50%) scale(2.2);
+        opacity: 0;
+    }
+}
+
+.contact-btn-zalo {
+    background-color: #2980b9;
+}
+
+.contact-btn-facebook {
+    background-color: #3498db;
+    color: #fff;
+}
+
+.contact-btn img {
+    display: block;
+    max-width: 24px;
+    max-height: 24px;
+    object-fit: contain;
+}
+
+/* Responsive: lớn nhỏ theo từng kích cỡ màn hình trừ thằng phone ra */
+@media (min-width: 1200px) {
+    .contact-btn {
+        width: 70px;
+        height: 70px;
+        font-size: 22px;
+    }
+    .contact-btn img {
+        max-width: 32px;
+        max-height: 32px;
+    }
+    .contact-btn-phone::after {
+        width: 80px;
+        height: 80px;
+    }
+}
+
+@media (min-width: 1024px) and (max-width: 1199px) {
+    .contact-btn {
+        width: 60px;
+        height: 60px;
+        font-size: 20px;
+    }
+    .contact-btn img {
+        max-width: 28px;
+        max-height: 28px;
+    }
+    .contact-btn-phone::after {
+        width: 70px;
+        height: 70px;
+    }
+}
+
+@media (min-width: 768px) and (max-width: 1023px) {
+    .contact-btn {
+        width: 54px;
+        height: 54px;
+        font-size: 18px;
+    }
+    .contact-btn img {
+        max-width: 24px;
+        max-height: 24px;
+    }
+    .contact-btn-phone::after {
+        width: 60px;
+        height: 60px;
+    }
+}
+
+@media (max-width: 600px) {
+    .floating-contact-buttons {
+        gap: 8px;
+    }
+    .contact-btn {
+        width: 50px;
+        height: 50px;
+        font-size: 16px;
+    }
+    .contact-btn img {
+        max-width: 18px;
+        max-height: 18px;
+    }
+    .contact-btn-phone::after {
+        width: 50px;
+        height: 50px;
+    }
+}
+
+/* Ensure buttons don't overlap with sidebar/menu when active */
+.sidebar[style*="display: block"],
+.sidebar.active,
+.overlay[style*="display: block"] {
+    z-index: 1001 !important;
+}
+
+.floating-contact-buttons {
+    z-index: 1000 !important;
 }
