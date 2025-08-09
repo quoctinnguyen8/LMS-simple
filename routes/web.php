@@ -29,6 +29,7 @@ Route::get('/contacts', [HomeController::class, 'contacts'])->name('contacts');
 Route::get('/news', [App\Http\Controllers\NewsController::class, 'index'])->name('news.index');
 Route::get('/news/category/{slug}', [App\Http\Controllers\NewsController::class, 'category'])->name('news.category');
 Route::get('/news/{slug}', [App\Http\Controllers\NewsController::class, 'show'])->name('news.show');
+Route::get('/search', [HomeController::class, 'search'])->name('search');
 
 // Admin routes for room booking details 
 Route::middleware(['web', 'auth'])->prefix('admin')->group(function () {

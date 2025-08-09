@@ -25,14 +25,42 @@
 
 <body>
     <header>
-        <nav>
-            <div class="logo">
-                <a href="{{ url('/') }}">
-                    <img src="{{ asset('storage/' . App\Helpers\SettingHelper::get('logo')) }}"
-                        alt="{{ App\Helpers\SettingHelper::get('center_name', 'Trung tâm đào tạo') }}"
-                        class="logo-image" style="max-height: 100px;">
-                </a>
+        <!-- TOPBAR (giống hình) -->
+        <div class="topbar">
+            <div class="container">
+                <a href="{{ route('contacts') }}">Liên hệ</a>
+                <span class="dot">|</span>
+                <a href="#" aria-label="Facebook" class="social">Fb</a>
+                <a href="#" aria-label="YouTube" class="social">Yt</a>
+                <span class="dot">|</span>
+                <span class="hotline">
+                    <x-heroicon-o-phone class="w-4 h-4" />
+                    Hotline: {{ App\Helpers\SettingHelper::get('hotline', '0123456789') }}
+                </span>
             </div>
+        </div>
+
+        <!-- HÀNG LOGO + TÌM KIẾM -->
+        <div class="brand-row">
+            <div class="container">
+                <div class="logo">
+                    <a href="{{ url('/') }}">
+                        <img src="{{ asset('storage/' . App\Helpers\SettingHelper::get('logo')) }}"
+                            alt="{{ App\Helpers\SettingHelper::get('center_name', 'Trung tâm đào tạo') }}"
+                            class="logo-image" style="max-height: 100px;">
+                    </a>
+                </div>
+
+                <!-- Ô tìm kiếm giống hình -->
+                <form action="{{ route('search') }}" method="GET" class="header-search" role="search">
+                    <input type="text" name="q" placeholder="Tìm kiếm" aria-label="Tìm kiếm">
+                    <button type="submit" aria-label="Tìm">
+                        <x-heroicon-o-magnifying-glass class="w-5 h-5" />
+                    </button>
+                </form>
+            </div>
+        </div>
+        <nav>
             <input type="checkbox" id="menu-toggle" class="hidden">
             <label for="menu-toggle" class="menu-button">
                 <x-heroicon-o-bars-3 class="w-8 h-8" />
@@ -144,6 +172,173 @@
             <label for="menu-toggle" class="overlay"></label>
         </nav>
     </header>
+    <style>
+        :root {
+            --brand: #e9323e;
+            /* đổi thành #f57c00 nếu muốn đúng cam như ảnh */
+            --brand-dark: #c62828;
+        }
+
+        /* khung container chung (nếu chưa có) */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 16px;
+        }
+
+        /* ===== TOPBAR mảnh, item dồn phải ===== */
+        .topbar {
+            background: var(--brand);
+            color: #fff;
+            font-size: 14px;
+        }
+
+        .topbar .container {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            gap: 14px;
+            min-height: 38px;
+        }
+
+        .topbar a {
+            color: #fff;
+            text-decoration: none;
+            opacity: .95;
+            transition: opacity .2s;
+        }
+
+        .topbar a:hover {
+            opacity: 1;
+        }
+
+        .topbar .dot {
+            opacity: .6;
+        }
+
+        .topbar .hotline {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-weight: 600;
+        }
+
+        /* ===== Hàng logo + ô tìm kiếm ===== */
+        .brand-row {
+            background: #fff;
+            border-bottom: 1px solid #eee;
+        }
+
+        .brand-row .container {
+            display: grid;
+            grid-template-columns: 1fr 420px;
+            align-items: center;
+            gap: 24px;
+            padding: 14px 16px;
+        }
+
+        .logo-image {
+            max-height: 64px;
+            width: auto;
+            object-fit: contain;
+        }
+
+        /* Ô tìm kiếm: nền trắng, viền mảnh, nút đỏ dính cạnh phải */
+        .header-search {
+            position: relative;
+            height: 44px;
+            display: flex;
+            align-items: center;
+            background: #fff;
+            border: 1px solid #e3e3e3;
+            border-radius: 6px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, .06);
+        }
+
+        .header-search input {
+            flex: 1;
+            height: 100%;
+            border: 0;
+            outline: none;
+            padding: 0 52px 0 14px;
+            font-size: 15px;
+            color: #333;
+        }
+
+        .header-search button {
+            position: absolute;
+            right: 0;
+            top: 0;
+            bottom: 0;
+            width: 48px;
+            border: 0;
+            border-left: 1px solid #e3e3e3;
+            background: var(--brand);
+            color: #fff;
+            cursor: pointer;
+            display: grid;
+            place-items: center;
+            border-top-right-radius: 6px;
+            border-bottom-right-radius: 6px;
+            transition: background .2s;
+        }
+
+        .header-search button:hover {
+            background: var(--brand-dark);
+        }
+
+        /* ===== Nav dưới: giữ selector cũ, chỉ chỉnh màu cho giống ảnh ===== */
+        nav {
+            background: #fff;
+            border-top: 1px solid #f2f2f2;
+            border-bottom: 1px solid #f2f2f2;
+        }
+
+        .desktop-menu a {
+            text-decoration: none;
+            color: #111;
+            font-weight: 700;
+            text-transform: uppercase;
+            padding: 14px 12px;
+            letter-spacing: .4px;
+        }
+
+        .desktop-menu a.active {
+            color: var(--brand);
+            border-bottom: 2px solid var(--brand);
+        }
+
+        .desktop-menu a:hover {
+            color: var(--brand);
+            background: rgba(233, 50, 62, .08);
+        }
+
+        .desktop-menu .dropdown-menu a:hover {
+            color: var(--brand);
+        }
+
+        /* ===== Responsive ===== */
+        @media (max-width: 992px) {
+            .brand-row .container {
+                grid-template-columns: 1fr;
+                gap: 12px;
+            }
+
+            .logo-image {
+                max-height: 56px;
+            }
+
+            .header-search {
+                height: 40px;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .topbar {
+                font-size: 13px;
+            }
+        }
+    </style>
     <main>
         @include('includes._notify')
         {{ $slot }}

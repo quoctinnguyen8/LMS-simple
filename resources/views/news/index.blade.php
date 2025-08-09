@@ -16,22 +16,28 @@
     <section class="featured-news">
         <div class="featured-container">
             @foreach ($news as $item)
-                <div class="featured-article">
+                 <div class="featured-article">
                     <div class="featured-image">
-                        <img src="{{ Storage::url($item->featured_image) }}" alt="{{ $item->title }}">
-                        <div class="featured-category">{{ $item->news_category->name }}</div>
+                        <a href="{{ route('news.show', $item->slug) }}">
+                            <img src="{{ Storage::url($item->featured_image) }}" alt="{{ $item->title }}">
+                            <div class="featured-category">{{ $item->news_category->name }}</div>
+                        </a>
                     </div>
                     <div class="featured-content">
-                        <div class="featured-date">{{ $item->published_at->format('d/m/Y') }}</div>
-                        <h3>{{ $item->title }}</h3>
-                        <p>{{ $item->summary }}</p>
+                        <div class="featured-date">{{ $item->published_at?->format('d/m/Y') }}</div>
+                        <h3>
+                            <a href="{{ route('news.show', $item->slug) }}">
+                                {{$item->title}}
+                            </a>
+                        </h3>
+                        <p>{{Str::limit(strip_tags($item->summary ?? $item->content), 140)}}</p>
                         <div class="featured-stats">
                             <span>
                                 <x-heroicon-o-eye class="inline w-5 h-5 text-gray-500 align-middle" />
                                 {{ $item->view_count }} lượt xem
                             </span>
                         </div>
-                         <a href="{{ route('news.show', $item->slug) }}" class="read-more-link">
+                        <a href="{{ route('news.show', $item->slug) }}" class="read-more-link">
                             Xem thêm &rarr;
                         </a>
                     </div>

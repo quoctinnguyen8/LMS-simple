@@ -26,6 +26,18 @@ class HomeController extends Controller
         $slides = Slider::where('is_active', 1)->orderBy('position', 'asc')->get();
         return view('home', compact('rooms', 'courses', 'slides', 'news'));
     }
+
+    public function search()
+    {
+        $query = request('q');
+        $courses = Course::where('title', 'like', "%{$query}%")
+            ->get();
+        $news = News::where('title', 'like', "%{$query}%")
+            ->get();
+
+        return view('search_results', compact('courses', 'news'));
+    }
+    
     public function contacts()
     {
         return view('contacts');

@@ -17,11 +17,17 @@
             @foreach ($courses as $course)
                 <div class="course-card-detailed">
                     <div class="course-image">
-                        <img src="{{ Storage::url($course->featured_image) }}" alt="{{ $course->title }}">
-                        <div class="course-level">{{ $course->category->name }}</div>
+                        <a href="{{ route('courses.show', $course->slug) }}">
+                            <img src="{{ Storage::url($course->featured_image) }}" alt="{{ $course->title }}">
+                            <div class="course-level">{{ $course->category->name }}</div>
+                        </a>
                     </div>
                     <div class="course-info-detailed">
-                        <h3>{{ $course->title }}</h3>
+                        <h3>
+                            <a href="{{ route('courses.show', $course->slug) }}">
+                                {{ $course->title }}
+                            </a>
+                        </h3>
                         <div class="course-meta">
                             @if ($course->start_date)
                                 <span class="start-date">
@@ -35,24 +41,31 @@
                                     Hạn đăng ký: {{ $course->end_registration_date->format('d/m/Y') }}
                                 </span>
                             @endif
+                            <span>
+                                <x-heroicon-o-eye class="inline w-5 h-5 text-gray-500 align-middle" />
+                                {{ $course->view_count }} lượt xem
+                            </span>
                         </div>
                         <p>
                             <x-heroicon-o-book-open class="inline w-5 h-5 text-gray-500 align-middle" />
-                             {{ Str::limit($course->description, 80, '...') }}
+                            {{Str::limit($course->short_description ?? $course->description, 120)}}
+                        </p>
                         <div class="course-price">
                             @if ($course->is_price_visible)
                                 <span class="price">
                                     <x-heroicon-o-currency-dollar class="inline w-5 h-5 text-gray-500 align-middle" />
                                     {{ number_format($course->price, 0, ',', '.') }}
-                                    VNĐ/{{ App\Helpers\SettingHelper::get('course_unit', 'khóa') }}</span>
+                                    VNĐ/{{ App\Helpers\SettingHelper::get('course_unit', 'khóa') }}
+                                </span>
                             @else
                                 <span class="price">Liên hệ để biết thêm chi tiết</span>
                             @endif
                         </div>
                         <div class="course-actions">
                             <button class="enroll-btn"
-                                onclick="window.location.href='{{ route('courses.show', $course->slug) }}'">Xem chi
-                                tiết</button>
+                                onclick="window.location.href='{{ route('courses.show', $course->slug) }}'">
+                                Xem chi tiết
+                            </button>
                         </div>
                     </div>
                 </div>
