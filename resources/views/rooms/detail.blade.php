@@ -57,17 +57,6 @@
                             </div>
                         </div>
                     </div>
-
-                    <div class="room-equipment">
-                        <h4>Trang thiết bị có sẵn</h4>
-                        <div class="equipment-list">
-                            @forelse ($room->equipment as $equipment)
-                                <span class="equipment-tag">{{ $equipment->name }}</span>
-                            @empty
-                                <span class="no-equipment">Không có trang thiết bị</span>
-                            @endforelse
-                        </div>
-                    </div>
                 </div>
             </div>
 

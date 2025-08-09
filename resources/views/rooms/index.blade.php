@@ -19,22 +19,19 @@
                     <div class="classroom-info">
                         <h3>{{ $room->name }}</h3>
                         <div class="classroom-specs">
-                                <x-heroicon-o-user-group class="inline w-5 h-5 text-gray-500 align-middle" />
-                                {{ $room->capacity }} chỗ ngồi
+                            <x-heroicon-o-user-group class="inline w-5 h-5 text-gray-500 align-middle" />
+                            {{ $room->capacity }} chỗ ngồi
                         </div>
-                      <div class="classroom-location">
-                            <span class="location">
-                                <x-heroicon-o-map-pin class="inline w-5 h-5 text-gray-500 align-middle" />
-                                {{ Str::limit($room->location, 50, '...') }}
-                            </span>
+                        <div class="room-equipment">
+                            <div class="equipment-list">
+                                @forelse ($room->equipment as $equipment)
+                                    <span class="equipment-tag">{{ $equipment->name }}</span>
+                                @empty
+                                    <span class="no-equipment">Không có trang thiết bị</span>
+                                @endforelse
+                            </div>
                         </div>
-                        <div class="classroom-price">
-                            <span class="price">
-                                <x-heroicon-o-currency-dollar class="inline w-5 h-5 text-gray-500 align-middle" />
-                                {{ number_format($room->price, 0, ',', '.') }} VNĐ/{{ App\Helpers\SettingHelper::get('room_unit', 'giờ') }}
-                            </span>
-                        </div>
-                       <div class="classroom-actions">
+                        <div class="classroom-actions">
                             <button class="view-btn"
                                 onclick="window.location.href='{{ route('rooms.show', $room->id) }}'">Xem chi
                                 tiết</button>

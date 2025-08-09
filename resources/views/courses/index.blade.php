@@ -41,10 +41,6 @@
                                     Hạn đăng ký: {{ $course->end_registration_date->format('d/m/Y') }}
                                 </span>
                             @endif
-                            <span>
-                                <x-heroicon-o-eye class="inline w-5 h-5 text-gray-500 align-middle" />
-                                {{ $course->view_count }} lượt xem
-                            </span>
                         </div>
                         <p>
                             <x-heroicon-o-book-open class="inline w-5 h-5 text-gray-500 align-middle" />

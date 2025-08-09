@@ -365,8 +365,10 @@
             </div>
             <div class="footer-section">
                 <h3>Giờ làm việc</h3>
-                <p>Thứ 2 - Thứ 6: 8:00 - 21:00</p>
-                <p>Thứ 7 - Chủ nhật: 8:00 - 17:00</p>
+                <p><strong>Thứ 2 - Thứ 7</strong></p>
+                <p><strong>Sáng:</strong> 8:00 - 11:30</p>
+                <p><strong>Tối:</strong> 18:00 - 21:00</p>
+                <p><strong>Chủ nhật:</strong> Nghỉ</p>
             </div>
         </div>
         <div class="footer-menu">

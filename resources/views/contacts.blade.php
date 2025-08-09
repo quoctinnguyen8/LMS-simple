@@ -37,7 +37,10 @@
                         <x-heroicon-o-clock class="w-8 h-8 text-yellow-500" />
                     </div>
                     <h3>Giờ làm việc</h3>
-                    <p>T2-T6: 8:00 - 21:00<br>T7-CN: 8:00 - 17:00</p>
+                    <p><strong>Thứ 2 - Thứ 7</strong></p>
+                    <p><strong>Sáng:</strong> 8:00 - 11:30</p>
+                    <p><strong>Tối:</strong> 18:00 - 21:00</p>
+                    <p><strong>Chủ nhật:</strong> Nghỉ</p>
                 </div>
             </div>
         </div>
@@ -48,10 +51,8 @@
         <div class="map-container">
             <h2>Vị trí trung tâm</h2>
             <div class="map-wrapper">
-                <iframe
-                    src="{{ App\Helpers\SettingHelper::get('google_map', '')}}"
-                    width="100%" height="450" style="border:0;" allowfullscreen=""
-                    referrerpolicy="no-referrer-when-downgrade">
+                <iframe src="{{ App\Helpers\SettingHelper::get('google_map', '') }}" width="100%" height="450"
+                    style="border:0;" allowfullscreen="" referrerpolicy="no-referrer-when-downgrade">
                 </iframe>
             </div>
         </div>
