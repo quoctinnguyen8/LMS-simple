@@ -43,20 +43,8 @@
                             @endif
                         </div>
                         <p>
-                            <x-heroicon-o-book-open class="inline w-5 h-5 text-gray-500 align-middle" />
-                            {{Str::limit($course->short_description ?? $course->description, 120)}}
+                            {{Str::limit($course->short_description ?? $course->description, 150)}}
                         </p>
-                        <div class="course-price">
-                            @if ($course->is_price_visible)
-                                <span class="price">
-                                    <x-heroicon-o-currency-dollar class="inline w-5 h-5 text-gray-500 align-middle" />
-                                    {{ number_format($course->price, 0, ',', '.') }}
-                                    VNĐ/{{ App\Helpers\SettingHelper::get('course_unit', 'khóa') }}
-                                </span>
-                            @else
-                                <span class="price">Liên hệ để biết thêm chi tiết</span>
-                            @endif
-                        </div>
                         <div class="course-actions">
                             <button class="enroll-btn"
                                 onclick="window.location.href='{{ route('courses.show', $course->slug) }}'">

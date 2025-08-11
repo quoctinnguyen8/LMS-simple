@@ -27,9 +27,6 @@ class CourseRequest extends FormRequest
             'name' => 'required|string|max:255',
             'email' => 'required|email|max:255|regex:/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/',
             'phone' => 'required|string|regex:/^0[0-9]{9}$/|unique:course_registrations,student_phone,NULL,id,course_id,' . $this->course_id,
-            'dob' => 'required|date|before:today|after:1900-01-01',
-            'address' => 'nullable|string|max:1000',
-            'gender' => 'required|in:male,female,other',
         ];
 
         // Chỉ thêm reCAPTCHA validation cho form đăng ký khóa học từ frontend
@@ -49,9 +46,6 @@ class CourseRequest extends FormRequest
             'name' => 'Họ và tên',
             'email' => 'Email',
             'phone' => 'Số điện thoại',
-            'dob' => 'Ngày sinh',
-            'address' => 'Địa chỉ',
-            'gender' => 'Giới tính',
             'g-recaptcha-response' => 'reCAPTCHA',
         ];
     }
@@ -77,14 +71,6 @@ class CourseRequest extends FormRequest
             'phone.string' => 'Số điện thoại phải là chuỗi ký tự.',
             'phone.regex' => 'Số điện thoại không hợp lệ. Vui lòng nhập đúng định dạng.',
             'phone.unique' => 'Số điện thoại đã được đăng ký cho khóa học này.',
-            'dob.required' => 'Ngày sinh là bắt buộc.',
-            'dob.date' => 'Ngày sinh không hợp lệ.',
-            'dob.before' => 'Ngày sinh phải trước ngày hôm nay.',
-            'dob.after' => 'Ngày sinh phải sau ngày 01/01/1900.',
-            'address.string' => 'Địa chỉ phải là chuỗi ký tự.',
-            'address.max' => 'Địa chỉ không được vượt quá :max ký tự.',
-            'gender.required' => 'Giới tính là bắt buộc.',
-            'gender.in' => 'Giới tính không hợp lệ. Vui lòng chọn nam, nữ hoặc khác.',
             'g-recaptcha-response.required' => 'Vui lòng xác minh bạn không phải là robot.',
             'g-recaptcha-response.recaptcha' => 'Xác minh reCAPTCHA không thành công. Vui lòng thử lại.',
         ];

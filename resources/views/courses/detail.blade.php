@@ -83,7 +83,7 @@
             <!-- Registration Form Sidebar -->
             <div class="course-registration-sidebar">
                 <div class="registration-form-card">
-                    <h3>Đăng ký khóa học</h3>
+                    <h3>Đăng ký tư vấn khóa học</h3>
                     <form class="course-registration-form" action="{{ route('courses.registration') }}" method="POST">
                         @csrf
                         <input type="hidden" name="course_id" value="{{ $course->id }}">
@@ -102,38 +102,12 @@
                                 placeholder="Nhập số điện thoại" required />
                         </div>
 
-                        <div class="form-group">
-                            <x-app-input name="dob" type="date" label="Ngày sinh" required />
-                        </div>
-
-                        <div class="form-group">
-                            <label for="enroll-gender">Giới tính <span style="color: red;">*</span></label>
-                            <select id="enroll-gender" name="gender" required>
-                                <option value="">Chọn giới tính</option>
-                                <option value="male" {{ old('gender') == 'male' ? 'selected' : '' }}>Nam</option>
-                                <option value="female" {{ old('gender') == 'female' ? 'selected' : '' }}>Nữ</option>
-                                <option value="other" {{ old('gender') == 'other' ? 'selected' : '' }}>Khác</option>
-                            </select>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="enroll-address">Địa chỉ</label>
-                            <textarea id="enroll-address" name="address" rows="3" placeholder="Nhập địa chỉ của bạn">{{ old('address') }}</textarea>
-                        </div>
-
                         <!-- reCAPTCHA -->
                         <x-recaptcha form-type="course-registration" />
 
                         <button type="submit" class="registration-submit-btn">
-                            Đăng ký ngay
+                            Đăng ký tư vấn!
                         </button>
-
-                        <div class="registration-note">
-                            <p>
-                                <x-heroicon-o-phone class="w-5 h-5 text-red-500 align-middle" />
-                                Cần tư vấn? <a href="{{ route('contacts') }}">Liên hệ với chúng tôi</a>
-                            </p>
-                        </div>
                     </form>
                 </div>
             </div>

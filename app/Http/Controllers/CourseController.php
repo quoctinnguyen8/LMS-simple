@@ -59,9 +59,6 @@ class CourseController extends Controller
         $registration->student_name = $validatedData['name'];
         $registration->student_phone = $validatedData['phone'];
         $registration->student_email = $validatedData['email'];
-        $registration->student_birth_date = $validatedData['dob'];
-        $registration->student_address = $validatedData['address'];
-        $registration->student_gender = $validatedData['gender'];
         $registration->created_by = Auth::id() ?? null;
         $registration->save();
         Mail::to($registration->student_email)->send(new CourseRegistrationNotification($registration));    

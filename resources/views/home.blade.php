@@ -53,60 +53,42 @@
     </section>
 
     <h2 class="courses-section-title">Khóa học mới nhất</h2>
-    <section class="home-courses-section">
-        <div class="courses-container">
-            @foreach ($courses->take(3) as $course)
-                <div class="course-card-detailed">
-                    <div class="course-image">
-                        <a href="{{ route('courses.show', $course->slug) }}">
-                            <img src="{{ Storage::url($course->featured_image) }}" alt="{{ $course->title }}">
-                            <div class="course-level">{{ $course->category->name }}</div>
-                        </a>
-                    </div>
-                    <div class="course-info-detailed">
-                        <h3>
+    <section class="courses-section">
+        <div class="courses-slider-wrapper">
+            <div class="courses-slider-track">
+                @foreach ($courses->take(6) as $course)
+                    <div class="course-card">
+                        <div class="course-media">
                             <a href="{{ route('courses.show', $course->slug) }}">
-                                {{ $course->title }}
+                                <img src="{{ Storage::url($course->featured_image) }}" alt="{{ $course->title }}">
+                                <div class="course-badge">{{ $course->category->name }}</div>
                             </a>
-                        </h3>
-                        <div class="course-meta">
-                            @if ($course->start_date)
-                                <span class="start-date">
-                                    <x-heroicon-o-calendar class="inline w-5 h-5 text-gray-500 align-middle" />
-                                    Khai giảng: {{ $course->start_date->format('d/m/Y') }}
-                                </span>
-                            @endif
-                            @if ($course->end_registration_date)
-                                <span class="registration-deadline">
-                                    <x-heroicon-o-clock class="inline w-5 h-5 text-gray-500 align-middle" />
-                                    Hạn đăng ký: {{ $course->end_registration_date->format('d/m/Y') }}
-                                </span>
-                            @endif
                         </div>
-                        <p>
-                            <x-heroicon-o-book-open class="inline w-5 h-5 text-gray-500 align-middle" />
-                            {{Str::limit($course->short_description ?? $course->description, 120)}}
-                        </p>
-                        <div class="course-price">
-                            @if ($course->is_price_visible)
-                                <span class="price">
-                                    <x-heroicon-o-currency-dollar class="inline w-5 h-5 text-gray-500 align-middle" />
-                                    {{ number_format($course->price, 0, ',', '.') }}
-                                    VNĐ/{{ App\Helpers\SettingHelper::get('course_unit', 'khóa') }}
-                                </span>
-                            @else
-                                <span class="price">Liên hệ để biết thêm chi tiết</span>
-                            @endif
-                        </div>
-                        <div class="course-actions">
-                            <button class="enroll-btn"
-                                onclick="window.location.href='{{ route('courses.show', $course->slug) }}'">
-                                Xem chi tiết
-                            </button>
+                        <div class="course-content">
+                            <h3>
+                                <a href="{{ route('courses.show', $course->slug) }}">
+                                    {{ $course->title }}
+                                </a>
+                            </h3>
+                            <p>
+                                {{ Str::limit($course->short_description ?? $course->description, 50) }}
+                            </p>
+                            <div class="course-footer">
+                                <button class="course-btn"
+                                    onclick="window.location.href='{{ route('courses.show', $course->slug) }}'">
+                                    Xem chi tiết
+                                </button>
+                            </div>
                         </div>
                     </div>
-                </div>
-            @endforeach
+                @endforeach
+            </div>
+            <button class="courses-slider-control prev">
+                <x-heroicon-o-chevron-left class="w-5 h-5" />
+            </button>
+            <button class="courses-slider-control next">
+                <x-heroicon-o-chevron-right class="w-5 h-5" />
+            </button>
         </div>
         @if ($courses->count() > 3)
             <div class="view-all-courses">
@@ -120,10 +102,16 @@
             @foreach ($rooms->take(3) as $room)
                 <div class="classroom-card">
                     <div class="classroom-image">
-                        <img src="{{ Storage::url($room->image) }}" alt="{{ $room->name }}">
+                        <a href="{{ route('rooms.show', $room->id) }}">
+                            <img src="{{ Storage::url($room->image) }}" alt="{{ $room->name }}">
+                        </a>
                     </div>
                     <div class="classroom-info">
-                        <h3>{{ $room->name }}</h3>
+                        <h3>
+                            <a href="{{ route('rooms.show', $room->id) }}">
+                                {{ $room->name }}
+                            </a>
+                        </h3>
                         <div class="classroom-specs">
                             <x-heroicon-o-user-group class="inline w-5 h-5 text-gray-500 align-middle" />
                             {{ $room->capacity }} chỗ ngồi
@@ -167,10 +155,10 @@
                         <div class="featured-date">{{ $item->published_at?->format('d/m/Y') }}</div>
                         <h3>
                             <a href="{{ route('news.show', $item->slug) }}">
-                                {{$item->title}}
+                                {{ $item->title }}
                             </a>
                         </h3>
-                        <p>{{Str::limit(strip_tags($item->summary ?? $item->content), 140)}}</p>
+                        <p>{{ Str::limit(strip_tags($item->summary ?? $item->content), 140) }}</p>
                         <div class="featured-stats">
                             <span>
                                 <x-heroicon-o-eye class="inline w-5 h-5 text-gray-500 align-middle" />
@@ -439,6 +427,176 @@
             // Initialize the dynamic slider
             document.addEventListener('DOMContentLoaded', () => {
                 new DynamicSlider('home');
+            });
+
+            // Initialize the courses slider
+            document.addEventListener('DOMContentLoaded', () => {
+                const wrapper = document.querySelector('.courses-slider-wrapper');
+                const track = document.querySelector('.courses-slider-track');
+                const prevBtn = document.querySelector('.courses-slider-control.prev');
+                const nextBtn = document.querySelector('.courses-slider-control.next');
+                const originalSlides = [...track.children].map(node => node.cloneNode(true));
+                let currentIndex = 0;
+                let slideWidth = 0;
+                let numClones = 0;
+                let numOriginal = 0;
+                let autoTimeout;
+                let isHovering = false;
+                let isDragging = false;
+                let startPos = 0;
+                let currentTranslate = 0;
+                let prevTranslate = 0;
+
+                function initSlider() {
+                    track.innerHTML = '';
+                    originalSlides.forEach(slide => track.appendChild(slide.cloneNode(true)));
+                    numOriginal = originalSlides.length;
+                    const cards = track.children;
+                    if (cards.length === 0) return;
+                    slideWidth = cards[0].offsetWidth + parseInt(getComputedStyle(track).gap || '0', 10);
+                    const wrapperWidth = wrapper.clientWidth;
+                    const numVisible = Math.floor(wrapperWidth / slideWidth);
+                    numClones = numVisible + 1; // Extra for safety
+
+                    // Prepend clones
+                    for (let i = 0; i < numClones; i++) {
+                        track.insertBefore(originalSlides[(numOriginal - 1 - i) % numOriginal].cloneNode(true), track
+                            .firstChild);
+                    }
+
+                    // Append clones
+                    for (let i = 0; i < numClones; i++) {
+                        track.appendChild(originalSlides[i % numOriginal].cloneNode(true));
+                    }
+
+                    currentIndex = numClones;
+                    currentTranslate = -currentIndex * slideWidth;
+                    track.style.transform = `translateX(${currentTranslate}px)`;
+                    track.style.transition = 'none';
+                }
+
+                function setSliderPosition() {
+                    track.style.transform = `translateX(${currentTranslate}px)`;
+                }
+
+                function nextSlide() {
+                    currentIndex++;
+                    currentTranslate = -currentIndex * slideWidth;
+                    track.style.transition = 'transform 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
+                    setSliderPosition();
+                    setTimeout(() => {
+                        if (currentIndex >= numClones + numOriginal) {
+                            track.style.transition = 'none';
+                            currentIndex = numClones;
+                            currentTranslate = -currentIndex * slideWidth;
+                            setSliderPosition();
+                        }
+                    }, 800);
+                }
+
+                function prevSlide() {
+                    currentIndex--;
+                    currentTranslate = -currentIndex * slideWidth;
+                    track.style.transition = 'transform 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
+                    setSliderPosition();
+                    setTimeout(() => {
+                        if (currentIndex < numClones) {
+                            track.style.transition = 'none';
+                            currentIndex = numClones + numOriginal - 1;
+                            currentTranslate = -currentIndex * slideWidth;
+                            setSliderPosition();
+                        }
+                    }, 800);
+                }
+
+                function autoSlide() {
+                    autoTimeout = setTimeout(() => {
+                        nextSlide();
+                        autoSlide();
+                    }, 4000);
+                }
+
+                function getPositionX(event) {
+                    return event.type.includes('mouse') ? event.pageX : event.touches[0].clientX;
+                }
+
+                function startDrag(event) {
+                    if (event.type === 'touchstart') {
+                        event.preventDefault();
+                    }
+                    isDragging = true;
+                    startPos = getPositionX(event);
+                    prevTranslate = currentTranslate;
+                    track.style.transition = 'none';
+                    clearTimeout(autoTimeout);
+                    wrapper.style.cursor = 'grabbing';
+                }
+
+                function dragging(event) {
+                    if (!isDragging) return;
+                    if (event.type === 'touchmove') {
+                        event.preventDefault();
+                    }
+                    const currentPosition = getPositionX(event);
+                    currentTranslate = prevTranslate + currentPosition - startPos;
+                    setSliderPosition();
+                }
+
+                function endDrag() {
+                    if (!isDragging) return;
+                    isDragging = false;
+                    wrapper.style.cursor = 'default';
+                    const movedBy = currentTranslate - (-currentIndex * slideWidth);
+                    if (movedBy < -slideWidth / 3) {
+                        nextSlide();
+                    } else if (movedBy > slideWidth / 3) {
+                        prevSlide();
+                    } else {
+                        track.style.transition = 'transform 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
+                        currentTranslate = -currentIndex * slideWidth;
+                        setSliderPosition();
+                    }
+                    if (!isHovering) autoSlide();
+                }
+
+                wrapper.addEventListener('mousedown', startDrag);
+                wrapper.addEventListener('touchstart', startDrag);
+                wrapper.addEventListener('mousemove', dragging);
+                wrapper.addEventListener('touchmove', dragging);
+                wrapper.addEventListener('mouseup', endDrag);
+                wrapper.addEventListener('mouseleave', endDrag);
+                wrapper.addEventListener('touchend', endDrag);
+
+                prevBtn.addEventListener('click', () => {
+                    clearTimeout(autoTimeout);
+                    prevSlide();
+                    if (!isHovering) autoSlide();
+                });
+
+                nextBtn.addEventListener('click', () => {
+                    clearTimeout(autoTimeout);
+                    nextSlide();
+                    if (!isHovering) autoSlide();
+                });
+
+                wrapper.addEventListener('mouseenter', () => {
+                    isHovering = true;
+                    clearTimeout(autoTimeout);
+                });
+
+                wrapper.addEventListener('mouseleave', () => {
+                    isHovering = false;
+                    autoSlide();
+                });
+
+                window.addEventListener('resize', () => {
+                    clearTimeout(autoTimeout);
+                    initSlider();
+                    if (!isHovering) autoSlide();
+                });
+
+                initSlider();
+                autoSlide();
             });
         </script>
     </x-slot:scripts>
