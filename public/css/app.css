@@ -563,6 +563,7 @@ nav {
     width: 350px;
     min-height: 280px;
     margin: auto;
+    padding-bottom: 20px;
 }
 
 .course-card:hover {
@@ -3958,13 +3959,12 @@ mark {
 }
 
 .course-card {
-    flex: 0 0 350px;
+    flex: 0 0 calc((100% - 60px) / 3);
     background: white;
     border-radius: 12px;
     overflow: hidden;
     box-shadow: 0 12px 35px rgba(0, 0, 0, 0.12);
     transition: all 0.3s ease;
-    height: 480px;
     display: flex;
     flex-direction: column;
     border: 1px solid #f0f0f0;
@@ -4113,7 +4113,7 @@ mark {
     margin-top: 40px;
 }
 
-/* Large desktop (1400px and up) */
+/* Large desktop (1400px and up) - 3 cards */
 @media (min-width: 1400px) {
     .courses-slider-wrapper {
         max-width: 1600px;
@@ -4121,8 +4121,7 @@ mark {
     }
 
     .course-card {
-        flex: 0 0 380px;
-        height: 520px;
+        flex: 0 0 calc((100% - 70px) / 3);
     }
 
     .course-media {
@@ -4138,16 +4137,15 @@ mark {
     }
 }
 
-/* Medium desktop (992px - 1199px) */
-@media (max-width: 1199px) and (min-width: 992px) {
+/* Medium desktop (992px - 1399px) - 3 cards */
+@media (max-width: 1399px) and (min-width: 992px) {
     .courses-slider-wrapper {
         max-width: 1200px;
         padding: 25px 30px;
     }
 
     .course-card {
-        flex: 0 0 320px;
-        height: 450px;
+        flex: 0 0 calc((100% - 50px) / 3);
     }
 
     .course-media {
@@ -4156,14 +4154,6 @@ mark {
 
     .course-content {
         padding: 20px;
-    }
-
-    .course-content {
-        margin-bottom: 12px;
-    }
-
-    .course-content p {
-        margin-bottom: 15px;
     }
 
     .courses-slider-control {
@@ -4176,15 +4166,16 @@ mark {
     }
 }
 
-/* Tablet landscape (768px - 991px) */
-@media (max-width: 991px) and (min-width: 768px) {
+/* Tablet and below (below 992px) - 1 card */
+@media (max-width: 991px) {
     .courses-slider-wrapper {
         padding: 20px 25px;
     }
 
     .course-card {
-        flex: 0 0 280px;
-        height: 420px;
+        flex: 0 0 calc(100% - 80px);
+        max-width: 500px;
+        margin: 0 auto;
     }
 
     .course-media {
@@ -4222,67 +4213,16 @@ mark {
     }
 }
 
-/* Tablet portrait (576px - 767px) */
-@media (max-width: 767px) and (min-width: 576px) {
-    .courses-slider-wrapper {
-        padding: 15px 20px;
-    }
-
-    .course-card {
-        flex: 0 0 260px;
-        height: 380px;
-    }
-
-    .course-media {
-        height: 160px;
-    }
-
-    .course-content {
-        padding: 15px;
-    }
-
-    .course-content h3 {
-        margin-bottom: 8px;
-    }
-
-    .course-content p {
-        margin-bottom: 10px;
-        -webkit-line-clamp: 2;
-    }
-
-    .course-badge {
-        padding: 8px 14px;
-        top: 12px;
-        left: 12px;
-    }
-
-    .courses-slider-control {
-        width: 36px;
-        height: 36px;
-    }
-
-    .courses-slider-control.prev {
-        left: 10px;
-    }
-
-    .courses-slider-control.next {
-        right: 10px;
-    }
-
-    .courses-slider-track {
-        gap: 15px;
-    }
-}
-
-/* Mobile (up to 575px) */
+/* Mobile (up to 575px) - 1 card */
 @media (max-width: 575px) {
     .courses-slider-wrapper {
         padding: 10px 15px;
     }
 
     .course-card {
-        flex: 0 0 240px;
-        height: 350px;
+        flex: 0 0 calc(100% - 60px);
+        max-width: 400px;
+        margin: 0 auto;
     }
 
     .course-media {
@@ -4331,15 +4271,16 @@ mark {
     }
 }
 
-/* Extra small mobile (up to 400px) */
+/* Extra small mobile (up to 400px) - 1 card */
 @media (max-width: 400px) {
     .courses-slider-wrapper {
         padding: 8px 10px;
     }
 
     .course-card {
-        flex: 0 0 220px;
-        height: 320px;
+        flex: 0 0 calc(100% - 40px);
+        max-width: 320px;
+        margin: 0 auto;
     }
 
     .course-media {
@@ -4372,7 +4313,6 @@ mark {
     .courses-slider-track {
         gap: 10px;
     }
-
 }
 
 :root {

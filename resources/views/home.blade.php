@@ -32,7 +32,7 @@
     <section class="achievements">
         <div class="achievement">
             <x-heroicon-o-check class="icon" />
-            <h3>10+</h3>
+            <h3>8+</h3>
             <p>Năm kinh nghiệm và phát triển</p>
         </div>
         <div class="achievement">
@@ -42,12 +42,12 @@
         </div>
         <div class="achievement">
             <x-heroicon-o-users class="icon" />
-            <h3>500+</h3>
+            <h3>1000+</h3>
             <p>Học viên tin tựởng</p>
         </div>
         <div class="achievement">
             <x-heroicon-o-academic-cap class="icon" />
-            <h3>98%</h3>
+            <h3>100%</h3>
             <p>Đạt mục tiêu đề ra</p>
         </div>
     </section>
@@ -67,7 +67,7 @@
                         <div class="course-content">
                             <h3>
                                 <a href="{{ route('courses.show', $course->slug) }}">
-                                    {{ $course->title }}
+                                    {{ Str::limit($course->title, 20) }}
                                 </a>
                             </h3>
                             <p>
@@ -90,7 +90,7 @@
                 <x-heroicon-o-chevron-right class="w-5 h-5" />
             </button>
         </div>
-        @if ($courses->count() > 3)
+        @if ($courses->count() > 6)
             <div class="view-all-courses">
                 <button onclick="window.location.href='{{ route('courses.index') }}'">Xem tất cả khóa học</button>
             </div>
@@ -429,174 +429,265 @@
                 new DynamicSlider('home');
             });
 
-            // Initialize the courses slider
-            document.addEventListener('DOMContentLoaded', () => {
-                const wrapper = document.querySelector('.courses-slider-wrapper');
-                const track = document.querySelector('.courses-slider-track');
-                const prevBtn = document.querySelector('.courses-slider-control.prev');
-                const nextBtn = document.querySelector('.courses-slider-control.next');
-                const originalSlides = [...track.children].map(node => node.cloneNode(true));
-                let currentIndex = 0;
-                let slideWidth = 0;
-                let numClones = 0;
-                let numOriginal = 0;
-                let autoTimeout;
-                let isHovering = false;
-                let isDragging = false;
-                let startPos = 0;
-                let currentTranslate = 0;
-                let prevTranslate = 0;
-
-                function initSlider() {
-                    track.innerHTML = '';
-                    originalSlides.forEach(slide => track.appendChild(slide.cloneNode(true)));
-                    numOriginal = originalSlides.length;
-                    const cards = track.children;
-                    if (cards.length === 0) return;
-                    slideWidth = cards[0].offsetWidth + parseInt(getComputedStyle(track).gap || '0', 10);
-                    const wrapperWidth = wrapper.clientWidth;
-                    const numVisible = Math.floor(wrapperWidth / slideWidth);
-                    numClones = numVisible + 1; // Extra for safety
-
-                    // Prepend clones
-                    for (let i = 0; i < numClones; i++) {
-                        track.insertBefore(originalSlides[(numOriginal - 1 - i) % numOriginal].cloneNode(true), track
-                            .firstChild);
+            class CoursesSlider {
+                constructor(containerId) {
+                    this.wrapper = document.querySelector('.courses-slider-wrapper');
+                    this.track = document.querySelector('.courses-slider-track');
+                    this.prevBtn = document.querySelector('.courses-slider-control.prev');
+                    this.nextBtn = document.querySelector('.courses-slider-control.next');
+                    
+                    if (!this.wrapper || !this.track) return;
+                    
+                    // Only get slides that actually exist
+                    this.slides = [...this.track.children].filter(slide => slide && slide.nodeType === 1);
+                    
+                    // Don't initialize if no slides exist
+                    if (this.slides.length === 0) {
+                        this.hideSlider();
+                        return;
                     }
-
-                    // Append clones
-                    for (let i = 0; i < numClones; i++) {
-                        track.appendChild(originalSlides[i % numOriginal].cloneNode(true));
+                    
+                    this.currentIndex = 0;
+                    this.slideWidth = 0;
+                    this.autoPlayInterval = null;
+                    this.isTransitioning = false;
+                    this.isHovering = false;
+                    this.isDragging = false;
+                    this.startPos = 0;
+                    this.currentTranslate = 0;
+                    this.prevTranslate = 0;
+                    this.touchStartX = 0;
+                    this.touchEndX = 0;
+                    this.minSwipeDistance = 50;
+                    
+                    this.init();
+                }
+                
+                hideSlider() {
+                    // Hide slider controls if no slides exist
+                    if (this.wrapper) {
+                        this.wrapper.style.display = 'none';
                     }
-
-                    currentIndex = numClones;
-                    currentTranslate = -currentIndex * slideWidth;
-                    track.style.transform = `translateX(${currentTranslate}px)`;
-                    track.style.transition = 'none';
                 }
-
-                function setSliderPosition() {
-                    track.style.transform = `translateX(${currentTranslate}px)`;
+                
+                init() {
+                    // Double check slides exist before initializing
+                    if (this.slides.length === 0) {
+                        this.hideSlider();
+                        return;
+                    }
+                    
+                    this.calculateSlideWidth();
+                    this.setupEventListeners();
+                    this.updateSlider(false);
+                    
+                    // Only start autoplay if we have more than 1 slide
+                    if (this.slides.length > 1) {
+                        this.startAutoPlay();
+                    }
                 }
-
-                function nextSlide() {
-                    currentIndex++;
-                    currentTranslate = -currentIndex * slideWidth;
-                    track.style.transition = 'transform 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
-                    setSliderPosition();
-                    setTimeout(() => {
-                        if (currentIndex >= numClones + numOriginal) {
-                            track.style.transition = 'none';
-                            currentIndex = numClones;
-                            currentTranslate = -currentIndex * slideWidth;
-                            setSliderPosition();
+                
+                calculateSlideWidth() {
+                    if (this.slides.length === 0) return;
+                    
+                    this.slideWidth = this.slides[0].offsetWidth + parseInt(getComputedStyle(this.track).gap || '20', 10);
+                    this.currentTranslate = -this.currentIndex * this.slideWidth;
+                    this.track.style.transform = `translateX(${this.currentTranslate}px)`;
+                    this.track.style.transition = 'none';
+                }
+                
+                setupEventListeners() {
+                    // Only setup navigation if we have more than 1 slide
+                    if (this.slides.length <= 1) {
+                        if (this.prevBtn) this.prevBtn.style.display = 'none';
+                        if (this.nextBtn) this.nextBtn.style.display = 'none';
+                        return;
+                    }
+                    
+                    // Arrow navigation
+                    this.prevBtn?.addEventListener('click', () => this.prevSlide());
+                    this.nextBtn?.addEventListener('click', () => this.nextSlide());
+                    
+                    // Touch events
+                    this.wrapper.addEventListener('touchstart', (e) => {
+                        this.touchStartX = e.touches[0].clientX;
+                        this.stopAutoPlay();
+                        this.startDrag(e);
+                    }, { passive: true });
+                    
+                    this.wrapper.addEventListener('touchmove', (e) => {
+                        this.touchEndX = e.touches[0].clientX;
+                        this.dragging(e);
+                    }, { passive: true });
+                    
+                    this.wrapper.addEventListener('touchend', () => {
+                        this.handleSwipe();
+                        this.endDrag();
+                        if (!this.isHovering) this.startAutoPlay();
+                    }, { passive: true });
+                    
+                    // Mouse events
+                    this.wrapper.addEventListener('mousedown', (e) => this.startDrag(e));
+                    this.wrapper.addEventListener('mousemove', (e) => this.dragging(e));
+                    this.wrapper.addEventListener('mouseup', () => this.endDrag());
+                    this.wrapper.addEventListener('mouseleave', () => this.endDrag());
+                    
+                    // Hover events
+                    this.wrapper.addEventListener('mouseenter', () => {
+                        this.isHovering = true;
+                        this.stopAutoPlay();
+                    });
+                    
+                    this.wrapper.addEventListener('mouseleave', () => {
+                        this.isHovering = false;
+                        if (!this.isDragging && this.slides.length > 1) this.startAutoPlay();
+                    });
+                    
+                    // Window resize
+                    window.addEventListener('resize', () => {
+                        this.stopAutoPlay();
+                        this.calculateSlideWidth();
+                        if (!this.isHovering && this.slides.length > 1) this.startAutoPlay();
+                    });
+                }
+                
+                handleSwipe() {
+                    const swipeDistance = this.touchStartX - this.touchEndX;
+                    if (Math.abs(swipeDistance) > this.minSwipeDistance) {
+                        if (swipeDistance > 0) {
+                            this.nextSlide();
+                        } else {
+                            this.prevSlide();
                         }
-                    }, 800);
+                    }
+                    this.touchStartX = 0;
+                    this.touchEndX = 0;
                 }
-
-                function prevSlide() {
-                    currentIndex--;
-                    currentTranslate = -currentIndex * slideWidth;
-                    track.style.transition = 'transform 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
-                    setSliderPosition();
-                    setTimeout(() => {
-                        if (currentIndex < numClones) {
-                            track.style.transition = 'none';
-                            currentIndex = numClones + numOriginal - 1;
-                            currentTranslate = -currentIndex * slideWidth;
-                            setSliderPosition();
-                        }
-                    }, 800);
-                }
-
-                function autoSlide() {
-                    autoTimeout = setTimeout(() => {
-                        nextSlide();
-                        autoSlide();
-                    }, 4000);
-                }
-
-                function getPositionX(event) {
-                    return event.type.includes('mouse') ? event.pageX : event.touches[0].clientX;
-                }
-
-                function startDrag(event) {
+                
+                startDrag(event) {
+                    if (this.isTransitioning || this.slides.length <= 1) return;
+                    
                     if (event.type === 'touchstart') {
                         event.preventDefault();
                     }
-                    isDragging = true;
-                    startPos = getPositionX(event);
-                    prevTranslate = currentTranslate;
-                    track.style.transition = 'none';
-                    clearTimeout(autoTimeout);
-                    wrapper.style.cursor = 'grabbing';
+                    this.isDragging = true;
+                    this.startPos = this.getPositionX(event);
+                    this.prevTranslate = this.currentTranslate;
+                    this.track.style.transition = 'none';
+                    this.stopAutoPlay();
+                    this.wrapper.style.cursor = 'grabbing';
                 }
-
-                function dragging(event) {
-                    if (!isDragging) return;
+                
+                dragging(event) {
+                    if (!this.isDragging || this.slides.length <= 1) return;
+                    
                     if (event.type === 'touchmove') {
                         event.preventDefault();
                     }
-                    const currentPosition = getPositionX(event);
-                    currentTranslate = prevTranslate + currentPosition - startPos;
-                    setSliderPosition();
+                    const currentPosition = this.getPositionX(event);
+                    this.currentTranslate = this.prevTranslate + currentPosition - this.startPos;
+                    this.setSliderPosition();
                 }
-
-                function endDrag() {
-                    if (!isDragging) return;
-                    isDragging = false;
-                    wrapper.style.cursor = 'default';
-                    const movedBy = currentTranslate - (-currentIndex * slideWidth);
-                    if (movedBy < -slideWidth / 3) {
-                        nextSlide();
-                    } else if (movedBy > slideWidth / 3) {
-                        prevSlide();
+                
+                endDrag() {
+                    if (!this.isDragging) return;
+                    
+                    this.isDragging = false;
+                    this.wrapper.style.cursor = 'default';
+                    
+                    if (this.slides.length <= 1) return;
+                    
+                    const movedBy = this.currentTranslate - (-this.currentIndex * this.slideWidth);
+                    if (movedBy < -this.slideWidth / 3) {
+                        this.nextSlide();
+                    } else if (movedBy > this.slideWidth / 3) {
+                        this.prevSlide();
                     } else {
-                        track.style.transition = 'transform 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
-                        currentTranslate = -currentIndex * slideWidth;
-                        setSliderPosition();
+                        this.track.style.transition = 'transform 0.5s ease';
+                        this.currentTranslate = -this.currentIndex * this.slideWidth;
+                        this.setSliderPosition();
                     }
-                    if (!isHovering) autoSlide();
+                    
+                    if (!this.isHovering) this.startAutoPlay();
                 }
+                
+                getPositionX(event) {
+                    return event.type.includes('mouse') ? event.pageX : event.touches[0].clientX;
+                }
+                
+                setSliderPosition() {
+                    this.track.style.transform = `translateX(${this.currentTranslate}px)`;
+                }
+                
+                nextSlide() {
+                    if (this.isTransitioning || this.slides.length <= 1) return;
+                    
+                    const nextIndex = this.currentIndex + 1;
+                    if (nextIndex >= this.slides.length) {
+                        this.goToSlide(0); // Go to first slide
+                    } else {
+                        this.goToSlide(nextIndex);
+                    }
+                }
+                
+                prevSlide() {
+                    if (this.isTransitioning || this.slides.length <= 1) return;
+                    
+                    const prevIndex = this.currentIndex - 1;
+                    if (prevIndex < 0) {
+                        this.goToSlide(this.slides.length - 1); // Go to last slide
+                    } else {
+                        this.goToSlide(prevIndex);
+                    }
+                }
+                
+                goToSlide(index) {
+                    if (this.isTransitioning || this.slides.length <= 1) return;
+                    
+                    this.isTransitioning = true;
+                    this.currentIndex = index;
+                    this.currentTranslate = -this.currentIndex * this.slideWidth;
+                    
+                    this.track.style.transition = 'transform 0.5s ease';
+                    this.setSliderPosition();
+                    
+                    setTimeout(() => {
+                        this.isTransitioning = false;
+                    }, 500);
+                }
+                
+                updateSlider(animate = true) {
+                    if (this.slides.length === 0) return;
+                    
+                    if (animate) {
+                        this.track.style.transition = 'transform 0.5s ease';
+                    } else {
+                        this.track.style.transition = 'none';
+                    }
+                    
+                    this.currentTranslate = -this.currentIndex * this.slideWidth;
+                    this.setSliderPosition();
+                }
+                
+                startAutoPlay() {
+                    if (this.slides.length <= 1) return;
+                    this.stopAutoPlay();
+                    this.autoPlayInterval = setInterval(() => {
+                        this.nextSlide();
+                    }, 4000);
+                }
+                
+                stopAutoPlay() {
+                    if (this.autoPlayInterval) {
+                        clearInterval(this.autoPlayInterval);
+                        this.autoPlayInterval = null;
+                    }
+                }
+            }
 
-                wrapper.addEventListener('mousedown', startDrag);
-                wrapper.addEventListener('touchstart', startDrag);
-                wrapper.addEventListener('mousemove', dragging);
-                wrapper.addEventListener('touchmove', dragging);
-                wrapper.addEventListener('mouseup', endDrag);
-                wrapper.addEventListener('mouseleave', endDrag);
-                wrapper.addEventListener('touchend', endDrag);
-
-                prevBtn.addEventListener('click', () => {
-                    clearTimeout(autoTimeout);
-                    prevSlide();
-                    if (!isHovering) autoSlide();
-                });
-
-                nextBtn.addEventListener('click', () => {
-                    clearTimeout(autoTimeout);
-                    nextSlide();
-                    if (!isHovering) autoSlide();
-                });
-
-                wrapper.addEventListener('mouseenter', () => {
-                    isHovering = true;
-                    clearTimeout(autoTimeout);
-                });
-
-                wrapper.addEventListener('mouseleave', () => {
-                    isHovering = false;
-                    autoSlide();
-                });
-
-                window.addEventListener('resize', () => {
-                    clearTimeout(autoTimeout);
-                    initSlider();
-                    if (!isHovering) autoSlide();
-                });
-
-                initSlider();
-                autoSlide();
+            // Initialize the courses slider
+            document.addEventListener('DOMContentLoaded', () => {
+                new CoursesSlider();
             });
         </script>
     </x-slot:scripts>
