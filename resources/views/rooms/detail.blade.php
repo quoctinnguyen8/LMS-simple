@@ -63,7 +63,7 @@
             <!-- Room Description -->
             <div class="room-description-card">
                 <h3>Mô tả phòng học</h3>
-                <div class="description-content">
+                <div class="content-body">
                     {!! $room->description !!}
                 </div>
             </div>

@@ -74,7 +74,7 @@
                 <!-- Course Content -->
                 <div class="course-content-section">
                     <h2>Nội dung khóa học</h2>
-                    <div class="course-content-body">
+                    <div class="content-body">
                         {!! $course->content !!}
                     </div>
                 </div>

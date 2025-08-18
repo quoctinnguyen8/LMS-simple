@@ -25,7 +25,7 @@
     <section class="about-section" id="about">
         <h2>Giới thiệu về {{ App\Helpers\SettingHelper::get('center_name', 'Trung tâm đào tạo') }}</h2>
         <div class="about-content">
-            <p>{{ App\Helpers\SettingHelper::get('center_description', 'Chưa cập nhật') }}</p>
+            {!! App\Helpers\SettingHelper::get('description', 'Chưa cập nhật') !!}
         </div>
     </section>
     <!-- Achievements -->
@@ -67,11 +67,11 @@
                             <div class="course-content">
                                 <h3>
                                     <a href="{{ route('courses.show', $course->slug) }}">
-                                        {{ Str::limit($course->title, 20) }}
+                                        {{ $course->title }}
                                     </a>
                                 </h3>
                                 <p>
-                                    {{ Str::limit($course->short_description ?? $course->description, 50) }}
+                                    {{ $course->short_description ?? $course->description }}
                                 </p>
                                 <div class="course-footer">
                                     <button class="course-btn"
@@ -103,7 +103,8 @@
         <div class="feedback-grid">
             <div class="feedback-card">
                 <div class="feedback-header">
-                    <img src="{{ Storage::url(App\Helpers\SettingHelper::get('feedback_avatar_1', '')) }}" alt="{{ App\Helpers\SettingHelper::get('feedback_name_1', 'User1') }}" class="feedback-avatar">
+                    <img src="{{ Storage::url(App\Helpers\SettingHelper::get('feedback_avatar_1', '')) }}"
+                        alt="{{ App\Helpers\SettingHelper::get('feedback_name_1', 'User1') }}" class="feedback-avatar">
                     <div class="feedback-user-info">
                         <div class="feedback-user-name">
                             {{ App\Helpers\SettingHelper::get('feedback_name_1', 'User1') }}
@@ -117,11 +118,13 @@
                         </div>
                     </div>
                 </div>
-                <p>"{{ App\Helpers\SettingHelper::get('feedback_content_1', 'Giảng viên rất nhiệt tình và phương pháp giảng dạy rất hay. Con em tôi đã tiến bộ rất nhiều sau 6 tháng học tại đây.') }}"</p>
+                <p>"{{ App\Helpers\SettingHelper::get('feedback_content_1', 'Giảng viên rất nhiệt tình và phương pháp giảng dạy rất hay. Con em tôi đã tiến bộ rất nhiều sau 6 tháng học tại đây.') }}"
+                </p>
             </div>
             <div class="feedback-card">
                 <div class="feedback-header">
-                    <img src="{{ Storage::url(App\Helpers\SettingHelper::get('feedback_avatar_2', '')) }}" alt="{{ App\Helpers\SettingHelper::get('feedback_name_2', 'User2') }}" class="feedback-avatar">
+                    <img src="{{ Storage::url(App\Helpers\SettingHelper::get('feedback_avatar_2', '')) }}"
+                        alt="{{ App\Helpers\SettingHelper::get('feedback_name_2', 'User2') }}" class="feedback-avatar">
                     <div class="feedback-user-info">
                         <div class="feedback-user-name">
                             {{ App\Helpers\SettingHelper::get('feedback_name_2', 'User2') }}
@@ -135,11 +138,13 @@
                         </div>
                     </div>
                 </div>
-                <p>"{{ App\Helpers\SettingHelper::get('feedback_content_2', 'Giảng viên rất nhiệt tình và phương pháp giảng dạy rất hay. Con em tôi đã tiến bộ rất nhiều sau 6 tháng học tại đây.') }}"</p>
+                <p>"{{ App\Helpers\SettingHelper::get('feedback_content_2', 'Giảng viên rất nhiệt tình và phương pháp giảng dạy rất hay. Con em tôi đã tiến bộ rất nhiều sau 6 tháng học tại đây.') }}"
+                </p>
             </div>
             <div class="feedback-card">
                 <div class="feedback-header">
-                    <img src="{{ Storage::url(App\Helpers\SettingHelper::get('feedback_avatar_3', '')) }}" alt="{{ App\Helpers\SettingHelper::get('feedback_name_3', 'User3') }}" class="feedback-avatar">
+                    <img src="{{ Storage::url(App\Helpers\SettingHelper::get('feedback_avatar_3', '')) }}"
+                        alt="{{ App\Helpers\SettingHelper::get('feedback_name_3', 'User3') }}" class="feedback-avatar">
                     <div class="feedback-user-info">
                         <div class="feedback-user-name">
                             {{ App\Helpers\SettingHelper::get('feedback_name_3', 'User3') }}
@@ -153,7 +158,8 @@
                         </div>
                     </div>
                 </div>
-                <p>"{{ App\Helpers\SettingHelper::get('feedback_content_3', 'Giảng viên rất nhiệt tình và phương pháp giảng dạy rất hay. Con em tôi đã tiến bộ rất nhiều sau 6 tháng học tại đây.') }}"</p>
+                <p>"{{ App\Helpers\SettingHelper::get('feedback_content_3', 'Giảng viên rất nhiệt tình và phương pháp giảng dạy rất hay. Con em tôi đã tiến bộ rất nhiều sau 6 tháng học tại đây.') }}"
+                </p>
             </div>
         </div>
     </section>
@@ -518,25 +524,33 @@
                     this.isTransitioning = false;
                     this.isHovering = false;
                     this.isDragging = false;
-                    this.startPos = 0;
-                    this.currentTranslate = 0;
-                    this.prevTranslate = 0;
-                    this.touchStartX = 0;
-                    this.touchEndX = 0;
-                    this.minSwipeDistance = 50;
+                    this.startX = 0;
 
                     this.init();
                 }
 
                 hideSlider() {
-                    // Hide slider controls if no slides exist
                     if (this.wrapper) {
                         this.wrapper.style.display = 'none';
                     }
                 }
 
+                getVisibleCards() {
+                    if (window.innerWidth >= 1200) return 3; // Large screens: 3 cards
+                    if (window.innerWidth >= 768) return 2; // Medium screens: 2 cards
+                    return 1; // Small screens: 1 card
+                }
+
+                calculateSlideWidth() {
+                    if (this.slides.length === 0) return;
+
+                    this.slideWidth = this.slides[0].offsetWidth + parseInt(getComputedStyle(this.track).gap || '15', 10);
+                    this.currentTranslate = -this.currentIndex * this.slideWidth;
+                    this.track.style.transform = `translateX(${this.currentTranslate}px)`;
+                    this.track.style.transition = 'none';
+                }
+
                 init() {
-                    // Double check slides exist before initializing
                     if (this.slides.length === 0) {
                         this.hideSlider();
                         return;
@@ -546,73 +560,28 @@
                     this.setupEventListeners();
                     this.updateSlider(false);
 
-                    // Only start autoplay if we have more than 1 slide
-                    if (this.slides.length > 1) {
+                    if (this.slides.length > this.getVisibleCards()) {
                         this.startAutoPlay();
                     }
                 }
 
-                calculateSlideWidth() {
-                    if (this.slides.length === 0) return;
-
-                    this.slideWidth = this.slides[0].offsetWidth + parseInt(getComputedStyle(this.track).gap || '20', 10);
-                    this.currentTranslate = -this.currentIndex * this.slideWidth;
-                    this.track.style.transform = `translateX(${this.currentTranslate}px)`;
-                    this.track.style.transition = 'none';
-                }
-
                 setupEventListeners() {
-                    // Arrow navigation - always show buttons
+                    // Arrow navigation
                     this.prevBtn?.addEventListener('click', (e) => {
                         e.preventDefault();
                         e.stopPropagation();
                         this.prevSlide();
                     });
+
                     this.nextBtn?.addEventListener('click', (e) => {
                         e.preventDefault();
                         e.stopPropagation();
                         this.nextSlide();
                     });
 
-                    if (this.slides.length <= 1) {
+                    if (this.slides.length <= this.getVisibleCards()) {
                         return;
                     }
-
-                    // Touch events with better event handling
-                    this.wrapper.addEventListener('touchstart', (e) => {
-                        this.touchStartX = e.touches[0].clientX;
-                        this.stopAutoPlay();
-                        this.startDrag(e);
-                    }, {
-                        passive: true
-                    });
-
-                    this.wrapper.addEventListener('touchmove', (e) => {
-                        if (this.isDragging) {
-                            e.preventDefault();
-                        }
-                        this.touchEndX = e.touches[0].clientX;
-                        this.dragging(e);
-                    }, {
-                        passive: false
-                    });
-
-                    this.wrapper.addEventListener('touchend', (e) => {
-                        this.handleSwipe();
-                        this.endDrag();
-                        if (!this.isHovering) this.startAutoPlay();
-                    }, {
-                        passive: true
-                    });
-
-                    // Mouse events
-                    this.wrapper.addEventListener('mousedown', (e) => {
-                        e.preventDefault();
-                        this.startDrag(e);
-                    });
-                    this.wrapper.addEventListener('mousemove', (e) => this.dragging(e));
-                    this.wrapper.addEventListener('mouseup', () => this.endDrag());
-                    this.wrapper.addEventListener('mouseleave', () => this.endDrag());
 
                     // Hover events
                     this.wrapper.addEventListener('mouseenter', () => {
@@ -622,117 +591,94 @@
 
                     this.wrapper.addEventListener('mouseleave', () => {
                         this.isHovering = false;
-                        if (!this.isDragging && this.slides.length > 1) this.startAutoPlay();
+                        if (this.slides.length > this.getVisibleCards()) {
+                            this.startAutoPlay();
+                        }
+                    });
+
+                    // Touch events
+                    this.track.addEventListener('touchstart', (e) => {
+                        this.startX = e.touches[0].clientX;
+                        this.isDragging = true;
+                        this.stopAutoPlay();
+                    });
+
+                    this.track.addEventListener('touchmove', (e) => {
+                        if (!this.isDragging) return;
+                        const currentX = e.touches[0].clientX;
+                        const diffX = this.startX - currentX;
+                        const threshold = this.slideWidth * 0.3; // 30% of slide width for swipe sensitivity
+                        if (Math.abs(diffX) > threshold) {
+                            if (diffX > 0) {
+                                this.nextSlide();
+                            } else if (diffX < 0) {
+                                this.prevSlide();
+                            }
+                            this.isDragging = false;
+                        }
+                    });
+
+                    this.track.addEventListener('touchend', () => {
+                        this.isDragging = false;
+                        if (!this.isHovering && this.slides.length > this.getVisibleCards()) {
+                            this.startAutoPlay();
+                        }
                     });
 
                     // Window resize
                     window.addEventListener('resize', () => {
                         this.stopAutoPlay();
+                        const prevVisibleCards = this.getVisibleCards();
                         this.calculateSlideWidth();
-                        if (!this.isHovering && this.slides.length > 1) this.startAutoPlay();
+                        const newVisibleCards = this.getVisibleCards();
+                        if (prevVisibleCards !== newVisibleCards) {
+                            this.currentIndex = Math.min(this.currentIndex, Math.max(0, this.slides.length -
+                                newVisibleCards));
+                            this.updateSlider(false);
+                        }
+                        if (!this.isHovering && this.slides.length > newVisibleCards) {
+                            this.startAutoPlay();
+                        }
                     });
                 }
 
-                handleSwipe() {
-                    const swipeDistance = this.touchStartX - this.touchEndX;
-                    if (Math.abs(swipeDistance) > this.minSwipeDistance) {
-                        if (swipeDistance > 0) {
-                            this.nextSlide();
-                        } else {
-                            this.prevSlide();
-                        }
-                    }
-                    this.touchStartX = 0;
-                    this.touchEndX = 0;
-                }
-
-                startDrag(event) {
-                    if (this.isTransitioning || this.slides.length <= 1) return;
-
-                    this.isDragging = true;
-                    this.startPos = this.getPositionX(event);
-                    this.prevTranslate = this.currentTranslate;
-                    this.track.style.transition = 'none';
-                    this.stopAutoPlay();
-                    if (event.type.includes('mouse')) {
-                        this.wrapper.style.cursor = 'grabbing';
-                    }
-                }
-
-                dragging(event) {
-                    if (!this.isDragging || this.slides.length <= 1) return;
-
-                    const currentPosition = this.getPositionX(event);
-                    this.currentTranslate = this.prevTranslate + currentPosition - this.startPos;
-                    this.setSliderPosition();
-                }
-
-                endDrag() {
-                    if (!this.isDragging) return;
-
-                    this.isDragging = false;
-                    this.wrapper.style.cursor = 'default';
-
-                    if (this.slides.length <= 1) return;
-
-                    const movedBy = this.currentTranslate - (-this.currentIndex * this.slideWidth);
-                    if (movedBy < -this.slideWidth / 3) {
-                        this.nextSlide();
-                    } else if (movedBy > this.slideWidth / 3) {
-                        this.prevSlide();
-                    } else {
-                        this.track.style.transition = 'transform 0.5s ease';
-                        this.currentTranslate = -this.currentIndex * this.slideWidth;
-                        this.setSliderPosition();
-                    }
-
-                    if (!this.isHovering) this.startAutoPlay();
-                }
-
-                getPositionX(event) {
-                    return event.type.includes('mouse') ? event.pageX : event.touches[0].clientX;
-                }
-
-                setSliderPosition() {
-                    this.track.style.transform = `translateX(${this.currentTranslate}px)`;
-                }
-
                 nextSlide() {
-                    if (this.isTransitioning || this.slides.length <= 1) return;
+                    if (this.isTransitioning || this.slides.length <= this.getVisibleCards()) return;
 
+                    const visibleCards = this.getVisibleCards();
+                    const lastRealIndex = Math.max(0, this.slides.length - visibleCards);
                     const nextIndex = this.currentIndex + 1;
-                    const lastRealIndex = window.innerWidth < 768 ? this.slides.length : this.slides.length - 2;
-                    if (nextIndex >= lastRealIndex) {
-                        this.goToSlide(0); // Go to first slide
+
+                    if (nextIndex > lastRealIndex) {
+                        this.goToSlide(0); // Loop back to start
                     } else {
                         this.goToSlide(nextIndex);
                     }
                 }
 
                 prevSlide() {
-                    if (this.isTransitioning || this.slides.length <= 1) return;
+                    if (this.isTransitioning || this.slides.length <= this.getVisibleCards()) return;
 
                     const prevIndex = this.currentIndex - 1;
+                    const visibleCards = this.getVisibleCards();
+                    const lastRealIndex = Math.max(0, this.slides.length - visibleCards);
+
                     if (prevIndex < 0) {
-                        if (window.innerWidth < 768) {
-                            this.goToSlide(this.slides.length - 1);
-                        } else {
-                            this.goToSlide(this.slides.length - 3); // Go to last real slide
-                        }
+                        this.goToSlide(lastRealIndex); // Loop to last valid index
                     } else {
                         this.goToSlide(prevIndex);
                     }
                 }
 
                 goToSlide(index) {
-                    if (this.isTransitioning || this.slides.length <= 1) return;
+                    if (this.isTransitioning || this.slides.length <= this.getVisibleCards()) return;
 
                     this.isTransitioning = true;
                     this.currentIndex = index;
                     this.currentTranslate = -this.currentIndex * this.slideWidth;
 
                     this.track.style.transition = 'transform 0.5s ease';
-                    this.setSliderPosition();
+                    this.track.style.transform = `translateX(${this.currentTranslate}px)`;
 
                     setTimeout(() => {
                         this.isTransitioning = false;
@@ -749,11 +695,11 @@
                     }
 
                     this.currentTranslate = -this.currentIndex * this.slideWidth;
-                    this.setSliderPosition();
+                    this.track.style.transform = `translateX(${this.currentTranslate}px)`;
                 }
 
                 startAutoPlay() {
-                    if (this.slides.length <= 1) return;
+                    if (this.slides.length <= this.getVisibleCards()) return;
                     this.stopAutoPlay();
                     this.autoPlayInterval = setInterval(() => {
                         this.nextSlide();

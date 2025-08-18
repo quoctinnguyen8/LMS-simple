@@ -181,7 +181,9 @@
         <div class="footer-content">
             <div class="footer-section">
                 <h3>{{ App\Helpers\SettingHelper::get('center_name', 'Trung tâm đào tạo') }}</h3>
-                <p>{{ App\Helpers\SettingHelper::get('center_description', 'Chưa cập nhật') }}</p>
+                <div class="footer-description">
+                {!! App\Helpers\SettingHelper::get('description', 'Chưa cập nhật') !!}
+                </div>
             </div>
             <div class="footer-section">
                 <h3>Khóa học</h3>
