@@ -15,6 +15,8 @@
         ogImage="{{ $attributes['ogImage'] ?? asset('storage/' . App\Helpers\SettingHelper::get('seo_image')) }}" />
     <link rel="icon" href="{{ asset('storage/' . App\Helpers\SettingHelper::get('logo')) }}" type="image/png">
     <link rel="stylesheet" href="{{ asset('css/app.css') }}">
+
+    {{-- Custom CSS from settings --}}
     {{-- Custom CSS từ settings --}}
     @if (App\Helpers\SettingHelper::get('custom_css'))
         <style>
@@ -25,39 +27,69 @@
 
 <body>
     <header>
-        <!-- TOPBAR (giống hình) -->
         <div class="topbar">
             <div class="container">
-                <a href="{{ route('contacts') }}">Liên hệ</a>
-                <span class="dot">|</span>
-                <a href="#" aria-label="Facebook" class="social">Fb</a>
-                <a href="#" aria-label="YouTube" class="social">Yt</a>
-                <span class="dot">|</span>
-                <span class="hotline">
-                    <x-heroicon-o-phone class="w-4 h-4" />
-                    Hotline: {{ App\Helpers\SettingHelper::get('hotline', '0123456789') }}
-                </span>
+                <div class="topbar-left">
+                    <div class="contact-item">
+                        <x-heroicon-o-envelope class="icon" />
+                        <span>{{ App\Helpers\SettingHelper::get('email', 'Chưa cập nhật') }}</span>
+                    </div>
+                    <div class="contact-item">
+                        <x-heroicon-o-phone class="icon" />
+                        <span>{{ App\Helpers\SettingHelper::get('phone', 'Chưa cập nhật') }}</span>
+                    </div>
+                </div>
+                <div class="topbar-right">
+                    <a href="{{ route('contacts') }}" class="contact-link">Liên hệ</a>
+                    <div class="social-links">
+                        <a href="{{ App\Helpers\SettingHelper::get('facebook_fanpage', '#') }}" aria-label="Facebook"
+                            class="social-link">
+                            <svg class="social-icon" fill="currentColor" viewBox="0 0 24 24">
+                                <path
+                                    d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
+                            </svg>
+                        </a>
+                        <a href="{{ App\Helpers\SettingHelper::get('youtube_channel', '#') }}" aria-label="YouTube"
+                            class="social-link">
+                            <svg class="social-icon" fill="currentColor" viewBox="0 0 24 24">
+                                <path
+                                    d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z" />
+                            </svg>
+                        </a>
+                    </div>
+                </div>
             </div>
         </div>
 
-        <!-- HÀNG LOGO + TÌM KIẾM -->
         <div class="brand-row">
             <div class="container">
                 <div class="logo">
                     <a href="{{ url('/') }}">
                         <img src="{{ asset('storage/' . App\Helpers\SettingHelper::get('logo')) }}"
                             alt="{{ App\Helpers\SettingHelper::get('center_name', 'Trung tâm đào tạo') }}"
-                            class="logo-image" style="max-height: 100px;">
+                            class="logo-image">
                     </a>
                 </div>
 
-                <!-- Ô tìm kiếm giống hình -->
                 <form action="{{ route('search') }}" method="GET" class="header-search" role="search">
-                    <input type="text" name="q" placeholder="Tìm kiếm" aria-label="Tìm kiếm">
-                    <button type="submit" aria-label="Tìm">
-                        <x-heroicon-o-magnifying-glass class="w-5 h-5" />
+                    <input type="text" name="q" placeholder="Tìm kiếm khóa học, tin tức..."
+                        aria-label="Tìm kiếm">
+                    <button type="submit" aria-label="Tìm kiếm">
+                        <x-heroicon-o-magnifying-glass class="search-icon" />
                     </button>
                 </form>
+
+                <div class="header-contact">
+                    <div class="contact-info">
+                        <x-heroicon-o-phone class="contact-icon" />
+                        <div class="contact-details">
+                            <span class="contact-label">Hotline</span>
+                            <a href="tel:{{ App\Helpers\SettingHelper::get('phone', '') }}" class="contact-number">
+                                {{ App\Helpers\SettingHelper::get('phone', 'Chưa cập nhật') }}
+                            </a>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
         <nav>
@@ -180,12 +212,6 @@
     <footer class="footer">
         <div class="footer-content">
             <div class="footer-section">
-                <h3>{{ App\Helpers\SettingHelper::get('center_name', 'Trung tâm đào tạo') }}</h3>
-                <div class="footer-description">
-                {!! App\Helpers\SettingHelper::get('description', 'Chưa cập nhật') !!}
-                </div>
-            </div>
-            <div class="footer-section">
                 <h3>Khóa học</h3>
                 @foreach (App\Models\Category::all() as $Category)
                     <a href="{{ route('courses.category', $Category->slug) }}"
@@ -224,25 +250,40 @@
                 All rights reserved.</p>
         </div>
     </footer>
-    <!-- Floating Contact Buttons -->
-    <div class="floating-contact-buttons">
-        <!-- Phone Button -->
-        <a href="tel:{{ App\Helpers\SettingHelper::get('phone', '') }}" target="_blank"
-            class="contact-btn contact-btn-phone" aria-label="Gọi điện">
-            <x-heroicon-o-phone class="w-6 h-6" />
-        </a>
-        <!-- Zalo Button -->
-        <a href="https://zalo.me/{{ App\Helpers\SettingHelper::get('zalo', '') }}" target="_blank"
-            class="contact-btn contact-btn-zalo" aria-label="Zalo">
-            <img src="https://upload.wikimedia.org/wikipedia/commons/9/91/Icon_of_Zalo.svg" alt="Zalo">
-        </a>
-        <!-- Facebook Button -->
-        <a href="{{ App\Helpers\SettingHelper::get('facebook_fanpage', 'https://facebook.com') }}" target="_blank"
-            class="contact-btn contact-btn-facebook" aria-label="Facebook">
-            <img src="https://upload.wikimedia.org/wikipedia/commons/5/51/Facebook_f_logo_%282019%29.svg"
-                alt="Facebook">
-        </a>
+    <!-- Floating Contact Button with Popup -->
+    <div class="floating-contact-wrapper">
+        <!-- Main Toggle Button -->
+        <button class="main-contact-btn" id="contactToggle" aria-label="Liên hệ">
+            <div class="btn-icon-wrapper">
+                <x-heroicon-o-phone class="icon phone-icon" />
+                <img src="https://upload.wikimedia.org/wikipedia/commons/9/91/Icon_of_Zalo.svg" alt="Zalo" class="icon zalo-icon">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/5/51/Facebook_f_logo_%282019%29.svg" alt="Facebook" class="icon facebook-icon">
+            </div>
+        </button>
+        
+        <!-- Popup Menu -->
+        <div class="contact-popup" id="contactPopup">
+            <a href="tel:{{ App\Helpers\SettingHelper::get('phone', '') }}" 
+               class="contact-btn contact-btn-phone" aria-label="Gọi điện">
+                <x-heroicon-o-phone class="w-6 h-6" />
+                <span class="btn-label">Gọi điện</span>
+            </a>
+            <a href="https://zalo.me/{{ App\Helpers\SettingHelper::get('zalo', '') }}" target="_blank"
+               class="contact-btn contact-btn-zalo" aria-label="Zalo">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/9/91/Icon_of_Zalo.svg" alt="Zalo">
+                <span class="btn-label">Zalo</span>
+            </a>
+            <a href="{{ App\Helpers\SettingHelper::get('facebook_fanpage', 'https://facebook.com') }}" target="_blank"
+               class="contact-btn contact-btn-facebook" aria-label="Facebook">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/5/51/Facebook_f_logo_%282019%29.svg" alt="Facebook">
+                <span class="btn-label">Facebook</span>
+            </a>
+        </div>
+        
+        <!-- Overlay -->
+        <div class="contact-overlay" id="contactOverlay"></div>
     </div>
+
     {{ $scripts ?? '' }}
     <script>
         const dropdownToggles1 = document.getElementById('dropdown-toggle-1');
@@ -298,6 +339,132 @@
                 });
             });
         }
+
+
+          document.addEventListener('DOMContentLoaded', function() {
+            const toggleBtn = document.getElementById('contactToggle');
+            const popup = document.getElementById('contactPopup');
+            const overlay = document.getElementById('contactOverlay');
+            const icons = document.querySelectorAll('.btn-icon-wrapper .icon');
+            
+            let currentIconIndex = 0;
+            let iconInterval;
+
+            // Initialize first icon
+            icons[0].classList.add('active');
+
+            function startIconSlider() {
+                iconInterval = setInterval(() => {
+                    const currentIcon = icons[currentIconIndex];
+                    const nextIconIndex = (currentIconIndex + 1) % icons.length;
+                    const nextIcon = icons[nextIconIndex];
+
+                    // Current icon exits to left
+                    currentIcon.classList.remove('active');
+                    currentIcon.classList.add('exit-left');
+
+                    // Next icon enters from right
+                    nextIcon.classList.remove('enter-right');
+                    nextIcon.classList.add('active');
+
+                    // Clean up classes after animation
+                    setTimeout(() => {
+                        currentIcon.classList.remove('exit-left');
+                        currentIcon.classList.add('enter-right');
+                    }, 500);
+
+                    currentIconIndex = nextIconIndex;
+                }, 2000); // Change icon every 2 seconds
+            }
+
+            function stopIconSlider() {
+                if (iconInterval) {
+                    clearInterval(iconInterval);
+                    iconInterval = null;
+                }
+            }
+
+            // Start icon slider
+            startIconSlider();
+
+            function togglePopup() {
+                const isActive = popup.classList.contains('active');
+                
+                if (isActive) {
+                    closePopup();
+                } else {
+                    openPopup();
+                }
+            }
+
+            function openPopup() {
+                popup.classList.add('active');
+                overlay.classList.add('active');
+                
+                // Add subtle bounce effect to main button
+                toggleBtn.style.transform = 'scale(0.95)';
+                setTimeout(() => {
+                    toggleBtn.style.transform = 'scale(1)';
+                }, 100);
+            }
+
+            function closePopup() {
+                popup.classList.remove('active');
+                overlay.classList.remove('active');
+            }
+
+            // Event listeners
+            toggleBtn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                togglePopup();
+            });
+
+            overlay.addEventListener('click', closePopup);
+
+            // Close popup when clicking contact buttons
+            const contactBtns = popup.querySelectorAll('.contact-btn');
+            contactBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    setTimeout(closePopup, 100);
+                });
+            });
+
+            // Close popup when clicking outside
+            document.addEventListener('click', function(e) {
+                if (!toggleBtn.contains(e.target) && !popup.contains(e.target)) {
+                    closePopup();
+                }
+            });
+
+            // Keyboard accessibility
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape') {
+                    closePopup();
+                }
+            });
+
+            // Pause slider on hover (only on non-touch devices)
+            if (!('ontouchstart' in window)) {
+                toggleBtn.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateY(-2px) scale(1.05)';
+                    stopIconSlider();
+                });
+
+                toggleBtn.addEventListener('mouseleave', function() {
+                    this.style.transform = 'translateY(0) scale(1)';
+                    startIconSlider();
+                });
+            }
+
+            // Handle visibility change (pause when tab is not active)
+            document.addEventListener('visibilitychange', function() {
+                if (document.hidden) {
+                    stopIconSlider();
+                } else {
+                    startIconSlider();
+                }
+            });
+        });
     </script>
     @if (App\Helpers\SettingHelper::get('custom_js'))
         <script>

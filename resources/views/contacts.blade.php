@@ -51,9 +51,7 @@
         <div class="map-container">
             <h2>Vị trí trung tâm</h2>
             <div class="map-wrapper">
-                <iframe src="{{ App\Helpers\SettingHelper::get('google_map', '') }}" width="100%" height="450"
-                    style="border:0;" allowfullscreen="" referrerpolicy="no-referrer-when-downgrade">
-                </iframe>
+               {!! App\Helpers\SettingHelper::get('google_map', '') !!}
             </div>
         </div>
     </section>

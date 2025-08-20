@@ -1,25 +1,58 @@
 <x-layouts>
-    <!-- Slider Section -->
-    <section class="slider-section" id="home">
-        <div class="slider-container">
-            <div class="slider-wrapper" id="sliderWrapper">
-                @foreach ($slides as $slide)
-                    <div class="slide" data-url="{{ $slide->link_url }}">
-                        <div class="slide-content">
-                            <h1>{{ $slide->title }}</h1>
-                            <p>{{ $slide->description }}</p>
-                        </div>
-                        <img src="{{ Storage::url($slide->image_url) }}" alt="{{ $slide->title }}">
+    <!-- Hero Section with Slider and Achievements -->
+    <section class="hero-section" id="home">
+        <div class="hero-container">
+            <!-- Slider on the left -->
+            <div class="slider-section">
+                <div class="slider-container">
+                    <div class="slider-wrapper" id="sliderWrapper">
+                        @foreach ($slides as $slide)
+                            <div class="slide" data-url="{{ $slide->link_url }}">
+                                <div class="slide-content">
+                                    <h1>{{ $slide->title }}</h1>
+                                    <p>{{ $slide->description }}</p>
+                                </div>
+                                <img src="{{ Storage::url($slide->image_url) }}" alt="{{ $slide->title }}">
+                            </div>
+                        @endforeach
                     </div>
-                @endforeach
+
+                    <button class="slider-arrows prev-arrow" id="prevBtn">‹</button>
+                    <button class="slider-arrows next-arrow" id="nextBtn">›</button>
+
+                    <div class="slider-nav" id="sliderNav"></div>
+                </div>
             </div>
 
-            <button class="slider-arrows prev-arrow" id="prevBtn">‹</button>
-            <button class="slider-arrows next-arrow" id="nextBtn">›</button>
-
-            <div class="slider-nav" id="sliderNav"></div>
+            <!-- Achievements on the right (2x2 grid) -->
+            <div class="achievements">
+                <div class="achievement">
+                    <x-heroicon-s-check class="icon" />
+                    <h3>8+</h3>
+                    <p>Năm kinh nghiệm và phát triển</p>
+                </div>
+                <div class="achievement">
+                    <x-heroicon-s-academic-cap class="icon" />
+                    <h3>100%</h3>
+                    <p>Giảng viên có chứng chỉ quốc tế</p>
+                </div>
+                <div class="achievement">
+                    <x-heroicon-s-users class="icon" />
+                    <h3>1000+</h3>
+                    <p>Học viên tin tựởng</p>
+                </div>
+                <div class="achievement">
+                    <x-heroicon-s-academic-cap class="icon" />
+                    <h3>100%</h3>
+                    <p>Đạt mục tiêu đề ra</p>
+                </div>
+            </div>
         </div>
     </section>
+
+    <style>
+  
+    </style>
 
     <!-- About Section -->
     <section class="about-section" id="about">
@@ -28,76 +61,7 @@
             {!! App\Helpers\SettingHelper::get('description', 'Chưa cập nhật') !!}
         </div>
     </section>
-    <!-- Achievements -->
-    <section class="achievements">
-        <div class="achievement">
-            <x-heroicon-s-check class="icon" />
-            <h3>8+</h3>
-            <p>Năm kinh nghiệm và phát triển</p>
-        </div>
-        <div class="achievement">
-            <x-heroicon-s-academic-cap class="icon" />
-            <h3>100%</h3>
-            <p>Giảng viên có chứng chỉ quốc tế</p>
-        </div>
-        <div class="achievement">
-            <x-heroicon-s-users class="icon" />
-            <h3>1000+</h3>
-            <p>Học viên tin tựởng</p>
-        </div>
-        <div class="achievement">
-            <x-heroicon-s-academic-cap class="icon" />
-            <h3>100%</h3>
-            <p>Đạt mục tiêu đề ra</p>
-        </div>
-    </section>
-    @if ($courses->count() > 0)
-        <h2 class="courses-section-title">Khóa học mới nhất</h2>
-        <section class="courses-section">
-            <div class="courses-slider-wrapper">
-                <div class="courses-slider-track">
-                    @foreach ($courses->take(6) as $course)
-                        <div class="course-card">
-                            <div class="course-media">
-                                <a href="{{ route('courses.show', $course->slug) }}">
-                                    <img src="{{ Storage::url($course->featured_image) }}" alt="{{ $course->title }}">
-                                    <div class="course-badge">{{ $course->category->name }}</div>
-                                </a>
-                            </div>
-                            <div class="course-content">
-                                <h3>
-                                    <a href="{{ route('courses.show', $course->slug) }}">
-                                        {{ $course->title }}
-                                    </a>
-                                </h3>
-                                <p>
-                                    {{ $course->short_description ?? $course->description }}
-                                </p>
-                                <div class="course-footer">
-                                    <button class="course-btn"
-                                        onclick="window.location.href='{{ route('courses.show', $course->slug) }}'">
-                                        Xem chi tiết
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    @endforeach
-                </div>
-                <button class="courses-slider-control prev">
-                    <x-heroicon-s-chevron-left class="w-5 h-5" />
-                </button>
-                <button class="courses-slider-control next">
-                    <x-heroicon-s-chevron-right class="w-5 h-5" />
-                </button>
-            </div>
-            @if ($courses->count() > 6)
-                <div class="view-all-courses">
-                    <button onclick="window.location.href='{{ route('courses.index') }}'">Xem tất cả khóa học</button>
-                </div>
-            @endif
-        </section>
-    @endif
-    <!-- Student Feedback -->
+     <!-- Student Feedback -->
     <section class="feedback-section">
         <h2>Học viên nói gì về chúng tôi</h2>
         <div class="feedback-grid">
@@ -163,6 +127,53 @@
             </div>
         </div>
     </section>
+    <!-- Achievements -->
+    @if ($courses->count() > 0)
+    <section class="courses-section">
+            <h2 class="courses-section-title">Khóa học mới nhất</h2>
+            <div class="courses-slider-wrapper">
+                <div class="courses-slider-track">
+                    @foreach ($courses->take(6) as $course)
+                        <div class="course-card">
+                            <div class="course-media">
+                                <a href="{{ route('courses.show', $course->slug) }}">
+                                    <img src="{{ Storage::url($course->featured_image) }}" alt="{{ $course->title }}">
+                                    <div class="course-badge">{{ $course->category->name }}</div>
+                                </a>
+                            </div>
+                            <div class="course-content">
+                                <h3>
+                                    <a href="{{ route('courses.show', $course->slug) }}">
+                                        {{ $course->title }}
+                                    </a>
+                                </h3>
+                                <p>
+                                    {{ $course->short_description ?? $course->description }}
+                                </p>
+                                <div class="course-footer">
+                                    <button class="course-btn"
+                                        onclick="window.location.href='{{ route('courses.show', $course->slug) }}'">
+                                        Xem chi tiết
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    @endforeach
+                </div>
+                <button class="courses-slider-control prev">
+                    <x-heroicon-s-chevron-left class="w-5 h-5" />
+                </button>
+                <button class="courses-slider-control next">
+                    <x-heroicon-s-chevron-right class="w-5 h-5" />
+                </button>
+            </div>
+            @if ($courses->count() > 6)
+                <div class="view-all-courses">
+                    <button onclick="window.location.href='{{ route('courses.index') }}'">Xem tất cả khóa học</button>
+                </div>
+            @endif
+        </section>
+    @endif
     @if ($rooms->count() > 0)
         <h2 class="classrooms-section-title">Phòng học hiện đại</h2>
         <section class="home-classrooms-section">
