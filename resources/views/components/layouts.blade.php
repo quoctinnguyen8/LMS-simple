@@ -99,6 +99,8 @@
             </label>
             <ul class="desktop-menu">
                 <li><a href="/" class="{{ request()->is('/') ? 'active' : '' }}">Trang chủ</a></li>
+                <li><a href="/#about"
+                        class="{{ request()->is('/#about') ? 'active' : '' }}">Giới thiệu</a></li>
                 <li class="dropdown">
                     <a href="{{ route('courses.index') }}"
                         class="dropdown-toggle {{ request()->routeIs('courses.index') || request()->routeIs('courses.category') || request()->routeIs('courses.show') ? 'active' : '' }}"
@@ -151,6 +153,7 @@
                 </div>
                 <ul class="sidebar-menu">
                     <li><a href="/" class="{{ request()->is('/') ? 'active' : '' }}">Trang chủ</a></li>
+                    <li><a href="/#about" class="{{ request()->is('/#about') ? 'active' : '' }}">Giới thiệu</a></li>
                     <li class="dropdown">
                         <div class="dropdown-header">
                             <a href="{{ route('courses.index') }}"
@@ -237,6 +240,8 @@
                 <li><a class="{{ request()->is('/') ? 'active' : '' }}" href="/">Trang chủ</a></li>
                 <li><a class="{{ request()->routeIs('courses.index') || request()->routeIs('courses.category') || request()->routeIs('courses.show') ? 'active' : '' }}"
                         href="{{ route('courses.index') }}">Khóa học</a></li>
+                <li><a class="/#about {{ request()->is('/#about') ? 'active' : '' }}"
+                        href="/#about">Giới thiệu</a></li>
                 <li><a class="{{ request()->routeIs('rooms.index') || request()->routeIs('rooms.show') ? 'active' : '' }}"
                         href="{{ route('rooms.index') }}">Phòng học</a></li>
                 <li><a class="{{ request()->routeIs('news.index') || request()->routeIs('news.category') || request()->routeIs('news.show') ? 'active' : '' }}"

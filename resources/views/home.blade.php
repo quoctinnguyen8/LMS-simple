@@ -51,7 +51,7 @@
     </section>
 
     <style>
-  
+
     </style>
 
     <!-- About Section -->
@@ -61,75 +61,86 @@
             {!! App\Helpers\SettingHelper::get('description', 'Chưa cập nhật') !!}
         </div>
     </section>
-     <!-- Student Feedback -->
+    @php
+        $feedbacks = [
+            [
+                'name' => App\Helpers\SettingHelper::get('feedback_name_1', 'User1'),
+                'avatar' => Storage::url(App\Helpers\SettingHelper::get('feedback_avatar_1', '')),
+                'content' => App\Helpers\SettingHelper::get(
+                    'feedback_content_1',
+                    'Giảng viên rất nhiệt tình và phương pháp giảng dạy rất hay. Con em tôi đã tiến bộ rất nhiều sau 6 tháng học tại đây.',
+                ),
+            ],
+            [
+                'name' => App\Helpers\SettingHelper::get('feedback_name_2', 'User2'),
+                'avatar' => Storage::url(App\Helpers\SettingHelper::get('feedback_avatar_2', '')),
+                'content' => App\Helpers\SettingHelper::get(
+                    'feedback_content_2',
+                    'Giảng viên rất nhiệt tình và phương pháp giảng dạy rất hay. Con em tôi đã tiến bộ rất nhiều sau 6 tháng học tại đây.',
+                ),
+            ],
+            [
+                'name' => App\Helpers\SettingHelper::get('feedback_name_3', 'User3'),
+                'avatar' => Storage::url(App\Helpers\SettingHelper::get('feedback_avatar_3', '')),
+                'content' => App\Helpers\SettingHelper::get(
+                    'feedback_content_3',
+                    'Giảng viên rất nhiệt tình và phương pháp giảng dạy rất hay. Con em tôi đã tiến bộ rất nhiều sau 6 tháng học tại đây.',
+                ),
+            ],
+        ];
+    @endphp
     <section class="feedback-section">
         <h2>Học viên nói gì về chúng tôi</h2>
-        <div class="feedback-grid">
-            <div class="feedback-card">
-                <div class="feedback-header">
-                    <img src="{{ Storage::url(App\Helpers\SettingHelper::get('feedback_avatar_1', '')) }}"
-                        alt="{{ App\Helpers\SettingHelper::get('feedback_name_1', 'User1') }}" class="feedback-avatar">
-                    <div class="feedback-user-info">
-                        <div class="feedback-user-name">
-                            {{ App\Helpers\SettingHelper::get('feedback_name_1', 'User1') }}
-                        </div>
-                        <div class="stars">
-                            <x-heroicon-s-star class="w-5 h-5 text-yellow-400 inline" />
-                            <x-heroicon-s-star class="w-5 h-5 text-yellow-400 inline" />
-                            <x-heroicon-s-star class="w-5 h-5 text-yellow-400 inline" />
-                            <x-heroicon-s-star class="w-5 h-5 text-yellow-400 inline" />
-                            <x-heroicon-s-star class="w-5 h-5 text-yellow-400 inline" />
-                        </div>
+        <div class="feedback-container">
+            <div class="feedback-slider">
+                <div class="feedback-slider-wrapper">
+                    <div class="feedback-track">
+                        @foreach ($feedbacks as $index => $feedback)
+                            <div class="feedback-card {{ $index === 0 ? 'active' : '' }}"
+                                data-index="{{ $index }}">
+                                <div class="feedback-content">
+                                    <div class="feedback-avatar">
+                                        <img src="{{ $feedback['avatar'] }}" alt="{{ $feedback['name'] }}"
+                                            class="avatar-img">
+                                    </div>
+
+                                    <div class="feedback-info">
+                                        <h3 class="feedback-name">{{ $feedback['name'] }}</h3>
+                                        <div class="feedback-rating">
+                                            @for ($i = 1; $i <= 5; $i++)
+                                                <span class="star">
+                                                    <x-heroicon-s-star class="w-5 h-5 text-yellow-500" />
+                                                </span>
+                                            @endfor
+                                        </div>
+                                        <p class="feedback-text">{{ $feedback['content'] }}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        @endforeach
                     </div>
                 </div>
-                <p>"{{ App\Helpers\SettingHelper::get('feedback_content_1', 'Giảng viên rất nhiệt tình và phương pháp giảng dạy rất hay. Con em tôi đã tiến bộ rất nhiều sau 6 tháng học tại đây.') }}"
-                </p>
+
+                <div class="feedback-navigation">
+                    <button class="feedback-nav-btn prev-btn" aria-label="Previous feedback">
+                        <x-heroicon-s-chevron-left class="w-5 h-5 text-white" />
+                    </button>
+                    <button class="feedback-nav-btn next-btn" aria-label="Next feedback">
+                        <x-heroicon-s-chevron-right class="w-5 h-5 text-white" />
+                    </button>
+                </div>
             </div>
-            <div class="feedback-card">
-                <div class="feedback-header">
-                    <img src="{{ Storage::url(App\Helpers\SettingHelper::get('feedback_avatar_2', '')) }}"
-                        alt="{{ App\Helpers\SettingHelper::get('feedback_name_2', 'User2') }}" class="feedback-avatar">
-                    <div class="feedback-user-info">
-                        <div class="feedback-user-name">
-                            {{ App\Helpers\SettingHelper::get('feedback_name_2', 'User2') }}
-                        </div>
-                        <div class="stars">
-                            <x-heroicon-s-star class="w-5 h-5 text-yellow-400 inline" />
-                            <x-heroicon-s-star class="w-5 h-5 text-yellow-400 inline" />
-                            <x-heroicon-s-star class="w-5 h-5 text-yellow-400 inline" />
-                            <x-heroicon-s-star class="w-5 h-5 text-yellow-400 inline" />
-                            <x-heroicon-s-star class="w-5 h-5 text-yellow-400 inline" />
-                        </div>
-                    </div>
-                </div>
-                <p>"{{ App\Helpers\SettingHelper::get('feedback_content_2', 'Giảng viên rất nhiệt tình và phương pháp giảng dạy rất hay. Con em tôi đã tiến bộ rất nhiều sau 6 tháng học tại đây.') }}"
-                </p>
-            </div>
-            <div class="feedback-card">
-                <div class="feedback-header">
-                    <img src="{{ Storage::url(App\Helpers\SettingHelper::get('feedback_avatar_3', '')) }}"
-                        alt="{{ App\Helpers\SettingHelper::get('feedback_name_3', 'User3') }}" class="feedback-avatar">
-                    <div class="feedback-user-info">
-                        <div class="feedback-user-name">
-                            {{ App\Helpers\SettingHelper::get('feedback_name_3', 'User3') }}
-                        </div>
-                        <div class="stars">
-                            <x-heroicon-s-star class="w-5 h-5 text-yellow-400 inline" />
-                            <x-heroicon-s-star class="w-5 h-5 text-yellow-400 inline" />
-                            <x-heroicon-s-star class="w-5 h-5 text-yellow-400 inline" />
-                            <x-heroicon-s-star class="w-5 h-5 text-yellow-400 inline" />
-                            <x-heroicon-s-star class="w-5 h-5 text-yellow-400 inline" />
-                        </div>
-                    </div>
-                </div>
-                <p>"{{ App\Helpers\SettingHelper::get('feedback_content_3', 'Giảng viên rất nhiệt tình và phương pháp giảng dạy rất hay. Con em tôi đã tiến bộ rất nhiều sau 6 tháng học tại đây.') }}"
-                </p>
+
+            <div class="feedback-dots">
+                @foreach ($feedbacks as $index => $feedback)
+                    <span class="dot {{ $index === 0 ? 'active' : '' }}" data-index="{{ $index }}"></span>
+                @endforeach
             </div>
         </div>
     </section>
     <!-- Achievements -->
     @if ($courses->count() > 0)
-    <section class="courses-section">
+        <section class="courses-section">
             <h2 class="courses-section-title">Khóa học mới nhất</h2>
             <div class="courses-slider-wrapper">
                 <div class="courses-slider-track">
@@ -161,10 +172,10 @@
                     @endforeach
                 </div>
                 <button class="courses-slider-control prev">
-                    <x-heroicon-s-chevron-left class="w-5 h-5" />
+                    <x-heroicon-s-chevron-left class="w-5 h-5 text-white" />
                 </button>
                 <button class="courses-slider-control next">
-                    <x-heroicon-s-chevron-right class="w-5 h-5" />
+                    <x-heroicon-s-chevron-right class="w-5 h-5 text-white" />
                 </button>
             </div>
             @if ($courses->count() > 6)
@@ -728,6 +739,173 @@
             // Initialize the courses slider
             document.addEventListener('DOMContentLoaded', () => {
                 new CoursesSlider();
+            });
+            class FeedbackSlider {
+                constructor() {
+                    this.slider = document.querySelector('.feedback-slider');
+                    this.track = document.querySelector('.feedback-track');
+                    this.cards = document.querySelectorAll('.feedback-card');
+                    this.prevBtn = document.querySelector('.feedback-nav-btn.prev-btn');
+                    this.nextBtn = document.querySelector('.feedback-nav-btn.next-btn');
+                    this.dots = document.querySelectorAll('.feedback-dots .dot');
+
+                    if (!this.slider || !this.track || this.cards.length === 0) return;
+
+                    this.currentIndex = 0;
+                    this.totalSlides = this.cards.length;
+                    this.isTransitioning = false;
+                    this.autoPlayInterval = null;
+
+                    this.init();
+                }
+
+                init() {
+                    this.setupEventListeners();
+                    this.updateSlider(false);
+                    this.startAutoPlay();
+                }
+
+                setupEventListeners() {
+                    // Arrow navigation
+                    this.prevBtn?.addEventListener('click', () => this.prevSlide());
+                    this.nextBtn?.addEventListener('click', () => this.nextSlide());
+
+                    // Dot navigation
+                    this.dots.forEach((dot, index) => {
+                        dot.addEventListener('click', () => this.goToSlide(index));
+                    });
+
+                    // Touch/swipe events
+                    let startX = 0;
+                    let endX = 0;
+
+                    this.track.addEventListener('touchstart', (e) => {
+                        startX = e.touches[0].clientX;
+                        this.stopAutoPlay();
+                    });
+
+                    this.track.addEventListener('touchmove', (e) => {
+                        endX = e.touches[0].clientX;
+                    });
+
+                    this.track.addEventListener('touchend', () => {
+                        const threshold = 50;
+                        const diff = startX - endX;
+
+                        if (Math.abs(diff) > threshold) {
+                            if (diff > 0) {
+                                this.nextSlide();
+                            } else {
+                                this.prevSlide();
+                            }
+                        }
+                        this.startAutoPlay();
+                    });
+
+                    // Mouse drag events for desktop
+                    let isDragging = false;
+                    let startXMouse = 0;
+
+                    this.track.addEventListener('mousedown', (e) => {
+                        isDragging = true;
+                        startXMouse = e.clientX;
+                        this.track.style.cursor = 'grabbing';
+                        this.stopAutoPlay();
+                        e.preventDefault();
+                    });
+
+                    document.addEventListener('mousemove', (e) => {
+                        if (!isDragging) return;
+                        endX = e.clientX;
+                    });
+
+                    document.addEventListener('mouseup', () => {
+                        if (!isDragging) return;
+
+                        const threshold = 50;
+                        const diff = startXMouse - endX;
+
+                        if (Math.abs(diff) > threshold) {
+                            if (diff > 0) {
+                                this.nextSlide();
+                            } else {
+                                this.prevSlide();
+                            }
+                        }
+
+                        isDragging = false;
+                        this.track.style.cursor = 'grab';
+                        this.startAutoPlay();
+                    });
+
+                    // Pause autoplay on hover
+                    this.slider.addEventListener('mouseenter', () => this.stopAutoPlay());
+                    this.slider.addEventListener('mouseleave', () => this.startAutoPlay());
+                }
+
+                nextSlide() {
+                    if (this.isTransitioning) return;
+                    const nextIndex = (this.currentIndex + 1) % this.totalSlides;
+                    this.goToSlide(nextIndex);
+                }
+
+                prevSlide() {
+                    if (this.isTransitioning) return;
+                    const prevIndex = (this.currentIndex - 1 + this.totalSlides) % this.totalSlides;
+                    this.goToSlide(prevIndex);
+                }
+
+                goToSlide(index) {
+                    if (this.isTransitioning || index === this.currentIndex) return;
+
+                    this.isTransitioning = true;
+                    this.currentIndex = index;
+                    this.updateSlider(true);
+
+                    setTimeout(() => {
+                        this.isTransitioning = false;
+                    }, 500);
+                }
+
+                updateSlider(animate = true) {
+                    if (animate) {
+                        this.track.style.transition = 'transform 0.5s ease';
+                    } else {
+                        this.track.style.transition = 'none';
+                    }
+
+                    const translateX = -this.currentIndex * 100;
+                    this.track.style.transform = `translateX(${translateX}%)`;
+
+                    // Update active states
+                    this.cards.forEach((card, index) => {
+                        card.classList.toggle('active', index === this.currentIndex);
+                    });
+
+                    this.dots.forEach((dot, index) => {
+                        dot.classList.toggle('active', index === this.currentIndex);
+                    });
+                }
+
+                startAutoPlay() {
+                    if (this.totalSlides <= 1) return;
+                    this.stopAutoPlay();
+                    this.autoPlayInterval = setInterval(() => {
+                        this.nextSlide();
+                    }, 5000);
+                }
+
+                stopAutoPlay() {
+                    if (this.autoPlayInterval) {
+                        clearInterval(this.autoPlayInterval);
+                        this.autoPlayInterval = null;
+                    }
+                }
+            }
+
+            // Initialize feedback slider
+            document.addEventListener('DOMContentLoaded', () => {
+                new FeedbackSlider();
             });
         </script>
     </x-slot:scripts>
