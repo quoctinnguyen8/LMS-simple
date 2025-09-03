@@ -62,32 +62,10 @@
         </div>
     </section>
     @php
-        $feedbacks = [
-            [
-                'name' => App\Helpers\SettingHelper::get('feedback_name_1', 'User1'),
-                'avatar' => Storage::url(App\Helpers\SettingHelper::get('feedback_avatar_1', '')),
-                'content' => App\Helpers\SettingHelper::get(
-                    'feedback_content_1',
-                    'Giảng viên rất nhiệt tình và phương pháp giảng dạy rất hay. Con em tôi đã tiến bộ rất nhiều sau 6 tháng học tại đây.',
-                ),
-            ],
-            [
-                'name' => App\Helpers\SettingHelper::get('feedback_name_2', 'User2'),
-                'avatar' => Storage::url(App\Helpers\SettingHelper::get('feedback_avatar_2', '')),
-                'content' => App\Helpers\SettingHelper::get(
-                    'feedback_content_2',
-                    'Giảng viên rất nhiệt tình và phương pháp giảng dạy rất hay. Con em tôi đã tiến bộ rất nhiều sau 6 tháng học tại đây.',
-                ),
-            ],
-            [
-                'name' => App\Helpers\SettingHelper::get('feedback_name_3', 'User3'),
-                'avatar' => Storage::url(App\Helpers\SettingHelper::get('feedback_avatar_3', '')),
-                'content' => App\Helpers\SettingHelper::get(
-                    'feedback_content_3',
-                    'Giảng viên rất nhiệt tình và phương pháp giảng dạy rất hay. Con em tôi đã tiến bộ rất nhiều sau 6 tháng học tại đây.',
-                ),
-            ],
-        ];
+        $feedbacks = json_decode(App\Helpers\SettingHelper::get('feedback', '[]'), true);
+        if (!is_array($feedbacks)) {
+            $feedbacks = [];
+        }
     @endphp
     <section class="feedback-section">
         <h2>Học viên nói gì về chúng tôi</h2>
@@ -100,7 +78,7 @@
                                 data-index="{{ $index }}">
                                 <div class="feedback-content">
                                     <div class="feedback-avatar">
-                                        <img src="{{ $feedback['avatar'] }}" alt="{{ $feedback['name'] }}"
+                                        <img src="{{ Storage::url($feedback['avatar']) }}" alt="{{ $feedback['name'] }}"
                                             class="avatar-img">
                                     </div>
 

@@ -98,15 +98,7 @@ class SettingHelper
                 'seo_description' => self::get('seo_description', ''),
                 'seo_title' => self::get('seo_title', ''),
                 'seo_image' => self::get('seo_image', ''),
-                'feedback_avatar_1' => self::get('feedback_avatar_1', ''),
-                'feedback_avatar_2' => self::get('feedback_avatar_2', ''),
-                'feedback_avatar_3' => self::get('feedback_avatar_3', ''),
-                'feedback_name_1' => self::get('feedback_name_1', ''),
-                'feedback_name_2' => self::get('feedback_name_2', ''),
-                'feedback_name_3' => self::get('feedback_name_3', ''),
-                'feedback_content_1' => self::get('feedback_content_1', ''),
-                'feedback_content_2' => self::get('feedback_content_2', ''),
-                'feedback_content_3' => self::get('feedback_content_3', ''),
+                'feedback' => self::get('feedback', ''),
             ];
         } catch (\Exception $e) {
             Log::error("Error getting system info: " . $e->getMessage());
@@ -128,15 +120,7 @@ class SettingHelper
                 'seo_description' => '',
                 'seo_title' => '',
                 'seo_image' => '',
-                'feedback_avatar_1' => '',
-                'feedback_avatar_2' => '',
-                'feedback_avatar_3' => '',
-                'feedback_name_1' => '',
-                'feedback_name_2' => '',
-                'feedback_name_3' => '',
-                'feedback_content_1' => '',
-                'feedback_content_2' => '',
-                'feedback_content_3' => '',
+                'feedback' => '',
             ];
         }
     }

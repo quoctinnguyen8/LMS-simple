@@ -50,15 +50,7 @@ class SystemSettings extends Page
                 'seo_description' => $settings['seo_description'] ?? '',
                 'seo_title' => $settings['seo_title'] ?? '',
                 'seo_image' => $settings['seo_image'] ?? '',
-                'feedback_avatar_1' => $settings['feedback_avatar_1'] ?? '',
-                'feedback_avatar_2' => $settings['feedback_avatar_2'] ?? '',
-                'feedback_avatar_3' => $settings['feedback_avatar_3'] ?? '',
-                'feedback_name_1' => $settings['feedback_name_1'] ?? '',
-                'feedback_name_2' => $settings['feedback_name_2'] ?? '',
-                'feedback_name_3' => $settings['feedback_name_3'] ?? '',
-                'feedback_content_1' => $settings['feedback_content_1'] ?? '',
-                'feedback_content_2' => $settings['feedback_content_2'] ?? '',
-                'feedback_content_3' => $settings['feedback_content_3'] ?? '',
+                'feedback' => $settings['feedback'] ?? '',
             ]);
         } catch (\Exception $e) {
             // Fallback nếu có lỗi
@@ -80,15 +72,7 @@ class SystemSettings extends Page
                 'seo_description' => '',
                 'seo_title' => '',
                 'seo_image' => '',
-                'feedback_avatar_1' => '',
-                'feedback_avatar_2' => '',
-                'feedback_avatar_3' => '',
-                'feedback_name_1' => '',
-                'feedback_name_2' => '',
-                'feedback_name_3' => '',
-                'feedback_content_1' => '',
-                'feedback_content_2' => '',
-                'feedback_content_3' => '',
+                'feedback' => '',
             ]);
         }
     }
@@ -161,66 +145,6 @@ class SystemSettings extends Page
                             ])
                             ->helperText('Nội dung sẽ hiển thị trên trang chủ')
                             ->columnSpanFull(),
-                    ]),
-
-                Section::make('Phản hồi khách hàng')
-                    ->description('Hiển thị phản hồi từ khách hàng')
-                    ->schema([
-                        FileUpload::make('feedback_avatar_1')
-                            ->label('Ảnh phản hồi 1')
-                            ->image()
-                            ->directory('feedbacks')
-                            ->visibility('public')
-                            ->acceptedFileTypes(['image/*'])
-                            ->maxSize(1024)
-                            ->helperText('Ảnh đại diện cho phản hồi 1'),
-                        TextInput::make('feedback_name_1')
-                            ->label('Tên phản hồi 1')
-                            ->maxLength(100)
-                            ->helperText('Tên người để lại phản hồi 1'),
-                        Textarea::make('feedback_content_1')
-                            ->label('Nội dung phản hồi 1')
-                            ->rows(3)
-                            ->maxLength(500)
-                            ->helperText('Nội dung phản hồi 1'),
-                        FileUpload::make('feedback_avatar_2')
-                            ->label('Ảnh phản hồi 2')
-                            ->image()
-                            ->directory('feedbacks')
-                            ->visibility('public')
-                            ->acceptedFileTypes(['image/*'])
-                            ->maxSize(1024)
-                            ->helperText('Ảnh đại diện cho phản hồi 2'),
-                        TextInput::make('feedback_name_2')
-                            ->label('Tên phản hồi 2')
-                            ->maxLength(100)
-                            ->helperText('Tên người để lại phản hồi 2'),
-                        Textarea::make('feedback_content_2')
-                            ->label('Nội dung phản hồi 2')
-                            ->rows(3)
-                            ->maxLength(500)
-                            ->helperText('Nội dung phản hồi 2'),
-                        FileUpload::make('feedback_avatar_3')
-                            ->label('Ảnh phản hồi 3')
-                            ->image()
-                            ->directory('feedbacks')
-                            ->visibility('public')
-                            ->acceptedFileTypes(['image/*'])
-                            ->maxSize(1024)
-                            ->helperText('Ảnh đại diện cho phản hồi 3'),
-                        TextInput::make('feedback_name_3')
-                            ->label('Tên phản hồi 3')
-                            ->maxLength(100)
-                            ->helperText('Tên người để lại phản hồi 3'),
-                        Textarea::make('feedback_content_3')
-                            ->label('Nội dung phản hồi 3')
-                            ->rows(3)
-                            ->maxLength(500)
-                            ->helperText('Nội dung phản hồi 3'),
-                    ])
-                    ->collapsible()
-                    ->extraAttributes([
-                        'style' => 'margin-bottom: 20px;'
                     ]),
                 Section::make('SEO & Meta Data')
                     ->schema([
