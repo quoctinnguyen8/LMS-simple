@@ -91,7 +91,6 @@ class Feedback extends Page
                                     ->placeholder('Nhập nội dung phản hồi từ khách hàng')
                                     ->helperText('Tối đa 500 ký tự'),
                             ])
-                            ->columns(3)
                             ->collapsible()
                             ->cloneable()
                             ->reorderableWithButtons()
