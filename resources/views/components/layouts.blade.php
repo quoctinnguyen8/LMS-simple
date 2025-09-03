@@ -99,8 +99,7 @@
             </label>
             <ul class="desktop-menu">
                 <li><a href="/" class="{{ request()->is('/') ? 'active' : '' }}">Trang chủ</a></li>
-                <li><a href="/#about"
-                        class="{{ request()->is('/#about') ? 'active' : '' }}">Giới thiệu</a></li>
+                <li><a href="/#about" class="{{ request()->is('/#about') ? 'active' : '' }}">Giới thiệu</a></li>
                 <li class="dropdown">
                     <a href="{{ route('courses.index') }}"
                         class="dropdown-toggle {{ request()->routeIs('courses.index') || request()->routeIs('courses.category') || request()->routeIs('courses.show') ? 'active' : '' }}"
@@ -234,14 +233,24 @@
                 <p><strong>Tối:</strong> 18:00 - 21:00</p>
                 <p><strong>Chủ nhật:</strong> Nghỉ</p>
             </div>
+            <div class="footer-section">
+                <h3>Vị trí trung tâm</h3>
+                <div class="map-wrapper">
+                    <iframe src="{{ App\Helpers\SettingHelper::get('google_map', '') }}" width="100%"
+                        height="200" style="border:0;" allowfullscreen="" loading="lazy"
+                        referrerpolicy="no-referrer-when-downgrade">
+                    </iframe>
+                </div>
+            </div>
+            <style></style>
         </div>
         <div class="footer-menu">
             <ul>
                 <li><a class="{{ request()->is('/') ? 'active' : '' }}" href="/">Trang chủ</a></li>
                 <li><a class="{{ request()->routeIs('courses.index') || request()->routeIs('courses.category') || request()->routeIs('courses.show') ? 'active' : '' }}"
                         href="{{ route('courses.index') }}">Khóa học</a></li>
-                <li><a class="/#about {{ request()->is('/#about') ? 'active' : '' }}"
-                        href="/#about">Giới thiệu</a></li>
+                <li><a class="/#about {{ request()->is('/#about') ? 'active' : '' }}" href="/#about">Giới thiệu</a>
+                </li>
                 <li><a class="{{ request()->routeIs('rooms.index') || request()->routeIs('rooms.show') ? 'active' : '' }}"
                         href="{{ route('rooms.index') }}">Phòng học</a></li>
                 <li><a class="{{ request()->routeIs('news.index') || request()->routeIs('news.category') || request()->routeIs('news.show') ? 'active' : '' }}"
@@ -261,30 +270,33 @@
         <button class="main-contact-btn" id="contactToggle" aria-label="Liên hệ">
             <div class="btn-icon-wrapper">
                 <x-heroicon-o-phone class="icon phone-icon" />
-                <img src="https://upload.wikimedia.org/wikipedia/commons/9/91/Icon_of_Zalo.svg" alt="Zalo" class="icon zalo-icon">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/5/51/Facebook_f_logo_%282019%29.svg" alt="Facebook" class="icon facebook-icon">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/9/91/Icon_of_Zalo.svg" alt="Zalo"
+                    class="icon zalo-icon">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/5/51/Facebook_f_logo_%282019%29.svg"
+                    alt="Facebook" class="icon facebook-icon">
             </div>
         </button>
-        
+
         <!-- Popup Menu -->
         <div class="contact-popup" id="contactPopup">
-            <a href="tel:{{ App\Helpers\SettingHelper::get('phone', '') }}" 
-               class="contact-btn contact-btn-phone" aria-label="Gọi điện">
+            <a href="tel:{{ App\Helpers\SettingHelper::get('phone', '') }}" class="contact-btn contact-btn-phone"
+                aria-label="Gọi điện">
                 <x-heroicon-o-phone class="w-6 h-6" />
                 <span class="btn-label">Gọi điện</span>
             </a>
             <a href="https://zalo.me/{{ App\Helpers\SettingHelper::get('zalo', '') }}" target="_blank"
-               class="contact-btn contact-btn-zalo" aria-label="Zalo">
+                class="contact-btn contact-btn-zalo" aria-label="Zalo">
                 <img src="https://upload.wikimedia.org/wikipedia/commons/9/91/Icon_of_Zalo.svg" alt="Zalo">
                 <span class="btn-label">Zalo</span>
             </a>
-            <a href="{{ App\Helpers\SettingHelper::get('facebook_fanpage', 'https://facebook.com') }}" target="_blank"
-               class="contact-btn contact-btn-facebook" aria-label="Facebook">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/5/51/Facebook_f_logo_%282019%29.svg" alt="Facebook">
+            <a href="{{ App\Helpers\SettingHelper::get('facebook_fanpage', 'https://facebook.com') }}"
+                target="_blank" class="contact-btn contact-btn-facebook" aria-label="Facebook">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/5/51/Facebook_f_logo_%282019%29.svg"
+                    alt="Facebook">
                 <span class="btn-label">Facebook</span>
             </a>
         </div>
-        
+
         <!-- Overlay -->
         <div class="contact-overlay" id="contactOverlay"></div>
     </div>
@@ -346,12 +358,12 @@
         }
 
 
-          document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function() {
             const toggleBtn = document.getElementById('contactToggle');
             const popup = document.getElementById('contactPopup');
             const overlay = document.getElementById('contactOverlay');
             const icons = document.querySelectorAll('.btn-icon-wrapper .icon');
-            
+
             let currentIconIndex = 0;
             let iconInterval;
 
@@ -394,7 +406,7 @@
 
             function togglePopup() {
                 const isActive = popup.classList.contains('active');
-                
+
                 if (isActive) {
                     closePopup();
                 } else {
@@ -405,7 +417,7 @@
             function openPopup() {
                 popup.classList.add('active');
                 overlay.classList.add('active');
-                
+
                 // Add subtle bounce effect to main button
                 toggleBtn.style.transform = 'scale(0.95)';
                 setTimeout(() => {
