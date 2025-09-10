@@ -23,6 +23,9 @@
             {!! App\Helpers\SettingHelper::get('custom_css') !!}
         </style>
     @endif
+    @if (App\Helpers\SettingHelper::get('ga_head'))
+        {!! App\Helpers\SettingHelper::get('ga_head') !!}
+    @endif
 </head>
 
 <body>
@@ -302,6 +305,9 @@
     </div>
 
     {{ $scripts ?? '' }}
+    @if(App\Helpers\SettingHelper::get('ga_body'))
+        {!! App\Helpers\SettingHelper::get('ga_body') !!}
+    @endif
     <script>
         const dropdownToggles1 = document.getElementById('dropdown-toggle-1');
         const dropdownToggles2 = document.getElementById('dropdown-toggle-2');

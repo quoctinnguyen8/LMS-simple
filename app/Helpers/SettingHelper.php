@@ -98,6 +98,10 @@ class SettingHelper
                 'seo_description' => self::get('seo_description', ''),
                 'seo_title' => self::get('seo_title', ''),
                 'seo_image' => self::get('seo_image', ''),
+                'seo_keywords' => self::get('seo_keywords', ''),
+                'sitemap_file' => self::get('sitemap_file', ''),
+                'ga_head' => self::get('ga_head', ''),
+                'ga_body' => self::get('ga_body', ''),
                 'feedback' => self::get('feedback', ''),
             ];
         } catch (\Exception $e) {
@@ -121,6 +125,10 @@ class SettingHelper
                 'seo_title' => '',
                 'seo_image' => '',
                 'feedback' => '',
+                'seo_keywords' => '',
+                'sitemap_file' => '',
+                'ga_head' => '',
+                'ga_body' => '',
             ];
         }
     }

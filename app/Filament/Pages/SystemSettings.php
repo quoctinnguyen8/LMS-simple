@@ -50,7 +50,11 @@ class SystemSettings extends Page
                 'seo_description' => $settings['seo_description'] ?? '',
                 'seo_title' => $settings['seo_title'] ?? '',
                 'seo_image' => $settings['seo_image'] ?? '',
+                'seo_keywords' => $settings['seo_keywords'] ?? '',
                 'feedback' => $settings['feedback'] ?? '',
+                'sitemap_file' => $settings['sitemap_file'] ?? '',
+                'ga_head' => $settings['ga_head'] ?? '',
+                'ga_body' => $settings['ga_body'] ?? '',
             ]);
         } catch (\Exception $e) {
             // Fallback nếu có lỗi
@@ -71,8 +75,12 @@ class SystemSettings extends Page
                 'room_unit_to_hour' => '1',
                 'seo_description' => '',
                 'seo_title' => '',
+                'seo_keywords' => '',
                 'seo_image' => '',
                 'feedback' => '',
+                'sitemap_file' => '',
+                'ga_head' => '',
+                'ga_body' => '',
             ]);
         }
     }
@@ -146,26 +154,7 @@ class SystemSettings extends Page
                             ->helperText('Nội dung sẽ hiển thị trên trang chủ')
                             ->columnSpanFull(),
                     ]),
-                Section::make('SEO & Meta Data')
-                    ->schema([
-                        TextInput::make('seo_image')
-                            ->label('Ảnh SEO')
-                            ->maxLength(500)
-                            ->helperText('Ảnh được sử dụng khi chia sẻ trên mạng xã hội, để trống sẽ dùng ảnh bìa.'),
-
-                        TextInput::make('seo_title')
-                            ->label('Tiêu đề SEO')
-                            ->maxLength(500)
-                            ->helperText('Tiêu đề tối ưu cho công cụ tìm kiếm'),
-
-                        Textarea::make('seo_description')
-                            ->label('Mô tả SEO')
-                            ->maxLength(2000)
-                            ->rows(3)
-                            ->helperText('Mô tả ngắn gọn cho công cụ tìm kiếm'),
-                    ])
-                    ->columns(1)
-                    ->collapsible(),
+                
                 Section::make('Cài đặt đơn vị tính tiền')
                     ->description('Cấu hình đơn vị tính tiền cho khóa học và thuê phòng')
                     ->schema([
@@ -283,12 +272,6 @@ console.log(\'Hello World\');')
     public function save(): void
     {
         $data = $this->form->getState();
-        $imgFullUrl = asset('storage/' . $data['logo']);
-        $data['seo_image'] = empty($data['seo_image']) ? $imgFullUrl : trim($data['seo_image']);
-        foreach ($data as $key => $value) {
-            SettingHelper::set($key, $value);
-        }
-
         // Clear all settings cache after update
         SettingHelper::clearCache();
 
