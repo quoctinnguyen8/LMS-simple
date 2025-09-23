@@ -103,6 +103,7 @@ class SettingHelper
                 'ga_head' => self::get('ga_head', ''),
                 'ga_body' => self::get('ga_body', ''),
                 'feedback' => self::get('feedback', ''),
+                'youtube_embed' => self::get('youtube_embed', ''), 
             ];
         } catch (\Exception $e) {
             Log::error("Error getting system info: " . $e->getMessage());
@@ -129,6 +130,7 @@ class SettingHelper
                 'sitemap_file' => '',
                 'ga_head' => '',
                 'ga_body' => '',
+                'youtube_embed' => '',
             ];
         }
     }

@@ -55,6 +55,7 @@ class SystemSettings extends Page
                 'sitemap_file' => $settings['sitemap_file'] ?? '',
                 'ga_head' => $settings['ga_head'] ?? '',
                 'ga_body' => $settings['ga_body'] ?? '',
+                'youtube_embed' => $settings['youtube_embed'] ?? '',
             ]);
         } catch (\Exception $e) {
             // Fallback nếu có lỗi
@@ -81,6 +82,7 @@ class SystemSettings extends Page
                 'sitemap_file' => '',
                 'ga_head' => '',
                 'ga_body' => '',
+                'youtube_embed' => '',
             ]);
         }
     }
@@ -153,8 +155,16 @@ class SystemSettings extends Page
                             ])
                             ->helperText('Nội dung sẽ hiển thị trên trang chủ')
                             ->columnSpanFull(),
+                        Textarea::make('youtube_embed')
+                            ->label('Nhúng video YouTube')
+                            ->placeholder('Dán mã embed HTML của YouTube')
+                            ->rows(2)
+                            ->helperText('Lấy liên kết video từ YouTube và dán vào đây')
+                            ->extraAttributes([
+                                'style' => 'font-family: "Fira Code", "JetBrains Mono", "Monaco", "Cascadia Code", "Roboto Mono", monospace; font-size: 14px;'
+                            ]),
                     ]),
-                
+
                 Section::make('Cài đặt đơn vị tính tiền')
                     ->description('Cấu hình đơn vị tính tiền cho khóa học và thuê phòng')
                     ->schema([
@@ -274,7 +284,9 @@ console.log(\'Hello World\');')
         $data = $this->form->getState();
         // Clear all settings cache after update
         SettingHelper::clearCache();
-
+        foreach ($data as $key => $value) {
+            SettingHelper::set($key, $value);
+        }
         Notification::make()
             ->title('Cập nhật thành công')
             ->body('Các cài đặt hệ thống đã được cập nhật.')

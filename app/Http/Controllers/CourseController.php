@@ -8,6 +8,8 @@ use App\Models\Course;
 use App\Models\CourseRegistration;
 use Illuminate\Support\Facades\Auth;
 use App\Mail\CourseRegistrationNotification;
+use App\Mail\NotifyAdmin;
+use App\Models\User;
 use Illuminate\Support\Facades\Mail;
 
 class CourseController extends Controller
@@ -62,6 +64,10 @@ class CourseController extends Controller
         $registration->created_by = Auth::id() ?? null;
         $registration->save();
         Mail::to($registration->student_email)->send(new CourseRegistrationNotification($registration));    
+        $adminUsers = User::where('role', '!=' , 'user')->get();
+        foreach ($adminUsers as $admin) {
+            Mail::to($admin->email)->send(new NotifyAdmin('registration', $registration));
+        }
         return redirect()->route('courses.show', ['slug' => $course->slug])->with('success', 'Đăng ký khóa học thành công.');
     }
 }

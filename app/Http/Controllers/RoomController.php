@@ -7,6 +7,8 @@ use App\Models\Room;
 use App\Models\RoomBooking;
 use App\Services\RoomBookingService;
 use App\Mail\BookingConfirmationNotification;
+use App\Mail\NotifyAdmin;
+use App\Models\User;
 use Illuminate\Support\Facades\Mail;
 
 class RoomController extends Controller
@@ -48,6 +50,10 @@ class RoomController extends Controller
         $roomBookingService->createBookingDetails($booking, $data, true, false);
         $booking->refresh();
         Mail::to($booking->customer_email)->send(new BookingConfirmationNotification($booking));
+        $adminUsers = User::where('role', '!=' , 'user')->get();
+        foreach ($adminUsers as $admin) {
+            Mail::to($admin->email)->send(new NotifyAdmin('booking', $booking));
+        }
         return redirect()->route('rooms.show', ['id' => $validated['room_id']])
             ->with('success', 'Đặt phòng thành công!');
     }

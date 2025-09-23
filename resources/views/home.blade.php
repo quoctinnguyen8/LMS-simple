@@ -1,65 +1,73 @@
 <x-layouts>
-    <!-- Hero Section with Slider and Achievements -->
+    <!-- Welcome Marquee -->
+    <div class="welcome-marquee">
+        <marquee behavior="scroll" direction="left" scrollamount="5">
+            {!! App\Helpers\SettingHelper::get(
+                'welcome_message',
+                'Chào mừng bạn đến với ' .
+                    App\Helpers\SettingHelper::get('center_name', 'Trung tâm đào tạo') .
+                    ' - Nơi học tập và phát triển bản thân!',
+            ) !!}
+        </marquee>
+    </div>
     <section class="hero-section" id="home">
-        <div class="hero-container">
-            <!-- Slider on the left -->
-            <div class="slider-section">
-                <div class="slider-container">
-                    <div class="slider-wrapper" id="sliderWrapper">
-                        @foreach ($slides as $slide)
-                            <div class="slide" data-url="{{ $slide->link_url }}">
-                                <div class="slide-content">
-                                    <h1>{{ $slide->title }}</h1>
-                                    <p>{{ $slide->description }}</p>
-                                </div>
-                                <img src="{{ Storage::url($slide->image_url) }}" alt="{{ $slide->title }}">
+        <div class="slider-section">
+            <div class="slider-container">
+                <div class="slider-wrapper" id="sliderWrapper">
+                    @foreach ($slides as $slide)
+                        <div class="slide" data-url="{{ $slide->link_url }}">
+                            <div class="slide-content">
+                                <h1>{{ $slide->title }}</h1>
+                                <p>{{ $slide->description }}</p>
                             </div>
-                        @endforeach
-                    </div>
+                            <img src="{{ Storage::url($slide->image_url) }}" alt="{{ $slide->title }}">
+                        </div>
+                    @endforeach
+                </div>
 
-                    <button class="slider-arrows prev-arrow" id="prevBtn">‹</button>
-                    <button class="slider-arrows next-arrow" id="nextBtn">›</button>
+                <button class="slider-arrows prev-arrow" id="prevBtn">‹</button>
+                <button class="slider-arrows next-arrow" id="nextBtn">›</button>
 
-                    <div class="slider-nav" id="sliderNav"></div>
-                </div>
-            </div>
-
-            <!-- Achievements on the right (2x2 grid) -->
-            <div class="achievements">
-                <div class="achievement">
-                    <x-heroicon-s-check class="icon" />
-                    <h3>8+</h3>
-                    <p>Năm kinh nghiệm và phát triển</p>
-                </div>
-                <div class="achievement">
-                    <x-heroicon-s-academic-cap class="icon" />
-                    <h3>100%</h3>
-                    <p>Giảng viên có chứng chỉ quốc tế</p>
-                </div>
-                <div class="achievement">
-                    <x-heroicon-s-users class="icon" />
-                    <h3>1000+</h3>
-                    <p>Học viên tin tựởng</p>
-                </div>
-                <div class="achievement">
-                    <x-heroicon-s-academic-cap class="icon" />
-                    <h3>100%</h3>
-                    <p>Đạt mục tiêu đề ra</p>
-                </div>
+                <div class="slider-nav" id="sliderNav"></div>
             </div>
         </div>
     </section>
-
-    <style>
-
-    </style>
-
+    <div class="achievements">
+        <div class="achievement">
+            <x-heroicon-s-check class="icon" />
+            <h3>8+</h3>
+            <p>Năm kinh nghiệm và phát triển</p>
+        </div>
+        <div class="achievement">
+            <x-heroicon-s-academic-cap class="icon" />
+            <h3>100%</h3>
+            <p>Giảng viên có chứng chỉ quốc tế</p>
+        </div>
+        <div class="achievement">
+            <x-heroicon-s-users class="icon" />
+            <h3>1000+</h3>
+            <p>Học viên tin tựởng</p>
+        </div>
+        <div class="achievement">
+            <x-heroicon-s-academic-cap class="icon" />
+            <h3>100%</h3>
+            <p>Đạt mục tiêu đề ra</p>
+        </div>
+    </div>
     <!-- About Section -->
     <section class="about-section" id="about">
         <h2>Giới thiệu về {{ App\Helpers\SettingHelper::get('center_name', 'Trung tâm đào tạo') }}</h2>
         <div class="about-content">
             {!! App\Helpers\SettingHelper::get('description', 'Chưa cập nhật') !!}
         </div>
+        @if (App\Helpers\SettingHelper::get('youtube_embed'))
+            <div class="about-video">
+                <iframe src="{{App\Helpers\SettingHelper::get('youtube_embed')}}" title="YouTube video player" frameborder="0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowfullscreen>
+                </iframe>
+            </div>
+        @endif
     </section>
     @php
         $feedbacks = json_decode(App\Helpers\SettingHelper::get('feedback', '[]'), true);
@@ -163,55 +171,9 @@
             @endif
         </section>
     @endif
-    @if ($rooms->count() > 0)
-        <h2 class="classrooms-section-title">Phòng học hiện đại</h2>
-        <section class="home-classrooms-section">
-            <div class="classrooms-container">
-                @foreach ($rooms->take(3) as $room)
-                    <div class="classroom-card">
-                        <div class="classroom-image">
-                            <a href="{{ route('rooms.show', $room->id) }}">
-                                <img src="{{ Storage::url($room->image) }}" alt="{{ $room->name }}">
-                            </a>
-                        </div>
-                        <div class="classroom-info">
-                            <h3>
-                                <a href="{{ route('rooms.show', $room->id) }}">
-                                    {{ $room->name }}
-                                </a>
-                            </h3>
-                            <div class="classroom-specs">
-                                <x-heroicon-s-user-group class="inline w-5 h-5 text-gray-500 align-middle" />
-                                {{ $room->capacity }} chỗ ngồi
-                            </div>
-                            <div class="room-equipment">
-                                <div class="equipment-list">
-                                    @forelse ($room->equipment as $equipment)
-                                        <span class="equipment-tag">{{ $equipment->name }}</span>
-                                    @empty
-                                        <span class="no-equipment">Không có trang thiết bị</span>
-                                    @endforelse
-                                </div>
-                            </div>
-                            <div class="classroom-actions">
-                                <button class="view-btn"
-                                    onclick="window.location.href='{{ route('rooms.show', $room->id) }}'">Xem chi
-                                    tiết</button>
-                            </div>
-                        </div>
-                    </div>
-                @endforeach
-            </div>
-            @if ($rooms->count() > 3)
-                <div class="view-all-rooms">
-                    <button onclick="window.location.href='{{ route('rooms.index') }}'">Xem tất cả phòng học</button>
-                </div>
-            @endif
-        </section>
-    @endif
     @if ($news->count() > 0)
-        <h2 class="news-section-title">Tin tức mới nhất</h2>
         <section class="featured-news">
+            <h2 class="news-section-title">Tin tức mới nhất</h2>
             <div class="featured-container">
                 @foreach ($news as $item)
                     <div class="featured-article">
@@ -787,7 +749,7 @@
                     this.track.addEventListener('mousedown', (e) => {
                         isDragging = true;
                         startXMouse = e.clientX;
-                        this.track.style.cursor = 'grabbing';
+                        this.track.style.cursor = 'grab';
                         this.stopAutoPlay();
                         e.preventDefault();
                     });
